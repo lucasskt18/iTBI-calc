@@ -1,2 +1,2 @@
-# Dispositivos-M-veis-em-Android
+# Dispositivos Moveis para Android
 Trabalho para conclusão de disciplina.
