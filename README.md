@@ -1,2 +1,3 @@
 # Dispositivos Moveis para Android
-Trabalho para conclusão de disciplina.
+
+Trabalho válido como conclusão da disciplina "Programação Para Dispositivos Móveis em Android"
