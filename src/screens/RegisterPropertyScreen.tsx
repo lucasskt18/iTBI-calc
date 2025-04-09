@@ -1,57 +1,85 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
-import { Button, Input } from '@rneui/themed';
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  Alert,
+} from 'react-native';
+import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 
-interface Property {
-  id: string;
-  street: string;
-  number: string;
-  neighborhood: string;
-  city: string;
+interface FormErrors {
+  address?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  area?: string;
+  value?: string;
+  type?: string;
 }
 
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
-  const [street, setStreet] = useState('');
-  const [number, setNumber] = useState('');
-  const [neighborhood, setNeighborhood] = useState('');
-  const [city, setCity] = useState('');
-  const [errors, setErrors] = useState({
-    street: '',
-    number: '',
+  const [formData, setFormData] = useState({
+    address: '',
     neighborhood: '',
-    city: ''
+    city: '',
+    state: '',
+    area: '',
+    value: '',
+    type: '',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
     let isValid = true;
-    const newErrors = {
-      street: '',
-      number: '',
-      neighborhood: '',
-      city: ''
-    };
 
-    if (!street.trim()) {
-      newErrors.street = 'O nome da rua é obrigatório';
+    if (!formData.address.trim()) {
+      newErrors.address = 'Endereço é obrigatório';
       isValid = false;
     }
 
-    if (!number.trim()) {
-      newErrors.number = 'O número é obrigatório';
+    if (!formData.neighborhood.trim()) {
+      newErrors.neighborhood = 'Bairro é obrigatório';
       isValid = false;
     }
 
-    if (!neighborhood.trim()) {
-      newErrors.neighborhood = 'O bairro é obrigatório';
+    if (!formData.city.trim()) {
+      newErrors.city = 'Cidade é obrigatória';
       isValid = false;
     }
 
-    if (!city.trim()) {
-      newErrors.city = 'A cidade é obrigatória';
+    if (!formData.state.trim()) {
+      newErrors.state = 'Estado é obrigatório';
+      isValid = false;
+    }
+
+    if (!formData.area.trim()) {
+      newErrors.area = 'Área é obrigatória';
+      isValid = false;
+    } else if (isNaN(Number(formData.area)) || Number(formData.area) <= 0) {
+      newErrors.area = 'Área deve ser um número válido';
+      isValid = false;
+    }
+
+    if (!formData.value.trim()) {
+      newErrors.value = 'Valor é obrigatório';
+      isValid = false;
+    } else if (isNaN(Number(formData.value)) || Number(formData.value) <= 0) {
+      newErrors.value = 'Valor deve ser um número válido';
+      isValid = false;
+    }
+
+    if (!formData.type.trim()) {
+      newErrors.type = 'Tipo do imóvel é obrigatório';
       isValid = false;
     }
 
@@ -59,189 +87,258 @@ export default function RegisterPropertyScreen() {
     return isValid;
   };
 
-  const handleRegister = async () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
-      Alert.alert(
-        'Campos Obrigatórios',
-        'Por favor, preencha todos os campos obrigatórios.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Erro', 'Por favor, corrija os erros no formulário.');
       return;
     }
 
     try {
-      const newProperty: Property = {
+      const newProperty = {
         id: Date.now().toString(),
-        street,
-        number,
-        neighborhood,
-        city,
+        ...formData,
       };
 
-      // Recuperar propriedades existentes
-      const existingProperties = await AsyncStorage.getItem('properties');
-      const properties: Property[] = existingProperties 
-        ? JSON.parse(existingProperties) 
-        : [];
-
-      // Adicionar nova propriedade
-      properties.push(newProperty);
-
-      // Salvar no AsyncStorage
-      await AsyncStorage.setItem('properties', JSON.stringify(properties));
-
-      // Voltar para a tela inicial
-      navigation.goBack();
-    } catch (error) {
-      console.error('Erro ao salvar propriedade:', error);
+      const storedProperties = await AsyncStorage.getItem('properties');
+      const properties = storedProperties ? JSON.parse(storedProperties) : [];
+      
+      await AsyncStorage.setItem('properties', JSON.stringify([...properties, newProperty]));
+      
       Alert.alert(
-        'Erro',
-        'Ocorreu um erro ao salvar o imóvel. Tente novamente.',
-        [{ text: 'OK' }]
+        'Sucesso',
+        'Imóvel cadastrado com sucesso!',
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
+    } catch (error) {
+      Alert.alert('Erro', 'Ocorreu um erro ao salvar o imóvel.');
     }
   };
 
+  const renderError = (field: keyof FormErrors) => {
+    return errors[field] ? (
+      <Text style={styles.errorText}>{errors[field]}</Text>
+    ) : null;
+  };
+
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Cadastro de Imóvel</Text>
-          <Text style={styles.subtitle}>Preencha os dados do imóvel</Text>
-        </View>
-        
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Rua</Text>
-            <Input
-              placeholder="Digite o nome da rua"
-              value={street}
-              onChangeText={(text) => {
-                setStreet(text);
-                setErrors(prev => ({ ...prev, street: '' }));
-              }}
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.street}
-            />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <BackButton />
+      
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Cadastrar Imóvel</Text>
+        <Text style={styles.headerSubtitle}>Preencha os dados do imóvel</Text>
+      </View>
+
+      <ScrollView style={styles.content}>
+        <View style={styles.formContainer}>
+          <View>
+            <View style={[styles.inputGroup, errors.address && styles.inputError]}>
+              <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Endereço"
+                placeholderTextColor="#8F94FB"
+                value={formData.address}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, address: text });
+                  if (errors.address) {
+                    setErrors({ ...errors, address: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('address')}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Número</Text>
-            <Input
-              placeholder="Digite o número"
-              value={number}
-              onChangeText={(text) => {
-                setNumber(text);
-                setErrors(prev => ({ ...prev, number: '' }));
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.number}
-            />
+          <View>
+            <View style={[styles.inputGroup, errors.neighborhood && styles.inputError]}>
+              <Icon name="map-marker-alt" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Bairro"
+                placeholderTextColor="#8F94FB"
+                value={formData.neighborhood}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, neighborhood: text });
+                  if (errors.neighborhood) {
+                    setErrors({ ...errors, neighborhood: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('neighborhood')}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Bairro</Text>
-            <Input
-              placeholder="Digite o bairro"
-              value={neighborhood}
-              onChangeText={(text) => {
-                setNeighborhood(text);
-                setErrors(prev => ({ ...prev, neighborhood: '' }));
-              }}
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.neighborhood}
-            />
+          <View>
+            <View style={[styles.inputGroup, errors.city && styles.inputError]}>
+              <Icon name="city" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Cidade"
+                placeholderTextColor="#8F94FB"
+                value={formData.city}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, city: text });
+                  if (errors.city) {
+                    setErrors({ ...errors, city: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('city')}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Cidade</Text>
-            <Input
-              placeholder="Digite a cidade"
-              value={city}
-              onChangeText={(text) => {
-                setCity(text);
-                setErrors(prev => ({ ...prev, city: '' }));
-              }}
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.city}
-            />
+          <View>
+            <View style={[styles.inputGroup, errors.state && styles.inputError]}>
+              <Icon name="flag" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Estado"
+                placeholderTextColor="#8F94FB"
+                value={formData.state}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, state: text });
+                  if (errors.state) {
+                    setErrors({ ...errors, state: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('state')}
           </View>
 
-          <Button
-            title="Cadastrar Imóvel"
-            onPress={handleRegister}
-            buttonStyle={styles.registerButton}
-            containerStyle={styles.buttonContainer}
-            titleStyle={styles.buttonText}
-          />
+          <View>
+            <View style={[styles.inputGroup, errors.area && styles.inputError]}>
+              <Icon name="ruler-combined" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Área (m²)"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric"
+                value={formData.area}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, area: text });
+                  if (errors.area) {
+                    setErrors({ ...errors, area: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('area')}
+          </View>
+
+          <View>
+            <View style={[styles.inputGroup, errors.value && styles.inputError]}>
+              <Icon name="dollar-sign" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Valor"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric"
+                value={formData.value}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, value: text });
+                  if (errors.value) {
+                    setErrors({ ...errors, value: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('value')}
+          </View>
+
+          <View>
+            <View style={[styles.inputGroup, errors.type && styles.inputError]}>
+              <Icon name="building" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Tipo do Imóvel"
+                placeholderTextColor="#8F94FB"
+                value={formData.type}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, type: text });
+                  if (errors.type) {
+                    setErrors({ ...errors, type: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('type')}
+          </View>
+
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>Cadastrar Imóvel</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-      <BackButton />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: '#1A1A2E',
   },
   header: {
     padding: 20,
     paddingTop: 40,
-    backgroundColor: '#007AFF',
+    marginLeft: 40,
   },
-  title: {
+  headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFF',
     marginBottom: 8,
   },
-  subtitle: {
+  headerSubtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: '#8F94FB',
     opacity: 0.8,
   },
-  form: {
+  content: {
+    flex: 1,
     padding: 20,
-    paddingTop: 30,
-    paddingBottom: 100,
   },
-  inputContainer: {
-    marginBottom: 20,
+  formContainer: {
+    gap: 20,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-    marginLeft: 10,
+  inputGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#252544',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    gap: 15,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: '#FF6B6B',
   },
   input: {
-    paddingHorizontal: 0,
-  },
-  inputText: {
+    flex: 1,
+    color: '#FFF',
     fontSize: 16,
+    padding: 0,
   },
-  buttonContainer: {
-    marginTop: 30,
-    borderRadius: 10,
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 15,
   },
-  registerButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 15,
-    borderRadius: 10,
+  submitButton: {
+    backgroundColor: '#4E54C8',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 20,
   },
-  buttonText: {
-    fontSize: 18,
+  submitButtonText: {
+    color: '#FFF',
+    fontSize: 16,
     fontWeight: '600',
   },
 }); 

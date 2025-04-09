@@ -1,40 +1,55 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
-import { Button, Input } from '@rneui/themed';
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  Alert,
+} from 'react-native';
+import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import BackButton from '../components/BackButton';
 
+interface FormErrors {
+  propertyValue?: string;
+  propertyType?: string;
+  location?: string;
+}
+
 export default function CalculateITBIScreen() {
   const navigation = useNavigation();
-  const [propertyValue, setPropertyValue] = useState('');
-  const [taxRate, setTaxRate] = useState('');
-  const [result, setResult] = useState<number | null>(null);
-  const [errors, setErrors] = useState({
+  const [formData, setFormData] = useState({
     propertyValue: '',
-    taxRate: ''
+    propertyType: '',
+    location: '',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [result, setResult] = useState<number | null>(null);
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
     let isValid = true;
-    const newErrors = {
-      propertyValue: '',
-      taxRate: ''
-    };
 
-    if (!propertyValue.trim()) {
-      newErrors.propertyValue = 'O valor do imóvel é obrigatório';
+    if (!formData.propertyValue.trim()) {
+      newErrors.propertyValue = 'Valor do imóvel é obrigatório';
+      isValid = false;
+    } else if (isNaN(Number(formData.propertyValue)) || Number(formData.propertyValue) <= 0) {
+      newErrors.propertyValue = 'Valor deve ser um número válido';
       isValid = false;
     }
 
-    if (!taxRate.trim()) {
-      newErrors.taxRate = 'A alíquota é obrigatória';
+    if (!formData.propertyType.trim()) {
+      newErrors.propertyType = 'Tipo do imóvel é obrigatório';
       isValid = false;
-    } else {
-      const rate = parseFloat(taxRate);
-      if (isNaN(rate) || rate <= 0 || rate > 100) {
-        newErrors.taxRate = 'A alíquota deve ser um número entre 0 e 100';
-        isValid = false;
-      }
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Localização é obrigatória';
+      isValid = false;
     }
 
     setErrors(newErrors);
@@ -43,189 +58,198 @@ export default function CalculateITBIScreen() {
 
   const calculateITBI = () => {
     if (!validateForm()) {
-      Alert.alert(
-        'Campos Inválidos',
-        'Por favor, preencha todos os campos corretamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Erro', 'Por favor, corrija os erros no formulário.');
       return;
     }
 
-    const value = parseFloat(propertyValue.replace(/[^0-9.]/g, ''));
-    const rate = parseFloat(taxRate) / 100;
-    const itbi = value * rate;
+    const value = parseFloat(formData.propertyValue);
+    // Taxa exemplo de 2% do valor do imóvel
+    const itbi = value * 0.02;
     setResult(itbi);
   };
 
-  const formatCurrency = (value: string) => {
-    const numbers = value.replace(/[^0-9]/g, '');
-    const amount = parseFloat(numbers) / 100;
-    return amount.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
-  };
-
-  const handlePropertyValueChange = (text: string) => {
-    const formattedValue = formatCurrency(text);
-    setPropertyValue(formattedValue);
+  const renderError = (field: keyof FormErrors) => {
+    return errors[field] ? (
+      <Text style={styles.errorText}>{errors[field]}</Text>
+    ) : null;
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Cálculo de ITBI</Text>
-          <Text style={styles.subtitle}>Informe os valores para calcular</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <BackButton />
+      
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Calcular ITBI</Text>
+        <Text style={styles.headerSubtitle}>Informe os dados para o cálculo</Text>
+      </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Valor do Imóvel</Text>
-            <Input
-              placeholder="Digite o valor do imóvel"
-              value={propertyValue}
-              onChangeText={(text) => {
-                handlePropertyValueChange(text);
-                setErrors(prev => ({ ...prev, propertyValue: '' }));
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.propertyValue}
-            />
+      <ScrollView style={styles.content}>
+        <View style={styles.formContainer}>
+          <View>
+            <View style={[styles.inputGroup, errors.propertyValue && styles.inputError]}>
+              <Icon name="dollar-sign" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Valor do Imóvel"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric"
+                value={formData.propertyValue}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, propertyValue: text });
+                  if (errors.propertyValue) {
+                    setErrors({ ...errors, propertyValue: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('propertyValue')}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Alíquota (%)</Text>
-            <Input
-              placeholder="Digite a alíquota (ex: 2.5)"
-              value={taxRate}
-              onChangeText={(text) => {
-                setTaxRate(text);
-                setErrors(prev => ({ ...prev, taxRate: '' }));
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-              inputStyle={styles.inputText}
-              errorMessage={errors.taxRate}
-            />
+          <View>
+            <View style={[styles.inputGroup, errors.propertyType && styles.inputError]}>
+              <Icon name="building" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Tipo do Imóvel"
+                placeholderTextColor="#8F94FB"
+                value={formData.propertyType}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, propertyType: text });
+                  if (errors.propertyType) {
+                    setErrors({ ...errors, propertyType: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('propertyType')}
           </View>
 
-          <Button
-            title="Calcular ITBI"
-            onPress={calculateITBI}
-            buttonStyle={styles.calculateButton}
-            containerStyle={styles.buttonContainer}
-            titleStyle={styles.buttonText}
-          />
+          <View>
+            <View style={[styles.inputGroup, errors.location && styles.inputError]}>
+              <Icon name="map-marker-alt" type="font-awesome-5" color="#8F94FB" size={20} />
+              <TextInput
+                style={styles.input}
+                placeholder="Localização"
+                placeholderTextColor="#8F94FB"
+                value={formData.location}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, location: text });
+                  if (errors.location) {
+                    setErrors({ ...errors, location: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError('location')}
+          </View>
+
+          <TouchableOpacity style={styles.calculateButton} onPress={calculateITBI}>
+            <Text style={styles.calculateButtonText}>Calcular ITBI</Text>
+          </TouchableOpacity>
 
           {result !== null && (
             <View style={styles.resultContainer}>
-              <Text style={styles.resultTitle}>Resultado do Cálculo</Text>
               <Text style={styles.resultLabel}>Valor do ITBI:</Text>
               <Text style={styles.resultValue}>
-                {result.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
+                R$ {result.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={styles.resultInfo}>
+                Taxa aplicada: 2% do valor do imóvel
               </Text>
             </View>
           )}
         </View>
       </ScrollView>
-      <BackButton />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: '#1A1A2E',
   },
   header: {
     padding: 20,
     paddingTop: 40,
-    backgroundColor: '#007AFF',
+    marginLeft: 40,
   },
-  title: {
+  headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFF',
     marginBottom: 8,
   },
-  subtitle: {
+  headerSubtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: '#8F94FB',
     opacity: 0.8,
   },
-  form: {
+  content: {
+    flex: 1,
     padding: 20,
-    paddingTop: 30,
-    paddingBottom: 100,
   },
-  inputContainer: {
-    marginBottom: 20,
+  formContainer: {
+    gap: 20,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-    marginLeft: 10,
+  inputGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#252544',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    gap: 15,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: '#FF6B6B',
   },
   input: {
-    paddingHorizontal: 0,
-  },
-  inputText: {
+    flex: 1,
+    color: '#FFF',
     fontSize: 16,
+    padding: 0,
   },
-  buttonContainer: {
-    marginTop: 30,
-    borderRadius: 10,
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 15,
   },
   calculateButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 15,
-    borderRadius: 10,
+    backgroundColor: '#4E54C8',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 20,
   },
-  buttonText: {
-    fontSize: 18,
+  calculateButtonText: {
+    color: '#FFF',
+    fontSize: 16,
     fontWeight: '600',
   },
   resultContainer: {
-    marginTop: 30,
+    backgroundColor: '#252544',
     padding: 20,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  resultTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    borderRadius: 12,
+    marginTop: 20,
   },
   resultLabel: {
+    color: '#8F94FB',
     fontSize: 16,
-    color: '#666',
     marginBottom: 8,
   },
   resultValue: {
-    fontSize: 32,
+    color: '#FFF',
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#007AFF',
+    marginBottom: 8,
+  },
+  resultInfo: {
+    color: '#8F94FB',
+    fontSize: 14,
+    opacity: 0.8,
   },
 }); 

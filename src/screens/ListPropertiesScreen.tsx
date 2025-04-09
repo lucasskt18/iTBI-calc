@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, Text, Alert } from 'react-native';
-import { Card, Button } from '@rneui/themed';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  StatusBar,
+  Alert,
+} from 'react-native';
+import { Icon } from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 
 interface Property {
   id: string;
-  street: string;
-  number: string;
+  address: string;
   neighborhood: string;
   city: string;
+  value: string;
+  type: string;
 }
 
 export default function ListPropertiesScreen() {
   const navigation = useNavigation();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Carrega os imóveis quando a tela recebe foco
-  useFocusEffect(
-    React.useCallback(() => {
-      loadProperties();
-    }, [])
-  );
+  useEffect(() => {
+    loadProperties();
+  }, []);
 
   const loadProperties = async () => {
     try {
@@ -31,197 +39,221 @@ export default function ListPropertiesScreen() {
         setProperties(JSON.parse(storedProperties));
       }
     } catch (error) {
-      console.error('Erro ao carregar propriedades:', error);
+      console.error('Erro ao carregar imóveis:', error);
+      Alert.alert('Erro', 'Não foi possível carregar a lista de imóveis.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleClearHistory = () => {
+  const handleDeleteProperty = (id: string) => {
     Alert.alert(
-      'Limpar Histórico',
-      'Tem certeza que deseja apagar todos os imóveis cadastrados? Esta ação não poderá ser desfeita.',
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este imóvel?',
       [
+        { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Confirmar',
+          text: 'Excluir',
           style: 'destructive',
           onPress: async () => {
             try {
-              await AsyncStorage.removeItem('properties');
-              setProperties([]);
+              const updatedProperties = properties.filter(prop => prop.id !== id);
+              await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
+              setProperties(updatedProperties);
+              Alert.alert('Sucesso', 'Imóvel excluído com sucesso!');
             } catch (error) {
-              console.error('Erro ao limpar histórico:', error);
-              Alert.alert(
-                'Erro',
-                'Ocorreu um erro ao tentar limpar o histórico. Tente novamente.'
-              );
+              Alert.alert('Erro', 'Não foi possível excluir o imóvel.');
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
 
   const renderProperty = ({ item }: { item: Property }) => (
-    <Card containerStyle={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>{item.street}, {item.number}</Text>
+    <View style={styles.propertyCard}>
+      <View style={styles.propertyHeader}>
+        <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
+        <Text style={styles.propertyType}>{item.type}</Text>
       </View>
-      <Card.Divider />
+      
       <View style={styles.propertyInfo}>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Bairro:</Text>
-          <Text style={styles.value}>{item.neighborhood}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Cidade:</Text>
-          <Text style={styles.value}>{item.city}</Text>
-        </View>
+        <Text style={styles.propertyAddress}>{item.address}</Text>
+        <Text style={styles.propertyLocation}>
+          {item.neighborhood}, {item.city}
+        </Text>
+        <Text style={styles.propertyValue}>
+          R$ {parseFloat(item.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+        </Text>
       </View>
-    </Card>
+
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.editButton]}
+          onPress={() => {}}
+        >
+          <Icon name="edit" type="font-awesome-5" color="#FFF" size={14} />
+          <Text style={styles.actionButtonText}>Editar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.deleteButton]}
+          onPress={() => handleDeleteProperty(item.id)}
+        >
+          <Icon name="trash-alt" type="font-awesome-5" color="#FFF" size={14} />
+          <Text style={styles.actionButtonText}>Excluir</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <BackButton />
+      
       <View style={styles.header}>
-        <Text style={styles.title}>Imóveis Cadastrados</Text>
-        <Text style={styles.subtitle}>
-          {properties.length} {properties.length === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
+        <Text style={styles.headerTitle}>Imóveis Cadastrados</Text>
+        <Text style={styles.headerSubtitle}>
+          {properties.length} {properties.length === 1 ? 'imóvel' : 'imóveis'} encontrados
         </Text>
-        {properties.length > 0 && (
-          <Button
-            title="Limpar Histórico"
-            onPress={handleClearHistory}
-            buttonStyle={styles.clearButton}
-            titleStyle={styles.clearButtonText}
-            type="outline"
-          />
-        )}
       </View>
 
-      <View style={styles.content}>
-        {properties.length > 0 ? (
-          <FlatList
-            data={properties}
-            renderItem={renderProperty}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              Nenhum imóvel cadastrado ainda.
-            </Text>
-            <Text style={styles.emptySubtext}>
-              Cadastre um novo imóvel para começar.
-            </Text>
-          </View>
-        )}
-      </View>
-      <BackButton />
-    </View>
+      {loading ? (
+        <View style={styles.centerContent}>
+          <Text style={styles.loadingText}>Carregando...</Text>
+        </View>
+      ) : properties.length === 0 ? (
+        <View style={styles.centerContent}>
+          <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
+          <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => navigation.navigate('RegisterProperty')}
+          >
+            <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={properties}
+          renderItem={renderProperty}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A2E',
   },
   header: {
     padding: 20,
     paddingTop: 40,
-    backgroundColor: '#007AFF',
+    marginLeft: 40,
   },
-  title: {
+  headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFF',
     marginBottom: 8,
   },
-  subtitle: {
+  headerSubtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: '#8F94FB',
     opacity: 0.8,
   },
-  content: {
-    flex: 1,
+  listContent: {
+    padding: 20,
+    gap: 20,
   },
-  listContainer: {
-    padding: 15,
-    paddingBottom: 100,
+  propertyCard: {
+    backgroundColor: '#252544',
+    borderRadius: 12,
+    padding: 20,
   },
-  card: {
-    borderRadius: 15,
+  propertyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     marginBottom: 15,
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  cardHeader: {
-    marginBottom: 10,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+  propertyType: {
+    color: '#8F94FB',
+    fontSize: 14,
+    fontWeight: '500',
   },
   propertyInfo: {
-    marginTop: 10,
+    gap: 8,
   },
-  infoRow: {
+  propertyAddress: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  propertyLocation: {
+    color: '#8F94FB',
+    fontSize: 14,
+  },
+  propertyValue: {
+    color: '#4E54C8',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
+  buttonGroup: {
     flexDirection: 'row',
-    marginBottom: 8,
-    alignItems: 'center',
+    gap: 10,
+    marginTop: 15,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#666',
-    width: 70,
-  },
-  value: {
+  actionButton: {
     flex: 1,
-    fontSize: 16,
-    color: '#333',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 8,
   },
-  emptyContainer: {
+  editButton: {
+    backgroundColor: '#4E54C8',
+  },
+  deleteButton: {
+    backgroundColor: '#FF6B6B',
+  },
+  actionButtonText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  centerContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    gap: 20,
+  },
+  loadingText: {
+    color: '#8F94FB',
+    fontSize: 16,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptySubtext: {
+    color: '#8F94FB',
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
   },
-  clearButton: {
-    marginTop: 10,
-    borderColor: '#fff',
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 8,
+  addButton: {
+    backgroundColor: '#4E54C8',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 20,
   },
-  clearButtonText: {
-    color: '#fff',
-    fontSize: 14,
+  addButtonText: {
+    color: '#FFF',
+    fontSize: 16,
     fontWeight: '600',
   },
 }); 
