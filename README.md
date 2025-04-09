@@ -34,10 +34,10 @@ git clone https://github.com/lucasskt18/Dispositivos-Moveis.git
 2.⁠ ⁠Instale as dependências:
 ⁠ bash
 npm install
-# ou
+ou
 yarn install
  ⁠
-
+ 
 3.⁠ ⁠Inicie o projeto:
 ⁠ bash
 npx expo start
