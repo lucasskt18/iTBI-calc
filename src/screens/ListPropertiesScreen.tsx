@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, Text } from 'react-native';
-import { Card } from '@rneui/themed';
+import { View, StyleSheet, FlatList, Text, Alert } from 'react-native';
+import { Card, Button } from '@rneui/themed';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
@@ -35,6 +35,35 @@ export default function ListPropertiesScreen() {
     }
   };
 
+  const handleClearHistory = () => {
+    Alert.alert(
+      'Limpar Histórico',
+      'Tem certeza que deseja apagar todos os imóveis cadastrados? Esta ação não poderá ser desfeita.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Confirmar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('properties');
+              setProperties([]);
+            } catch (error) {
+              console.error('Erro ao limpar histórico:', error);
+              Alert.alert(
+                'Erro',
+                'Ocorreu um erro ao tentar limpar o histórico. Tente novamente.'
+              );
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const renderProperty = ({ item }: { item: Property }) => (
     <Card containerStyle={styles.card}>
       <View style={styles.cardHeader}>
@@ -61,6 +90,15 @@ export default function ListPropertiesScreen() {
         <Text style={styles.subtitle}>
           {properties.length} {properties.length === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
         </Text>
+        {properties.length > 0 && (
+          <Button
+            title="Limpar Histórico"
+            onPress={handleClearHistory}
+            buttonStyle={styles.clearButton}
+            titleStyle={styles.clearButtonText}
+            type="outline"
+          />
+        )}
       </View>
 
       <View style={styles.content}>
@@ -172,5 +210,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  clearButton: {
+    marginTop: 10,
+    borderColor: '#fff',
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  clearButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 }); 
