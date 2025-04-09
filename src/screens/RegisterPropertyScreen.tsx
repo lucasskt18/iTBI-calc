@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
 import { Button, Input } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,8 +19,56 @@ export default function RegisterPropertyScreen() {
   const [number, setNumber] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
   const [city, setCity] = useState('');
+  const [errors, setErrors] = useState({
+    street: '',
+    number: '',
+    neighborhood: '',
+    city: ''
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      street: '',
+      number: '',
+      neighborhood: '',
+      city: ''
+    };
+
+    if (!street.trim()) {
+      newErrors.street = 'O nome da rua é obrigatório';
+      isValid = false;
+    }
+
+    if (!number.trim()) {
+      newErrors.number = 'O número é obrigatório';
+      isValid = false;
+    }
+
+    if (!neighborhood.trim()) {
+      newErrors.neighborhood = 'O bairro é obrigatório';
+      isValid = false;
+    }
+
+    if (!city.trim()) {
+      newErrors.city = 'A cidade é obrigatória';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleRegister = async () => {
+    if (!validateForm()) {
+      Alert.alert(
+        'Campos Obrigatórios',
+        'Por favor, preencha todos os campos obrigatórios.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
     try {
       const newProperty: Property = {
         id: Date.now().toString(),
@@ -46,6 +94,11 @@ export default function RegisterPropertyScreen() {
       navigation.goBack();
     } catch (error) {
       console.error('Erro ao salvar propriedade:', error);
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro ao salvar o imóvel. Tente novamente.',
+        [{ text: 'OK' }]
+      );
     }
   };
 
@@ -63,9 +116,13 @@ export default function RegisterPropertyScreen() {
             <Input
               placeholder="Digite o nome da rua"
               value={street}
-              onChangeText={setStreet}
+              onChangeText={(text) => {
+                setStreet(text);
+                setErrors(prev => ({ ...prev, street: '' }));
+              }}
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.street}
             />
           </View>
 
@@ -74,10 +131,14 @@ export default function RegisterPropertyScreen() {
             <Input
               placeholder="Digite o número"
               value={number}
-              onChangeText={setNumber}
+              onChangeText={(text) => {
+                setNumber(text);
+                setErrors(prev => ({ ...prev, number: '' }));
+              }}
               keyboardType="numeric"
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.number}
             />
           </View>
 
@@ -86,9 +147,13 @@ export default function RegisterPropertyScreen() {
             <Input
               placeholder="Digite o bairro"
               value={neighborhood}
-              onChangeText={setNeighborhood}
+              onChangeText={(text) => {
+                setNeighborhood(text);
+                setErrors(prev => ({ ...prev, neighborhood: '' }));
+              }}
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.neighborhood}
             />
           </View>
 
@@ -97,9 +162,13 @@ export default function RegisterPropertyScreen() {
             <Input
               placeholder="Digite a cidade"
               value={city}
-              onChangeText={setCity}
+              onChangeText={(text) => {
+                setCity(text);
+                setErrors(prev => ({ ...prev, city: '' }));
+              }}
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.city}
             />
           </View>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
 import { Button, Input } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import BackButton from '../components/BackButton';
@@ -9,9 +9,47 @@ export default function CalculateITBIScreen() {
   const [propertyValue, setPropertyValue] = useState('');
   const [taxRate, setTaxRate] = useState('');
   const [result, setResult] = useState<number | null>(null);
+  const [errors, setErrors] = useState({
+    propertyValue: '',
+    taxRate: ''
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      propertyValue: '',
+      taxRate: ''
+    };
+
+    if (!propertyValue.trim()) {
+      newErrors.propertyValue = 'O valor do imóvel é obrigatório';
+      isValid = false;
+    }
+
+    if (!taxRate.trim()) {
+      newErrors.taxRate = 'A alíquota é obrigatória';
+      isValid = false;
+    } else {
+      const rate = parseFloat(taxRate);
+      if (isNaN(rate) || rate <= 0 || rate > 100) {
+        newErrors.taxRate = 'A alíquota deve ser um número entre 0 e 100';
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const calculateITBI = () => {
-    if (!propertyValue || !taxRate) return;
+    if (!validateForm()) {
+      Alert.alert(
+        'Campos Inválidos',
+        'Por favor, preencha todos os campos corretamente.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
 
     const value = parseFloat(propertyValue.replace(/[^0-9.]/g, ''));
     const rate = parseFloat(taxRate) / 100;
@@ -47,10 +85,14 @@ export default function CalculateITBIScreen() {
             <Input
               placeholder="Digite o valor do imóvel"
               value={propertyValue}
-              onChangeText={handlePropertyValueChange}
+              onChangeText={(text) => {
+                handlePropertyValueChange(text);
+                setErrors(prev => ({ ...prev, propertyValue: '' }));
+              }}
               keyboardType="numeric"
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.propertyValue}
             />
           </View>
 
@@ -59,10 +101,14 @@ export default function CalculateITBIScreen() {
             <Input
               placeholder="Digite a alíquota (ex: 2.5)"
               value={taxRate}
-              onChangeText={setTaxRate}
+              onChangeText={(text) => {
+                setTaxRate(text);
+                setErrors(prev => ({ ...prev, taxRate: '' }));
+              }}
               keyboardType="numeric"
               containerStyle={styles.input}
               inputStyle={styles.inputText}
+              errorMessage={errors.taxRate}
             />
           </View>
 
