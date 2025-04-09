@@ -20,10 +20,7 @@ export default function CalculateITBIScreen() {
   };
 
   const formatCurrency = (value: string) => {
-    // Remove todos os caracteres não numéricos
     const numbers = value.replace(/[^0-9]/g, '');
-    
-    // Converte para número e formata como moeda
     const amount = parseFloat(numbers) / 100;
     return amount.toLocaleString('pt-BR', {
       style: 'currency',
@@ -39,31 +36,47 @@ export default function CalculateITBIScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Cálculo de ITBI</Text>
+          <Text style={styles.subtitle}>Informe os valores para calcular</Text>
+        </View>
+
         <View style={styles.form}>
-          <Input
-            placeholder="Valor do Imóvel"
-            value={propertyValue}
-            onChangeText={handlePropertyValueChange}
-            keyboardType="numeric"
-            containerStyle={styles.input}
-          />
-          <Input
-            placeholder="Alíquota (%)"
-            value={taxRate}
-            onChangeText={setTaxRate}
-            keyboardType="numeric"
-            containerStyle={styles.input}
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Valor do Imóvel</Text>
+            <Input
+              placeholder="Digite o valor do imóvel"
+              value={propertyValue}
+              onChangeText={handlePropertyValueChange}
+              keyboardType="numeric"
+              containerStyle={styles.input}
+              inputStyle={styles.inputText}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Alíquota (%)</Text>
+            <Input
+              placeholder="Digite a alíquota (ex: 2.5)"
+              value={taxRate}
+              onChangeText={setTaxRate}
+              keyboardType="numeric"
+              containerStyle={styles.input}
+              inputStyle={styles.inputText}
+            />
+          </View>
 
           <Button
             title="Calcular ITBI"
             onPress={calculateITBI}
             buttonStyle={styles.calculateButton}
             containerStyle={styles.buttonContainer}
+            titleStyle={styles.buttonText}
           />
 
           {result !== null && (
             <View style={styles.resultContainer}>
+              <Text style={styles.resultTitle}>Resultado do Cálculo</Text>
               <Text style={styles.resultLabel}>Valor do ITBI:</Text>
               <Text style={styles.resultValue}>
                 {result.toLocaleString('pt-BR', {
@@ -88,15 +101,45 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  header: {
+    padding: 20,
+    paddingTop: 40,
+    backgroundColor: '#007AFF',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#fff',
+    opacity: 0.8,
+  },
   form: {
     padding: 20,
-    paddingBottom: 100, // Espaço para o botão voltar
+    paddingTop: 30,
+    paddingBottom: 100,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    marginLeft: 10,
   },
   input: {
-    marginBottom: 10,
+    paddingHorizontal: 0,
+  },
+  inputText: {
+    fontSize: 16,
   },
   buttonContainer: {
-    marginTop: 20,
+    marginTop: 30,
     borderRadius: 10,
   },
   calculateButton: {
@@ -104,20 +147,38 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
   },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
   resultContainer: {
     marginTop: 30,
     padding: 20,
     backgroundColor: '#f8f9fa',
-    borderRadius: 10,
+    borderRadius: 15,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  resultTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
   },
   resultLabel: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   resultValue: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#007AFF',
   },
