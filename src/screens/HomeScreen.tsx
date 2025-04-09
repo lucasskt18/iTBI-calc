@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
-import { Button } from '@rneui/themed';
-import Video from 'react-native-video';
+import { View, StyleSheet, Text, StatusBar, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -14,78 +13,122 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+interface MenuItemProps {
+  title: string;
+  icon: string;
+  color: string;
+  onPress: () => void;
+}
+
+const MenuItem = ({ title, icon, color, onPress }: MenuItemProps) => (
+  <TouchableOpacity 
+    onPress={onPress} 
+    style={[styles.card, { backgroundColor: color }]}
+  >
+    <Icon name={icon} type="font-awesome-5" color="#FFF" size={24} />
+    <Text style={styles.cardText}>{title}</Text>
+  </TouchableOpacity>
+);
+
+const { width } = Dimensions.get('window');
+const cardWidth = (width - 60) / 2;
+
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      
       <View style={styles.header}>
-        <Image
-          source={require('../../assets/brasao.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Text style={styles.headerTitle}>Gestão de Imóveis</Text>
+        <Text style={styles.headerSubtitle}>Selecione uma opção</Text>
       </View>
 
-      <View style={styles.videoContainer}>
-        {/* O componente de vídeo será adicionado posteriormente */}
+      <View style={styles.content}>
+        <View style={styles.grid}>
+          <MenuItem
+            title="Cadastrar Imóvel"
+            icon="home"
+            color="#FF6B6B"
+            onPress={() => navigation.navigate('RegisterProperty')}
+          />
+          <MenuItem
+            title="Calcular ITBI"
+            icon="calculator"
+            color="#4E54C8"
+            onPress={() => navigation.navigate('CalculateITBI')}
+          />
+          <MenuItem
+            title="Consultar Imóveis"
+            icon="list"
+            color="#00B4DB"
+            onPress={() => navigation.navigate('ListProperties')}
+          />
+          <MenuItem
+            title="Relatórios"
+            icon="chart-bar"
+            color="#11998e"
+            onPress={() => {}}
+          />
+        </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Cadastrar Imóvel"
-          onPress={() => navigation.navigate('RegisterProperty')}
-          buttonStyle={styles.button}
-          containerStyle={styles.buttonWrapper}
-        />
-        <Button
-          title="Calcular ITBI"
-          onPress={() => navigation.navigate('CalculateITBI')}
-          buttonStyle={styles.button}
-          containerStyle={styles.buttonWrapper}
-        />
-        <Button
-          title="Consultar Imóveis"
-          onPress={() => navigation.navigate('ListProperties')}
-          buttonStyle={styles.button}
-          containerStyle={styles.buttonWrapper}
-        />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#1A1A2E',
   },
   header: {
-    height: 60,
-    justifyContent: 'center',
+    padding: 20,
+    paddingTop: 40,
   },
-  logo: {
-    width: 100,
-    height: 40,
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 8,
   },
-  videoContainer: {
-    height: 200,
-    backgroundColor: '#f0f0f0',
-    marginVertical: 20,
-    borderRadius: 10,
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#8F94FB',
+    opacity: 0.8,
   },
-  buttonContainer: {
+  content: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 20,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     gap: 20,
   },
-  buttonWrapper: {
-    borderRadius: 10,
+  card: {
+    width: cardWidth,
+    height: 160,
+    borderRadius: 20,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  button: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 15,
-    borderRadius: 10,
+  cardText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 12,
+    textAlign: 'center',
   },
 }); 
