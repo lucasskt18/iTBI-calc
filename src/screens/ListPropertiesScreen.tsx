@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
-import { Button, Card } from '@rneui/themed';
+import { Card } from '@rneui/themed';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BackButton from '../components/BackButton';
 
 interface Property {
   id: string;
@@ -51,27 +52,23 @@ export default function ListPropertiesScreen() {
 
   return (
     <View style={styles.container}>
-      {properties.length > 0 ? (
-        <FlatList
-          data={properties}
-          renderItem={renderProperty}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            Nenhum imóvel cadastrado ainda.
-          </Text>
-        </View>
-      )}
-
-      <Button
-        title="Voltar"
-        onPress={() => navigation.goBack()}
-        type="clear"
-        containerStyle={styles.backButton}
-      />
+      <View style={styles.content}>
+        {properties.length > 0 ? (
+          <FlatList
+            data={properties}
+            renderItem={renderProperty}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              Nenhum imóvel cadastrado ainda.
+            </Text>
+          </View>
+        )}
+      </View>
+      <BackButton />
     </View>
   );
 }
@@ -81,9 +78,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  content: {
+    flex: 1,
+  },
   listContainer: {
     padding: 10,
-    paddingBottom: 80, // Espaço para o botão voltar
+    paddingBottom: 100, // Espaço para o botão voltar
   },
   card: {
     borderRadius: 10,
@@ -101,11 +101,6 @@ const styles = StyleSheet.create({
   value: {
     flex: 1,
     color: '#333',
-  },
-  backButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
   },
   emptyContainer: {
     flex: 1,

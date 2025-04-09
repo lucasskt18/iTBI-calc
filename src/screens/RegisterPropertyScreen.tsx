@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Button, Input } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BackButton from '../components/BackButton';
 
 interface Property {
   id: string;
@@ -49,49 +50,45 @@ export default function RegisterPropertyScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.form}>
-        <Input
-          placeholder="Rua"
-          value={street}
-          onChangeText={setStreet}
-          containerStyle={styles.input}
-        />
-        <Input
-          placeholder="Número"
-          value={number}
-          onChangeText={setNumber}
-          keyboardType="numeric"
-          containerStyle={styles.input}
-        />
-        <Input
-          placeholder="Bairro"
-          value={neighborhood}
-          onChangeText={setNeighborhood}
-          containerStyle={styles.input}
-        />
-        <Input
-          placeholder="Cidade"
-          value={city}
-          onChangeText={setCity}
-          containerStyle={styles.input}
-        />
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.form}>
+          <Input
+            placeholder="Rua"
+            value={street}
+            onChangeText={setStreet}
+            containerStyle={styles.input}
+          />
+          <Input
+            placeholder="Número"
+            value={number}
+            onChangeText={setNumber}
+            keyboardType="numeric"
+            containerStyle={styles.input}
+          />
+          <Input
+            placeholder="Bairro"
+            value={neighborhood}
+            onChangeText={setNeighborhood}
+            containerStyle={styles.input}
+          />
+          <Input
+            placeholder="Cidade"
+            value={city}
+            onChangeText={setCity}
+            containerStyle={styles.input}
+          />
 
-        <Button
-          title="Cadastrar"
-          onPress={handleRegister}
-          buttonStyle={styles.registerButton}
-          containerStyle={styles.buttonContainer}
-        />
-      </View>
-
-      <Button
-        title="Voltar"
-        onPress={() => navigation.goBack()}
-        type="clear"
-        containerStyle={styles.backButton}
-      />
-    </ScrollView>
+          <Button
+            title="Cadastrar"
+            onPress={handleRegister}
+            buttonStyle={styles.registerButton}
+            containerStyle={styles.buttonContainer}
+          />
+        </View>
+      </ScrollView>
+      <BackButton />
+    </View>
   );
 }
 
@@ -100,8 +97,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollView: {
+    flex: 1,
+  },
   form: {
     padding: 20,
+    paddingBottom: 100, // Espaço para o botão voltar
   },
   input: {
     marginBottom: 10,
@@ -114,10 +115,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     paddingVertical: 15,
     borderRadius: 10,
-  },
-  backButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
   },
 }); 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { Button, Input } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import BackButton from '../components/BackButton';
 
 export default function CalculateITBIScreen() {
   const navigation = useNavigation();
@@ -36,50 +37,46 @@ export default function CalculateITBIScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.form}>
-        <Input
-          placeholder="Valor do Imóvel"
-          value={propertyValue}
-          onChangeText={handlePropertyValueChange}
-          keyboardType="numeric"
-          containerStyle={styles.input}
-        />
-        <Input
-          placeholder="Alíquota (%)"
-          value={taxRate}
-          onChangeText={setTaxRate}
-          keyboardType="numeric"
-          containerStyle={styles.input}
-        />
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.form}>
+          <Input
+            placeholder="Valor do Imóvel"
+            value={propertyValue}
+            onChangeText={handlePropertyValueChange}
+            keyboardType="numeric"
+            containerStyle={styles.input}
+          />
+          <Input
+            placeholder="Alíquota (%)"
+            value={taxRate}
+            onChangeText={setTaxRate}
+            keyboardType="numeric"
+            containerStyle={styles.input}
+          />
 
-        <Button
-          title="Calcular ITBI"
-          onPress={calculateITBI}
-          buttonStyle={styles.calculateButton}
-          containerStyle={styles.buttonContainer}
-        />
+          <Button
+            title="Calcular ITBI"
+            onPress={calculateITBI}
+            buttonStyle={styles.calculateButton}
+            containerStyle={styles.buttonContainer}
+          />
 
-        {result !== null && (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultLabel}>Valor do ITBI:</Text>
-            <Text style={styles.resultValue}>
-              {result.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-            </Text>
-          </View>
-        )}
-      </View>
-
-      <Button
-        title="Voltar"
-        onPress={() => navigation.goBack()}
-        type="clear"
-        containerStyle={styles.backButton}
-      />
-    </ScrollView>
+          {result !== null && (
+            <View style={styles.resultContainer}>
+              <Text style={styles.resultLabel}>Valor do ITBI:</Text>
+              <Text style={styles.resultValue}>
+                {result.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+      <BackButton />
+    </View>
   );
 }
 
@@ -88,8 +85,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollView: {
+    flex: 1,
+  },
   form: {
     padding: 20,
+    paddingBottom: 100, // Espaço para o botão voltar
   },
   input: {
     marginBottom: 10,
@@ -102,11 +103,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     paddingVertical: 15,
     borderRadius: 10,
-  },
-  backButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
   },
   resultContainer: {
     marginTop: 30,
