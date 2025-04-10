@@ -129,7 +129,7 @@ export default function ListPropertiesScreen() {
           <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
           <TouchableOpacity 
             style={styles.addButton}
-            onPress={() => navigation.navigate('RegisterProperty')}
+            onPress={() => navigation.navigate('RegisterProperty' as never)}
           >
             <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
           </TouchableOpacity>
