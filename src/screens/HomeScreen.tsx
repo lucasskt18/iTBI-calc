@@ -21,8 +21,8 @@ interface MenuItemProps {
 }
 
 const MenuItem = ({ title, icon, color, onPress }: MenuItemProps) => (
-  <TouchableOpacity 
-    onPress={onPress} 
+  <TouchableOpacity
+    onPress={onPress}
     style={[styles.card, { backgroundColor: color }]}
   >
     <Icon name={icon} type="font-awesome-5" color="#FFF" size={24} />
@@ -39,7 +39,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Gestão de Imóveis</Text>
         <Text style={styles.headerSubtitle}>Selecione uma opção</Text>
@@ -69,7 +69,7 @@ export default function HomeScreen() {
             title="Relatórios"
             icon="chart-bar"
             color="#11998e"
-            onPress={() => {}}
+            onPress={() => { }}
           />
         </View>
       </View>

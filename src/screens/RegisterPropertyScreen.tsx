@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  Modal,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -26,6 +27,36 @@ interface FormErrors {
   type?: string;
 }
 
+const ESTADOS_BRASILEIROS = [
+  { sigla: 'AC', nome: 'Acre' },
+  { sigla: 'AL', nome: 'Alagoas' },
+  { sigla: 'AP', nome: 'Amapá' },
+  { sigla: 'AM', nome: 'Amazonas' },
+  { sigla: 'BA', nome: 'Bahia' },
+  { sigla: 'CE', nome: 'Ceará' },
+  { sigla: 'DF', nome: 'Distrito Federal' },
+  { sigla: 'ES', nome: 'Espírito Santo' },
+  { sigla: 'GO', nome: 'Goiás' },
+  { sigla: 'MA', nome: 'Maranhão' },
+  { sigla: 'MT', nome: 'Mato Grosso' },
+  { sigla: 'MS', nome: 'Mato Grosso do Sul' },
+  { sigla: 'MG', nome: 'Minas Gerais' },
+  { sigla: 'PA', nome: 'Pará' },
+  { sigla: 'PB', nome: 'Paraíba' },
+  { sigla: 'PR', nome: 'Paraná' },
+  { sigla: 'PE', nome: 'Pernambuco' },
+  { sigla: 'PI', nome: 'Piauí' },
+  { sigla: 'RJ', nome: 'Rio de Janeiro' },
+  { sigla: 'RN', nome: 'Rio Grande do Norte' },
+  { sigla: 'RS', nome: 'Rio Grande do Sul' },
+  { sigla: 'RO', nome: 'Rondônia' },
+  { sigla: 'RR', nome: 'Roraima' },
+  { sigla: 'SC', nome: 'Santa Catarina' },
+  { sigla: 'SP', nome: 'São Paulo' },
+  { sigla: 'SE', nome: 'Sergipe' },
+  { sigla: 'TO', nome: 'Tocantins' },
+];
+
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
@@ -39,6 +70,7 @@ export default function RegisterPropertyScreen() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showStateModal, setShowStateModal] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -194,18 +226,14 @@ export default function RegisterPropertyScreen() {
           <View>
             <View style={[styles.inputGroup, errors.state && styles.inputError]}>
               <Icon name="flag" type="font-awesome-5" color="#8F94FB" size={20} />
-              <TextInput
-                style={styles.input}
-                placeholder="Estado"
-                placeholderTextColor="#8F94FB"
-                value={formData.state}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, state: text });
-                  if (errors.state) {
-                    setErrors({ ...errors, state: undefined });
-                  }
-                }}
-              />
+              <TouchableOpacity
+                style={styles.stateSelector}
+                onPress={() => setShowStateModal(true)}
+              >
+                <Text style={[styles.stateSelectorText, !formData.state && styles.placeholderText]}>
+                  {formData.state || "Estado"}
+                </Text>
+              </TouchableOpacity>
             </View>
             {renderError('state')}
           </View>
@@ -281,6 +309,45 @@ export default function RegisterPropertyScreen() {
         message="Imóvel cadastrado com sucesso!"
         onClose={handleCloseSuccessModal}
       />
+
+      {/* Modal de Seleção de Estado */}
+      <Modal
+        visible={showStateModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowStateModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Selecione o Estado</Text>
+            <ScrollView style={styles.stateList}>
+              {ESTADOS_BRASILEIROS.map((estado) => (
+                <TouchableOpacity
+                  key={estado.sigla}
+                  style={styles.stateItem}
+                  onPress={() => {
+                    setFormData({ ...formData, state: estado.sigla });
+                    if (errors.state) {
+                      setErrors({ ...errors, state: undefined });
+                    }
+                    setShowStateModal(false);
+                  }}
+                >
+                  <Text style={styles.stateItemText}>
+                    {estado.nome} ({estado.sigla})
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowStateModal(false)}
+            >
+              <Text style={styles.closeButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -349,5 +416,63 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  stateSelector: {
+    flex: 1,
+    height: 24,
+    justifyContent: 'center',
+  },
+  stateSelectorText: {
+    color: '#FFF',
+    fontSize: 16,
+    height: 24,
+  },
+  placeholderText: {
+    color: '#8F94FB',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#252544',
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    color: '#FFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  stateList: {
+    maxHeight: 400,
+  },
+  stateItem: {
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1A1A2E',
+  },
+  stateItemText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: '#4E54C8',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 
