@@ -8,11 +8,12 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  Alert,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import BackButton from '../components/BackButton';
+import ErrorModal from '../components/ErrorModal';
+import SuccessModal from '../components/SuccessModal';
 
 interface FormErrors {
   propertyValue?: string;
@@ -29,6 +30,9 @@ export default function CalculateITBIScreen() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [result, setResult] = useState<number | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -58,7 +62,8 @@ export default function CalculateITBIScreen() {
 
   const calculateITBI = () => {
     if (!validateForm()) {
-      Alert.alert('Erro', 'Por favor, corrija os erros no formulário.');
+      setErrorMessage('Por favor, preencha todos os campos corretamente.');
+      setShowErrorModal(true);
       return;
     }
 
@@ -66,6 +71,17 @@ export default function CalculateITBIScreen() {
     // Taxa exemplo de 2% do valor do imóvel
     const itbi = value * 0.02;
     setResult(itbi);
+    setShowSuccessModal(true);
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setFormData({
+      propertyValue: '',
+      propertyType: '',
+      location: '',
+    });
+    setResult(null);
   };
 
   const renderError = (field: keyof FormErrors) => {
@@ -161,6 +177,21 @@ export default function CalculateITBIScreen() {
           )}
         </View>
       </ScrollView>
+
+      <ErrorModal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        message={errorMessage}
+      />
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title="Cálculo Realizado"
+        message={result ? `Valor do ITBI: R$ ${result.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+        
+Taxa aplicada: 2% do valor do imóvel` : ''}
+        onClose={handleCloseSuccessModal}
+      />
     </SafeAreaView>
   );
 }
