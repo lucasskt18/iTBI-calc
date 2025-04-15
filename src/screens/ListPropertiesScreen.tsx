@@ -13,6 +13,7 @@ import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 interface Property {
   id: string;
@@ -27,6 +28,8 @@ export default function ListPropertiesScreen() {
   const navigation = useNavigation();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadProperties();
@@ -47,27 +50,27 @@ export default function ListPropertiesScreen() {
   };
 
   const handleDeleteProperty = (id: string) => {
-    Alert.alert(
-      'Confirmar Exclusão',
-      'Tem certeza que deseja excluir este imóvel?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const updatedProperties = properties.filter(prop => prop.id !== id);
-              await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
-              setProperties(updatedProperties);
-              Alert.alert('Sucesso', 'Imóvel excluído com sucesso!');
-            } catch (error) {
-              Alert.alert('Erro', 'Não foi possível excluir o imóvel.');
-            }
-          },
-        },
-      ]
-    );
+    setPropertyToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!propertyToDelete) return;
+
+    try {
+      const updatedProperties = properties.filter(prop => prop.id !== propertyToDelete);
+      await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
+      setProperties(updatedProperties);
+      setShowDeleteModal(false);
+      setPropertyToDelete(null);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível excluir o imóvel.');
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setPropertyToDelete(null);
   };
 
   const renderProperty = ({ item }: { item: Property }) => (
@@ -142,6 +145,14 @@ export default function ListPropertiesScreen() {
           contentContainerStyle={styles.listContent}
         />
       )}
+
+      <ConfirmationModal
+        visible={showDeleteModal}
+        title="Confirmar Exclusão"
+        message="Tem certeza que deseja excluir este imóvel?"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </SafeAreaView>
   );
 }
