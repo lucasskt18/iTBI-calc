@@ -91,7 +91,9 @@ export default function ListPropertiesScreen() {
     <View style={styles.propertyCard}>
       <View style={styles.propertyHeader}>
         <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
-        <Text style={styles.propertyType}>{item.type}</Text>
+        <Text style={styles.propertyType}>
+          {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+        </Text>
       </View>
 
       <View style={styles.propertyInfo}>
