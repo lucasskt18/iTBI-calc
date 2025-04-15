@@ -1,55 +1,80 @@
-# Calculadora de ITBI - React Native
+# iTBI-calc - Gestão de Imóveis e Cálculo de ITBI
 
-Este projeto é um aplicativo móvel desenvolvido em React Native utilizando Expo, que tem como objetivo calcular o Imposto sobre Transmissão de Bens Imóveis (ITBI). O projeto foi desenvolvido como trabalho final para a disciplina de React Native da faculdade.
-
-## 🚀 Tecnologias Utilizadas
-
-•⁠  ⁠React Native
-•⁠  ⁠Expo
-•⁠  ⁠JavaScript
-•⁠  ⁠React Navigation
-•⁠  ⁠React Native Paper (UI Components)
+Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóveis e cálculo de ITBI (Imposto sobre Transmissão de Bens Imóveis).
 
 ## 📱 Funcionalidades
 
-•⁠  ⁠Cálculo automático do ITBI baseado no valor do imóvel
-•⁠  ⁠Interface intuitiva e amigável
-•⁠  ⁠Validação de dados
-•⁠  ⁠Resultados detalhados do cálculo
+- **Cadastro de Imóveis**: Registre imóveis com informações detalhadas
+  - Endereço completo
+  - Área do imóvel
+  - Valor do imóvel
+  - Tipo do imóvel
+  - Localização
 
-## 🛠️ Pré-requisitos
+- **Cálculo de ITBI**: Calcule o imposto de transferência
+  - Cálculo automático baseado no valor do imóvel
+  - Taxa configurável (atualmente 2%)
+  - Resultado instantâneo
 
-•⁠  ⁠Node.js
-•⁠  ⁠npm ou yarn
-•⁠  ⁠Expo CLI
-•⁠  ⁠Expo Go (para testar no dispositivo móvel)
+- **Gestão de Imóveis**
+  - Listagem de todos os imóveis cadastrados
+  - Edição de informações
+  - Exclusão de registros
+  - Visualização detalhada
+
+## 🚀 Tecnologias
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [React Navigation](https://reactnavigation.org/)
+- [React Native Elements](https://reactnativeelements.com/)
+- [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
+
+## 📋 Pré-requisitos
+
+- [Node.js](https://nodejs.org/) (versão 16 ou superior)
+- [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
+- [Expo CLI](https://docs.expo.dev/workflow/expo-cli/)
+- [Android Studio](https://developer.android.com/studio) (para emulador Android)
+- Ou dispositivo físico com [Expo Go](https://expo.dev/client)
 
 ## 🔧 Instalação
 
-1.⁠ ⁠Clone o repositório:
-⁠ bash
+1. Clone o repositório:
+\`\`\`bash
 git clone https://github.com/lucasskt18/Dispositivos-Moveis.git
- ⁠
+cd iTBI-calc
+\`\`\`
 
-2.⁠ ⁠Instale as dependências:
-⁠ bash
+2. Instale as dependências:
+\`\`\`bash
 npm install
-ou
+# ou
 yarn install
- ⁠
- 
-3.⁠ ⁠Inicie o projeto:
-⁠ bash
+\`\`\`
+
+3. Inicie o projeto:
+\`\`\`bash
 npx expo start
- ⁠
+\`\`\`
 
-4.⁠ ⁠Use o aplicativo Expo Go no seu dispositivo móvel para escanear o QR Code que aparecerá no terminal.
+## 📱 Executando no Emulador
 
-## 🤝 Contribuição
+1. Instale e configure o Android Studio
+2. Crie um dispositivo virtual (AVD) no AVD Manager
+3. Inicie o emulador
+4. Execute o projeto com:
+\`\`\`bash
+npx expo start --android
+\`\`\`
 
-Este é um projeto acadêmico desenvolvido como nota final. Bacharel em Sistemas de Informação
+## 📱 Executando no Dispositivo Físico
 
+1. Instale o aplicativo Expo Go no seu dispositivo
+2. Execute o projeto com \`npx expo start\`
+3. Escaneie o QR Code com o Expo Go (Android) ou Câmera (iOS)
 
-## 👥 Autores
+## Colaboradores
 
-•⁠  ⁠[Lucas Amancio, Arthur Moreira, Daniel Formoso e Guilherme Valentim]
+- Lucas Amancio, Daniel Formoso, Guilherme Valentim e Arthur Moreira
