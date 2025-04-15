@@ -142,7 +142,7 @@ export default function RegisterPropertyScreen() {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      setErrorMessage('Por favor, corrija os erros no formulário.');
+      setErrorMessage('Preencha todos os campos corretamente.');
       setShowErrorModal(true);
       return;
     }

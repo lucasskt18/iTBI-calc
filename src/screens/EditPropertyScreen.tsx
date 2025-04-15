@@ -216,7 +216,11 @@ export default function EditPropertyScreen() {
     };
 
     const handleSave = async () => {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            setErrorMessage('Preencha todos os campos corretamente.');
+            setShowErrorModal(true);
+            return;
+        }
 
         try {
             const storedProperties = await AsyncStorage.getItem('properties');
