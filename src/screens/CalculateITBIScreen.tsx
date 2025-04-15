@@ -78,7 +78,7 @@ export default function CalculateITBIScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
       <BackButton />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Calcular ITBI</Text>
         <Text style={styles.headerSubtitle}>Informe os dados para o cálculo</Text>
@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 40,
-    marginLeft: 40,
+    paddingTop: 60,
+    marginLeft: 50,
   },
   headerTitle: {
     fontSize: 28,

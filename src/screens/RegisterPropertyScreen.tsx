@@ -14,6 +14,7 @@ import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
+import SuccessModal from '../components/SuccessModal';
 
 interface FormErrors {
   address?: string;
@@ -37,6 +38,7 @@ export default function RegisterPropertyScreen() {
     type: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -101,17 +103,17 @@ export default function RegisterPropertyScreen() {
 
       const storedProperties = await AsyncStorage.getItem('properties');
       const properties = storedProperties ? JSON.parse(storedProperties) : [];
-      
+
       await AsyncStorage.setItem('properties', JSON.stringify([...properties, newProperty]));
-      
-      Alert.alert(
-        'Sucesso',
-        'Imóvel cadastrado com sucesso!',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
-      );
+      setShowSuccessModal(true);
     } catch (error) {
       Alert.alert('Erro', 'Ocorreu um erro ao salvar o imóvel.');
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigation.goBack();
   };
 
   const renderError = (field: keyof FormErrors) => {
@@ -124,7 +126,7 @@ export default function RegisterPropertyScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
       <BackButton />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Cadastrar Imóvel</Text>
         <Text style={styles.headerSubtitle}>Preencha os dados do imóvel</Text>
@@ -272,6 +274,13 @@ export default function RegisterPropertyScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title="Sucesso"
+        message="Imóvel cadastrado com sucesso!"
+        onClose={handleCloseSuccessModal}
+      />
     </SafeAreaView>
   );
 }
@@ -283,8 +292,8 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 40,
-    marginLeft: 40,
+    paddingTop: 60,
+    marginLeft: 50,
   },
   headerTitle: {
     fontSize: 28,

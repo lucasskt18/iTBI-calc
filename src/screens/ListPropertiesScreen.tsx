@@ -76,7 +76,7 @@ export default function ListPropertiesScreen() {
         <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
         <Text style={styles.propertyType}>{item.type}</Text>
       </View>
-      
+
       <View style={styles.propertyInfo}>
         <Text style={styles.propertyAddress}>{item.address}</Text>
         <Text style={styles.propertyLocation}>
@@ -88,15 +88,15 @@ export default function ListPropertiesScreen() {
       </View>
 
       <View style={styles.buttonGroup}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.actionButton, styles.editButton]}
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <Icon name="edit" type="font-awesome-5" color="#FFF" size={14} />
           <Text style={styles.actionButtonText}>Editar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.actionButton, styles.deleteButton]}
           onPress={() => handleDeleteProperty(item.id)}
         >
@@ -111,7 +111,7 @@ export default function ListPropertiesScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
       <BackButton />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Imóveis Cadastrados</Text>
         <Text style={styles.headerSubtitle}>
@@ -127,7 +127,7 @@ export default function ListPropertiesScreen() {
         <View style={styles.centerContent}>
           <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
           <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.addButton}
             onPress={() => navigation.navigate('RegisterProperty' as never)}
           >
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 40,
-    marginLeft: 40,
+    paddingTop: 60,
+    marginLeft: 50,
   },
   headerTitle: {
     fontSize: 28,
