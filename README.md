@@ -42,22 +42,28 @@ Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóve
 ## 🔧 Instalação
 
 1. Clone o repositório:
-\`\`\`bash
+```bash
 git clone https://github.com/lucasskt18/Dispositivos-Moveis.git
-cd iTBI-calc
-\`\`\`
+```
 
-2. Instale as dependências:
-\`\`\`bash
+2. Entre na pasta do projeto:
+```bash
+cd Dispositivos-Moveis
+```
+
+3. Instale as dependências:
+```bash
+# Usando npm
 npm install
-ou
+
+# Ou usando yarn
 yarn install
-\`\`\`
+```
 
 4. Inicie o projeto:
-\`\`\`bash
+```bash
 npx expo start
-\`\`\`
+```
 
 ## 📱 Executando no Emulador
 
@@ -65,16 +71,24 @@ npx expo start
 2. Crie um dispositivo virtual (AVD) no AVD Manager
 3. Inicie o emulador
 4. Execute o projeto com:
-\`\`\`bash
+```bash
 npx expo start --android
-\`\`\`
+```
 
 ## 📱 Executando no Dispositivo Físico
 
 1. Instale o aplicativo Expo Go no seu dispositivo
-2. Execute o projeto com \`npx expo start\`
-3. Escaneie o QR Code com o Expo Go (Android) ou Câmera (iOS)
+2. Execute o projeto:
+```bash
+npx expo start
+```
+3. Escaneie o QR Code com:
+   - Android: aplicativo Expo Go
+   - iOS: aplicativo Câmera
 
-## Colaboradores
+## 👥 Colaboradores
 
-- Lucas Amancio, Daniel Formoso, Guilherme Valentim e Arthur Moreira
+- Lucas Amancio
+- Daniel Formoso
+- Guilherme Valentim
+- Arthur Moreira
