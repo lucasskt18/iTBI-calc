@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -39,9 +39,11 @@ export default function ListPropertiesScreen() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProperties();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadProperties();
+    }, [])
+  );
 
   const loadProperties = async () => {
     try {

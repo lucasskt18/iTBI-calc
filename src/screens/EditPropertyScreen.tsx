@@ -16,6 +16,8 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 import SuccessModal from '../components/SuccessModal';
+import SelectField from '../components/SelectField';
+import SelectModal from '../components/SelectModal';
 
 interface FormErrors {
     address?: string;
@@ -39,33 +41,46 @@ interface Property {
 }
 
 const ESTADOS_BRASILEIROS = [
-    { sigla: 'AC', nome: 'Acre' },
-    { sigla: 'AL', nome: 'Alagoas' },
-    { sigla: 'AP', nome: 'Amapá' },
-    { sigla: 'AM', nome: 'Amazonas' },
-    { sigla: 'BA', nome: 'Bahia' },
-    { sigla: 'CE', nome: 'Ceará' },
-    { sigla: 'DF', nome: 'Distrito Federal' },
-    { sigla: 'ES', nome: 'Espírito Santo' },
-    { sigla: 'GO', nome: 'Goiás' },
-    { sigla: 'MA', nome: 'Maranhão' },
-    { sigla: 'MT', nome: 'Mato Grosso' },
-    { sigla: 'MS', nome: 'Mato Grosso do Sul' },
-    { sigla: 'MG', nome: 'Minas Gerais' },
-    { sigla: 'PA', nome: 'Pará' },
-    { sigla: 'PB', nome: 'Paraíba' },
-    { sigla: 'PR', nome: 'Paraná' },
-    { sigla: 'PE', nome: 'Pernambuco' },
-    { sigla: 'PI', nome: 'Piauí' },
-    { sigla: 'RJ', nome: 'Rio de Janeiro' },
-    { sigla: 'RN', nome: 'Rio Grande do Norte' },
-    { sigla: 'RS', nome: 'Rio Grande do Sul' },
-    { sigla: 'RO', nome: 'Rondônia' },
-    { sigla: 'RR', nome: 'Roraima' },
-    { sigla: 'SC', nome: 'Santa Catarina' },
-    { sigla: 'SP', nome: 'São Paulo' },
-    { sigla: 'SE', nome: 'Sergipe' },
-    { sigla: 'TO', nome: 'Tocantins' },
+    { id: 'AC', nome: 'Acre', sigla: 'AC' },
+    { id: 'AL', nome: 'Alagoas', sigla: 'AL' },
+    { id: 'AP', nome: 'Amapá', sigla: 'AP' },
+    { id: 'AM', nome: 'Amazonas', sigla: 'AM' },
+    { id: 'BA', nome: 'Bahia', sigla: 'BA' },
+    { id: 'CE', nome: 'Ceará', sigla: 'CE' },
+    { id: 'DF', nome: 'Distrito Federal', sigla: 'DF' },
+    { id: 'ES', nome: 'Espírito Santo', sigla: 'ES' },
+    { id: 'GO', nome: 'Goiás', sigla: 'GO' },
+    { id: 'MA', nome: 'Maranhão', sigla: 'MA' },
+    { id: 'MT', nome: 'Mato Grosso', sigla: 'MT' },
+    { id: 'MS', nome: 'Mato Grosso do Sul', sigla: 'MS' },
+    { id: 'MG', nome: 'Minas Gerais', sigla: 'MG' },
+    { id: 'PA', nome: 'Pará', sigla: 'PA' },
+    { id: 'PB', nome: 'Paraíba', sigla: 'PB' },
+    { id: 'PR', nome: 'Paraná', sigla: 'PR' },
+    { id: 'PE', nome: 'Pernambuco', sigla: 'PE' },
+    { id: 'PI', nome: 'Piauí', sigla: 'PI' },
+    { id: 'RJ', nome: 'Rio de Janeiro', sigla: 'RJ' },
+    { id: 'RN', nome: 'Rio Grande do Norte', sigla: 'RN' },
+    { id: 'RS', nome: 'Rio Grande do Sul', sigla: 'RS' },
+    { id: 'RO', nome: 'Rondônia', sigla: 'RO' },
+    { id: 'RR', nome: 'Roraima', sigla: 'RR' },
+    { id: 'SC', nome: 'Santa Catarina', sigla: 'SC' },
+    { id: 'SP', nome: 'São Paulo', sigla: 'SP' },
+    { id: 'SE', nome: 'Sergipe', sigla: 'SE' },
+    { id: 'TO', nome: 'Tocantins', sigla: 'TO' },
+];
+
+const TIPOS_IMOVEIS = [
+    { id: 'casa', nome: 'Casa' },
+    { id: 'apartamento', nome: 'Apartamento' },
+    { id: 'terreno', nome: 'Terreno' },
+    { id: 'sala_comercial', nome: 'Sala Comercial' },
+    { id: 'loja', nome: 'Loja' },
+    { id: 'galpao', nome: 'Galpão' },
+    { id: 'predio', nome: 'Prédio Comercial' },
+    { id: 'sitio', nome: 'Sítio' },
+    { id: 'fazenda', nome: 'Fazenda' },
+    { id: 'outro', nome: 'Outro' },
 ];
 
 type RootStackParamList = {
@@ -94,6 +109,7 @@ export default function EditPropertyScreen() {
     const [errors, setErrors] = useState<FormErrors>({});
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showStateModal, setShowStateModal] = useState(false);
+    const [showTypeModal, setShowTypeModal] = useState(false);
 
     useEffect(() => {
         loadProperty();
@@ -266,17 +282,14 @@ export default function EditPropertyScreen() {
                     </View>
 
                     <View>
-                        <View style={[styles.inputGroup, errors.state && styles.inputError]}>
-                            <Icon name="flag" type="font-awesome-5" color="#8F94FB" size={20} />
-                            <TouchableOpacity
-                                style={styles.stateSelector}
-                                onPress={() => setShowStateModal(true)}
-                            >
-                                <Text style={[styles.stateSelectorText, !formData.state && styles.placeholderText]}>
-                                    {formData.state || "Estado"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                        <SelectField
+                            value={formData.state}
+                            placeholder="Estado"
+                            icon="flag"
+                            options={ESTADOS_BRASILEIROS}
+                            error={!!errors.state}
+                            onPress={() => setShowStateModal(true)}
+                        />
                         {renderError('state')}
                     </View>
 
@@ -321,21 +334,14 @@ export default function EditPropertyScreen() {
                     </View>
 
                     <View>
-                        <View style={[styles.inputGroup, errors.type && styles.inputError]}>
-                            <Icon name="building" type="font-awesome-5" color="#8F94FB" size={20} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Tipo do Imóvel"
-                                placeholderTextColor="#8F94FB"
-                                value={formData.type}
-                                onChangeText={(text) => {
-                                    setFormData({ ...formData, type: text });
-                                    if (errors.type) {
-                                        setErrors({ ...errors, type: undefined });
-                                    }
-                                }}
-                            />
-                        </View>
+                        <SelectField
+                            value={formData.type}
+                            placeholder="Tipo do Imóvel"
+                            icon="building"
+                            options={TIPOS_IMOVEIS}
+                            error={!!errors.type}
+                            onPress={() => setShowTypeModal(true)}
+                        />
                         {renderError('type')}
                     </View>
 
@@ -352,44 +358,33 @@ export default function EditPropertyScreen() {
                 onClose={handleCloseSuccessModal}
             />
 
-            {/* Modal de Seleção de Estado */}
-            <Modal
+            <SelectModal
                 visible={showStateModal}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setShowStateModal(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Selecione o Estado</Text>
-                        <ScrollView style={styles.stateList}>
-                            {ESTADOS_BRASILEIROS.map((estado) => (
-                                <TouchableOpacity
-                                    key={estado.sigla}
-                                    style={styles.stateItem}
-                                    onPress={() => {
-                                        setFormData({ ...formData, state: estado.sigla });
-                                        if (errors.state) {
-                                            setErrors({ ...errors, state: undefined });
-                                        }
-                                        setShowStateModal(false);
-                                    }}
-                                >
-                                    <Text style={styles.stateItemText}>
-                                        {estado.nome} ({estado.sigla})
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                        <TouchableOpacity
-                            style={styles.closeButton}
-                            onPress={() => setShowStateModal(false)}
-                        >
-                            <Text style={styles.closeButtonText}>Fechar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+                title="Selecione o Estado"
+                options={ESTADOS_BRASILEIROS}
+                onSelect={(estado) => {
+                    setFormData({ ...formData, state: estado.sigla! });
+                    if (errors.state) {
+                        setErrors({ ...errors, state: undefined });
+                    }
+                    setShowStateModal(false);
+                }}
+                onClose={() => setShowStateModal(false)}
+            />
+
+            <SelectModal
+                visible={showTypeModal}
+                title="Selecione o Tipo do Imóvel"
+                options={TIPOS_IMOVEIS}
+                onSelect={(tipo) => {
+                    setFormData({ ...formData, type: tipo.id });
+                    if (errors.type) {
+                        setErrors({ ...errors, type: undefined });
+                    }
+                    setShowTypeModal(false);
+                }}
+                onClose={() => setShowTypeModal(false)}
+            />
         </SafeAreaView>
     );
 }
