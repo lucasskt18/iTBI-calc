@@ -49,10 +49,12 @@ cd iTBI-calc
 
 2. Instale as dependências:
 \`\`\`bash
-npm install ou yarn install
+npm install
+ou
+yarn install
 \`\`\`
 
-3. Inicie o projeto:
+4. Inicie o projeto:
 \`\`\`bash
 npx expo start
 \`\`\`
