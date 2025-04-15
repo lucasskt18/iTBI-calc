@@ -243,7 +243,7 @@ export default function EditPropertyScreen() {
             };
 
             await AsyncStorage.setItem('properties', JSON.stringify(properties));
-            navigation.goBack();
+            setShowSuccessModal(true);
         } catch (error) {
             setErrorMessage('Erro ao salvar as alterações. Tente novamente.');
             setShowErrorModal(true);
