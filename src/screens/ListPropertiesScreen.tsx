@@ -10,10 +10,18 @@ import {
   Alert,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 import ConfirmationModal from '../components/ConfirmationModal';
+
+type RootStackParamList = {
+  EditProperty: {
+    propertyId: string;
+  };
+};
+
+type NavigationProps = NavigationProp<RootStackParamList>;
 
 interface Property {
   id: string;
@@ -25,7 +33,7 @@ interface Property {
 }
 
 export default function ListPropertiesScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -73,6 +81,10 @@ export default function ListPropertiesScreen() {
     setPropertyToDelete(null);
   };
 
+  const handleEditProperty = (id: string) => {
+    navigation.navigate('EditProperty', { propertyId: id });
+  };
+
   const renderProperty = ({ item }: { item: Property }) => (
     <View style={styles.propertyCard}>
       <View style={styles.propertyHeader}>
@@ -93,7 +105,7 @@ export default function ListPropertiesScreen() {
       <View style={styles.buttonGroup}>
         <TouchableOpacity
           style={[styles.actionButton, styles.editButton]}
-          onPress={() => { }}
+          onPress={() => handleEditProperty(item.id)}
         >
           <Icon name="edit" type="font-awesome-5" color="#FFF" size={14} />
           <Text style={styles.actionButtonText}>Editar</Text>

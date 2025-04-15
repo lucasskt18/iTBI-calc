@@ -5,13 +5,14 @@ import HomeScreen from '../screens/HomeScreen';
 import RegisterPropertyScreen from '../screens/RegisterPropertyScreen';
 import CalculateITBIScreen from '../screens/CalculateITBIScreen';
 import ListPropertiesScreen from '../screens/ListPropertiesScreen';
+import EditPropertyScreen from '../screens/EditPropertyScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator 
+      <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
           headerShown: false,
@@ -21,6 +22,7 @@ export default function AppNavigator() {
         <Stack.Screen name="RegisterProperty" component={RegisterPropertyScreen} />
         <Stack.Screen name="CalculateITBI" component={CalculateITBIScreen} />
         <Stack.Screen name="ListProperties" component={ListPropertiesScreen} />
+        <Stack.Screen name="EditProperty" component={EditPropertyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
