@@ -18,6 +18,7 @@ import BackButton from '../components/BackButton';
 import SuccessModal from '../components/SuccessModal';
 import SelectField from '../components/SelectField';
 import SelectModal from '../components/SelectModal';
+import ErrorModal from '../components/ErrorModal';
 
 interface FormErrors {
   address?: string;
@@ -87,6 +88,8 @@ export default function RegisterPropertyScreen() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -139,7 +142,8 @@ export default function RegisterPropertyScreen() {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      Alert.alert('Erro', 'Por favor, corrija os erros no formulário.');
+      setErrorMessage('Por favor, corrija os erros no formulário.');
+      setShowErrorModal(true);
       return;
     }
 
@@ -155,7 +159,8 @@ export default function RegisterPropertyScreen() {
       await AsyncStorage.setItem('properties', JSON.stringify([...properties, newProperty]));
       setShowSuccessModal(true);
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao salvar o imóvel.');
+      setErrorMessage('Ocorreu um erro ao salvar o imóvel.');
+      setShowErrorModal(true);
     }
   };
 
@@ -342,6 +347,12 @@ export default function RegisterPropertyScreen() {
           setShowTypeModal(false);
         }}
         onClose={() => setShowTypeModal(false)}
+      />
+
+      <ErrorModal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        message={errorMessage}
       />
     </SafeAreaView>
   );

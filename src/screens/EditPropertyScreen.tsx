@@ -18,6 +18,7 @@ import BackButton from '../components/BackButton';
 import SuccessModal from '../components/SuccessModal';
 import SelectField from '../components/SelectField';
 import SelectModal from '../components/SelectModal';
+import ErrorModal from '../components/ErrorModal';
 
 interface FormErrors {
     address?: string;
@@ -110,6 +111,8 @@ export default function EditPropertyScreen() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showStateModal, setShowStateModal] = useState(false);
     const [showTypeModal, setShowTypeModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         loadProperty();
@@ -210,6 +213,41 @@ export default function EditPropertyScreen() {
         return errors[field] ? (
             <Text style={styles.errorText}>{errors[field]}</Text>
         ) : null;
+    };
+
+    const handleSave = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const storedProperties = await AsyncStorage.getItem('properties');
+            if (!storedProperties) {
+                setErrorMessage('Erro ao carregar os dados do imóvel');
+                setShowErrorModal(true);
+                return;
+            }
+
+            const properties = JSON.parse(storedProperties);
+            const propertyIndex = properties.findIndex(
+                (p: Property) => p.id === route.params?.propertyId
+            );
+
+            if (propertyIndex === -1) {
+                setErrorMessage('Imóvel não encontrado');
+                setShowErrorModal(true);
+                return;
+            }
+
+            properties[propertyIndex] = {
+                ...properties[propertyIndex],
+                ...formData,
+            };
+
+            await AsyncStorage.setItem('properties', JSON.stringify(properties));
+            navigation.goBack();
+        } catch (error) {
+            setErrorMessage('Erro ao salvar as alterações. Tente novamente.');
+            setShowErrorModal(true);
+        }
     };
 
     return (
@@ -345,7 +383,7 @@ export default function EditPropertyScreen() {
                         {renderError('type')}
                     </View>
 
-                    <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                    <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
                         <Text style={styles.submitButtonText}>Salvar Alterações</Text>
                     </TouchableOpacity>
                 </View>
@@ -384,6 +422,12 @@ export default function EditPropertyScreen() {
                     setShowTypeModal(false);
                 }}
                 onClose={() => setShowTypeModal(false)}
+            />
+
+            <ErrorModal
+                visible={showErrorModal}
+                onClose={() => setShowErrorModal(false)}
+                message={errorMessage}
             />
         </SafeAreaView>
     );
