@@ -9,6 +9,7 @@ type RootStackParamList = {
   RegisterProperty: undefined;
   CalculateITBI: undefined;
   ListProperties: undefined;
+  AboutUs: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -66,10 +67,10 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('ListProperties')}
           />
           <MenuItem
-            title="Relatórios"
-            icon="chart-bar"
+            title="Sobre Nós"
+            icon="info-circle"
             color="#11998e"
-            onPress={() => { }}
+            onPress={() => navigation.navigate('AboutUs')}
           />
         </View>
       </View>
