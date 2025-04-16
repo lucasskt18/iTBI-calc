@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,17 +8,17 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  Alert,
-  Modal,
-} from 'react-native';
-import { Icon } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BackButton from '../components/BackButton';
-import SuccessModal from '../components/SuccessModal';
-import SelectField from '../components/SelectField';
-import SelectModal from '../components/SelectModal';
-import ErrorModal from '../components/ErrorModal';
+  // Alert,
+  // Modal,
+} from "react-native";
+import { Icon } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import BackButton from "../components/BackButton";
+import SuccessModal from "../components/SuccessModal";
+import SelectField from "../components/SelectField";
+import SelectModal from "../components/SelectModal";
+import ErrorModal from "../components/ErrorModal";
 
 interface FormErrors {
   address?: string;
@@ -26,113 +26,111 @@ interface FormErrors {
   city?: string;
   state?: string;
   area?: string;
-  value?: string;
+  property?: string;
   type?: string;
 }
 
-const ESTADOS_BRASILEIROS = [
-  { id: 'AC', nome: 'Acre', sigla: 'AC' },
-  { id: 'AL', nome: 'Alagoas', sigla: 'AL' },
-  { id: 'AP', nome: 'Amapá', sigla: 'AP' },
-  { id: 'AM', nome: 'Amazonas', sigla: 'AM' },
-  { id: 'BA', nome: 'Bahia', sigla: 'BA' },
-  { id: 'CE', nome: 'Ceará', sigla: 'CE' },
-  { id: 'DF', nome: 'Distrito Federal', sigla: 'DF' },
-  { id: 'ES', nome: 'Espírito Santo', sigla: 'ES' },
-  { id: 'GO', nome: 'Goiás', sigla: 'GO' },
-  { id: 'MA', nome: 'Maranhão', sigla: 'MA' },
-  { id: 'MT', nome: 'Mato Grosso', sigla: 'MT' },
-  { id: 'MS', nome: 'Mato Grosso do Sul', sigla: 'MS' },
-  { id: 'MG', nome: 'Minas Gerais', sigla: 'MG' },
-  { id: 'PA', nome: 'Pará', sigla: 'PA' },
-  { id: 'PB', nome: 'Paraíba', sigla: 'PB' },
-  { id: 'PR', nome: 'Paraná', sigla: 'PR' },
-  { id: 'PE', nome: 'Pernambuco', sigla: 'PE' },
-  { id: 'PI', nome: 'Piauí', sigla: 'PI' },
-  { id: 'RJ', nome: 'Rio de Janeiro', sigla: 'RJ' },
-  { id: 'RN', nome: 'Rio Grande do Norte', sigla: 'RN' },
-  { id: 'RS', nome: 'Rio Grande do Sul', sigla: 'RS' },
-  { id: 'RO', nome: 'Rondônia', sigla: 'RO' },
-  { id: 'RR', nome: 'Roraima', sigla: 'RR' },
-  { id: 'SC', nome: 'Santa Catarina', sigla: 'SC' },
-  { id: 'SP', nome: 'São Paulo', sigla: 'SP' },
-  { id: 'SE', nome: 'Sergipe', sigla: 'SE' },
-  { id: 'TO', nome: 'Tocantins', sigla: 'TO' },
+export const ESTADOS_BRASILEIROS = [
+  { id: "AC", nome: "Acre", sigla: "AC", aliquot: 2.0 },
+  { id: "AL", nome: "Alagoas", sigla: "AL", aliquot: 2.5 },
+  { id: "AP", nome: "Amapá", sigla: "AP", aliquot: 3.0 },
+  { id: "AM", nome: "Amazonas", sigla: "AM", aliquot: 2.8 },
+  { id: "BA", nome: "Bahia", sigla: "BA", aliquot: 2.2 },
+  { id: "CE", nome: "Ceará", sigla: "CE", aliquot: 2.7 },
+  { id: "DF", nome: "Distrito Federal", sigla: "DF", aliquot: 3.5 },
+  { id: "ES", nome: "Espírito Santo", sigla: "ES", aliquot: 2.4 },
+  { id: "GO", nome: "Goiás", sigla: "GO", aliquot: 2.6 },
+  { id: "MA", nome: "Maranhão", sigla: "MA", aliquot: 2.3 },
+  { id: "MT", nome: "Mato Grosso", sigla: "MT", aliquot: 3.0 },
+  { id: "MS", nome: "Mato Grosso do Sul", sigla: "MS", aliquot: 2.9 },
+  { id: "MG", nome: "Minas Gerais", sigla: "MG", aliquot: 2.1 },
+  { id: "PA", nome: "Pará", sigla: "PA", aliquot: 2.8 },
+  { id: "PB", nome: "Paraíba", sigla: "PB", aliquot: 2.5 },
+  { id: "PR", nome: "Paraná", sigla: "PR", aliquot: 2.0 },
+  { id: "PE", nome: "Pernambuco", sigla: "PE", aliquot: 2.6 },
+  { id: "PI", nome: "Piauí", sigla: "PI", aliquot: 2.4 },
+  { id: "RJ", nome: "Rio de Janeiro", sigla: "RJ", aliquot: 3.0 },
+  { id: "RN", nome: "Rio Grande do Norte", sigla: "RN", aliquot: 2.7 },
+  { id: "RS", nome: "Rio Grande do Sul", sigla: "RS", aliquot: 2.3 },
+  { id: "RO", nome: "Rondônia", sigla: "RO", aliquot: 2.9 },
+  { id: "RR", nome: "Roraima", sigla: "RR", aliquot: 2.8 },
+  { id: "SC", nome: "Santa Catarina", sigla: "SC", aliquot: 2.2 },
+  { id: "SP", nome: "São Paulo", sigla: "SP", aliquot: 3.2 },
+  { id: "SE", nome: "Sergipe", sigla: "SE", aliquot: 2.5 },
+  { id: "TO", nome: "Tocantins", sigla: "TO", aliquot: 2.6 },
 ];
 
-const TIPOS_IMOVEIS = [
-  { id: 'casa', nome: 'Casa' },
-  { id: 'apartamento', nome: 'Apartamento' },
-  { id: 'terreno', nome: 'Terreno' },
-  { id: 'sala_comercial', nome: 'Sala Comercial' },
-  { id: 'loja', nome: 'Loja' },
-  { id: 'galpao', nome: 'Galpão' },
-  { id: 'predio', nome: 'Prédio Comercial' },
-  { id: 'sitio', nome: 'Sítio' },
-  { id: 'fazenda', nome: 'Fazenda' },
-  { id: 'outro', nome: 'Outro' },
+export const TIPOS_IMOVEIS = [
+  { id: "casa", nome: "Casa" },
+  { id: "apartamento", nome: "Apartamento" },
+  { id: "terreno", nome: "Terreno" },
+  { id: "sala_comercial", nome: "Sala Comercial" },
+  { id: "loja", nome: "Loja" },
+  { id: "chácara", nome: "Chácara" },
+  { id: "predio", nome: "Prédio Comercial" },
+  { id: "sitio", nome: "Sítio" },
+  { id: "fazenda", nome: "Fazenda" },
+  { id: "outro", nome: "Outro" },
 ];
 
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
-    address: '',
-    neighborhood: '',
-    city: '',
-    state: '',
-    area: '',
-    value: '',
-    type: '',
+    address: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+    area: "",
+    property: "",
+    type: "",
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
     if (!formData.address.trim()) {
-      newErrors.address = 'Endereço é obrigatório';
+      newErrors.address = "Endereço é obrigatório";
       isValid = false;
     }
 
     if (!formData.neighborhood.trim()) {
-      newErrors.neighborhood = 'Bairro é obrigatório';
+      newErrors.neighborhood = "Bairro é obrigatório";
       isValid = false;
     }
 
     if (!formData.city.trim()) {
-      newErrors.city = 'Cidade é obrigatória';
+      newErrors.city = "Cidade é obrigatória";
       isValid = false;
     }
 
     if (!formData.state.trim()) {
-      newErrors.state = 'Estado é obrigatório';
+      newErrors.state = "Estado é obrigatório";
       isValid = false;
     }
 
     if (!formData.area.trim()) {
-      newErrors.area = 'Área é obrigatória';
+      newErrors.area = "Área é obrigatória";
       isValid = false;
     } else if (isNaN(Number(formData.area)) || Number(formData.area) <= 0) {
-      newErrors.area = 'Área deve ser um número válido';
+      newErrors.area = "Área deve ser um número válido";
       isValid = false;
     }
 
-    if (!formData.value.trim()) {
-      newErrors.value = 'Valor é obrigatório';
-      isValid = false;
-    } else if (isNaN(Number(formData.value)) || Number(formData.value) <= 0) {
-      newErrors.value = 'Valor deve ser um número válido';
+    if (!formData.property || !formData.property.trim()) {
+      newErrors.property = "Proprietário é obrigatório";
       isValid = false;
     }
 
     if (!formData.type.trim()) {
-      newErrors.type = 'Tipo do imóvel é obrigatório';
+      newErrors.type = "Tipo do imóvel é obrigatório";
       isValid = false;
     }
 
@@ -142,7 +140,7 @@ export default function RegisterPropertyScreen() {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      setErrorMessage('Preencha todos os campos corretamente.');
+      setErrorMessage("Preencha todos os campos corretamente.");
       setShowErrorModal(true);
       return;
     }
@@ -153,13 +151,16 @@ export default function RegisterPropertyScreen() {
         ...formData,
       };
 
-      const storedProperties = await AsyncStorage.getItem('properties');
+      const storedProperties = await AsyncStorage.getItem("properties");
       const properties = storedProperties ? JSON.parse(storedProperties) : [];
 
-      await AsyncStorage.setItem('properties', JSON.stringify([...properties, newProperty]));
+      await AsyncStorage.setItem(
+        "properties",
+        JSON.stringify([...properties, newProperty])
+      );
       setShowSuccessModal(true);
     } catch (error) {
-      setErrorMessage('Ocorreu um erro ao salvar o imóvel.');
+      setErrorMessage("Ocorreu um erro ao salvar o imóvel.");
       setShowErrorModal(true);
     }
   };
@@ -188,11 +189,29 @@ export default function RegisterPropertyScreen() {
       <ScrollView style={styles.content}>
         <View style={styles.formContainer}>
           <View>
-            <View style={[styles.inputGroup, errors.address && styles.inputError]}>
-              <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
+            <SelectField
+              value={formData.type}
+              placeholder="Tipo do Imóvel"
+              icon="building"
+              options={TIPOS_IMOVEIS}
+              error={!!errors.type}
+              onPress={() => setShowTypeModal(true)}
+            />
+            {renderError("type")}
+          </View>
+          <View>
+            <View
+              style={[styles.inputGroup, errors.address && styles.inputError]}
+            >
+              <Icon
+                name="home"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
               <TextInput
                 style={styles.input}
-                placeholder="Endereço"
+                placeholder="Rua"
                 placeholderTextColor="#8F94FB"
                 value={formData.address}
                 onChangeText={(text) => {
@@ -203,12 +222,22 @@ export default function RegisterPropertyScreen() {
                 }}
               />
             </View>
-            {renderError('address')}
+            {renderError("address")}
           </View>
 
           <View>
-            <View style={[styles.inputGroup, errors.neighborhood && styles.inputError]}>
-              <Icon name="map-marker-alt" type="font-awesome-5" color="#8F94FB" size={20} />
+            <View
+              style={[
+                styles.inputGroup,
+                errors.neighborhood && styles.inputError,
+              ]}
+            >
+              <Icon
+                name="map-marker-alt"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Bairro"
@@ -222,12 +251,17 @@ export default function RegisterPropertyScreen() {
                 }}
               />
             </View>
-            {renderError('neighborhood')}
+            {renderError("neighborhood")}
           </View>
 
           <View>
             <View style={[styles.inputGroup, errors.city && styles.inputError]}>
-              <Icon name="city" type="font-awesome-5" color="#8F94FB" size={20} />
+              <Icon
+                name="city"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Cidade"
@@ -241,7 +275,7 @@ export default function RegisterPropertyScreen() {
                 }}
               />
             </View>
-            {renderError('city')}
+            {renderError("city")}
           </View>
 
           <View>
@@ -249,16 +283,26 @@ export default function RegisterPropertyScreen() {
               value={formData.state}
               placeholder="Estado"
               icon="flag"
-              options={ESTADOS_BRASILEIROS}
+              options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla, aliquot }) => ({
+                id,
+                nome,
+                sigla,
+                aliquot: aliquot.toString(),
+              }))}
               error={!!errors.state}
               onPress={() => setShowStateModal(true)}
             />
-            {renderError('state')}
+            {renderError("state")}
           </View>
 
           <View>
             <View style={[styles.inputGroup, errors.area && styles.inputError]}>
-              <Icon name="ruler-combined" type="font-awesome-5" color="#8F94FB" size={20} />
+              <Icon
+                name="ruler-combined"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Área (m²)"
@@ -273,39 +317,34 @@ export default function RegisterPropertyScreen() {
                 }}
               />
             </View>
-            {renderError('area')}
+            {renderError("area")}
           </View>
 
           <View>
-            <View style={[styles.inputGroup, errors.value && styles.inputError]}>
-              <Icon name="dollar-sign" type="font-awesome-5" color="#8F94FB" size={20} />
+            <View
+              style={[styles.inputGroup, errors.property && styles.inputError]}
+            >
+              <Icon
+                name="user"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
               <TextInput
                 style={styles.input}
-                placeholder="Valor"
+                placeholder="Proprietário"
                 placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                value={formData.value}
+                value={formData.property}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, value: text });
-                  if (errors.value) {
-                    setErrors({ ...errors, value: undefined });
+                  setFormData({ ...formData, property: text });
+
+                  if (errors.property) {
+                    setErrors({ ...errors, property: undefined });
                   }
                 }}
               />
             </View>
-            {renderError('value')}
-          </View>
-
-          <View>
-            <SelectField
-              value={formData.type}
-              placeholder="Tipo do Imóvel"
-              icon="building"
-              options={TIPOS_IMOVEIS}
-              error={!!errors.type}
-              onPress={() => setShowTypeModal(true)}
-            />
-            {renderError('type')}
+            {renderError("property")}
           </View>
 
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -361,7 +400,7 @@ export default function RegisterPropertyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: "#1A1A2E",
   },
   header: {
     padding: 20,
@@ -370,13 +409,13 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#8F94FB',
+    color: "#8F94FB",
     opacity: 0.8,
   },
   content: {
@@ -387,9 +426,9 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   inputGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#252544',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#252544",
     borderRadius: 12,
     paddingHorizontal: 15,
     paddingVertical: 12,
@@ -397,64 +436,64 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderWidth: 1,
-    borderColor: '#FF6B6B',
+    borderColor: "#FF6B6B",
   },
   input: {
     flex: 1,
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
     padding: 0,
   },
   errorText: {
-    color: '#FF6B6B',
+    color: "#FF6B6B",
     fontSize: 12,
     marginTop: 5,
     marginLeft: 15,
   },
   submitButton: {
-    backgroundColor: '#4E54C8',
+    backgroundColor: "#4E54C8",
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   submitButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   stateSelector: {
     flex: 1,
     height: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   stateSelectorText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
     height: 24,
   },
   placeholderText: {
-    color: '#8F94FB',
+    color: "#8F94FB",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#252544',
+    backgroundColor: "#252544",
     borderRadius: 12,
     padding: 20,
-    width: '90%',
-    maxHeight: '80%',
+    width: "90%",
+    maxHeight: "80%",
   },
   modalTitle: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   stateList: {
     maxHeight: 400,
@@ -463,32 +502,32 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A2E',
+    borderBottomColor: "#1A1A2E",
   },
   stateItemText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
   },
   closeButton: {
-    backgroundColor: '#4E54C8',
+    backgroundColor: "#4E54C8",
     padding: 15,
     borderRadius: 8,
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   closeButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   selector: {
     flex: 1,
     height: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   selectorText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
     height: 24,
   },
-}); 
+});
