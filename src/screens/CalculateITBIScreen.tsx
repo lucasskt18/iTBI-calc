@@ -16,12 +16,55 @@ import ErrorModal from "../components/ErrorModal";
 import SuccessModal from "../components/SuccessModal";
 import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
-import { ESTADOS_BRASILEIROS } from "../screens/RegisterPropertyScreen";
+import { ESTADOS_BRASILEIROS } from "./RegisterPropertyScreen";
+
+interface ESTADOS_BRASILEIROS {
+  id: string;
+  nome: string;
+  sigla: string;
+  aliquot?: number;
+}
 
 interface FormErrors {
   state?: string;
-  aliquot?: string | number;
-  propertyValue?: string | number;
+  aliquot?: string;
+  propertyValue?: string;
+  venalValue?: string;
+  cpf?: string;
+}
+
+interface SelectFieldProps {
+  value: string;
+  placeholder: string;
+  icon: string;
+  options: Array<{
+    id: string;
+    nome: string;
+    label: string;
+    value: number;
+    aliquot?: number;
+  }>;
+  error: boolean;
+  onPress: () => void;
+  onSelect?: (selectedValue: any) => void; // Add onSelect prop
+}
+
+interface SelectModalProps {
+  visible: boolean;
+  title: string;
+  options: Array<{
+    id: string;
+    nome: string;
+    sigla: string;
+    aliquot?: number; // Inclua a propriedade aliquot
+  }>;
+  onSelect: (selectedOption: {
+    id: string;
+    nome: string;
+    sigla: string;
+    aliquot?: number;
+  }) => void;
+  onClose: () => void;
 }
 
 export default function CalculateITBIScreen() {
@@ -30,18 +73,19 @@ export default function CalculateITBIScreen() {
     state: "",
     aliquot: "",
     propertyValue: "",
+    venalValue: "",
+    cpf: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [result, setResult] = useState<number | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
-  const [aliquota, setAliquota] = useState<number | null>(null);
+  const [aliquot, setAliquot] = useState<number | null>(null);
+  const [result, setResult] = useState<number | null>(null);
+
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {
-      aliquot: undefined,
-    };
+    const newErrors: FormErrors = {};
     let isValid = true;
 
     if (!formData.state.trim()) {
@@ -50,7 +94,22 @@ export default function CalculateITBIScreen() {
     }
 
     if (!formData.aliquot.trim()) {
-      newErrors.aliquot = "Alíquota é obrigatória"; // Validação da alíquota
+      newErrors.aliquot = "Alíquota é obrigatória";
+      isValid = false;
+    }
+
+    if (!formData.propertyValue.toString().trim()) {
+      newErrors.propertyValue = "Valor do imóvel é obrigatório";
+      isValid = false;
+    }
+
+    if (!formData.venalValue.toString().trim()) {
+      newErrors.venalValue = "Valor venal é obrigatório";
+      isValid = false;
+    }
+
+    if (!formData.cpf.trim()) {
+      newErrors.cpf = "CPF é obrigatório";
       isValid = false;
     }
 
@@ -65,18 +124,23 @@ export default function CalculateITBIScreen() {
       return;
     }
 
-    const value = parseFloat(formData.propertyValue);
+    const propertyValue = parseFloat(formData.propertyValue);
+    const venalValue = parseFloat(formData.venalValue);
 
-    if (!aliquota) {
-      setErrorMessage("Selecione um estado para calcular a alíquota.");
-      setShowErrorModal(true);
-      return;
+    let itbi = 0;
+
+    if (propertyValue > venalValue) {
+      itbi = (propertyValue * aliquot!) / 100;
+    } else if (propertyValue < venalValue) {
+      itbi = (venalValue * aliquot!) / 100;
+    } else {
+      itbi = (propertyValue * aliquot!) / 100;
     }
 
-    const itbi = (value * aliquota) / 100; // Calcula o ITBI com base na alíquota
     setResult(itbi);
     setShowSuccessModal(true);
   };
+
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
@@ -84,6 +148,8 @@ export default function CalculateITBIScreen() {
       state: "",
       aliquot: "",
       propertyValue: "",
+      venalValue: "",
+      cpf: ""
     });
     setResult(null);
   };
@@ -108,6 +174,36 @@ export default function CalculateITBIScreen() {
 
       <ScrollView style={styles.content}>
         <View style={styles.formContainer}>
+
+          <View>
+            <View
+              style={[styles.inputGroup, errors.cpf && styles.inputError]}
+            >
+              <Icon
+                name="id-card"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="CPF do Proprietário"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric" // Define o teclado numérico para CPF
+                value={formData.cpf}
+                maxLength={11}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, cpf: text });
+
+                  if (errors.cpf) {
+                    setErrors({ ...errors, cpf: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError("cpf")}
+          </View>
+
           <View>
             <SelectField
               value={formData.state}
@@ -115,7 +211,7 @@ export default function CalculateITBIScreen() {
               icon="flag"
               options={ESTADOS_BRASILEIROS.map((estado) => ({
                 ...estado,
-                aliquot: estado.aliquot.toString(),
+                aliquot: estado.aliquot?.toString() ?? "0", // Ensure aliquot is handled safely
               }))}
               error={!!errors.state}
               onPress={() => setShowStateModal(true)}
@@ -126,36 +222,36 @@ export default function CalculateITBIScreen() {
           <View>
             <View
               style={[
-              styles.inputGroup,
-              ...(errors.aliquot ? [styles.inputError] : []),
+                styles.inputGroup,
+                ...(errors.aliquot ? [styles.inputError] : []),
               ]}
             >
               <Icon
-              name="percent"
-              type="font-awesome-5"
-              color="#8F94FB"
-              size={20}
+                name="percent"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
               />
               <TextInput
-              style={styles.input}
-              placeholder="Alíquota"
-              placeholderTextColor="#8F94FB"
-              value={aliquota !== null ? aliquota.toString() : ""}
-              editable={false}
+                style={styles.input}
+                placeholder="Alíquota"
+                placeholderTextColor="#8F94FB"
+                value={formData.aliquot}
+                editable={false}
               />
             </View>
-            {renderError("propertyValue")}
+            {renderError("aliquot")}
           </View>
 
-          {/* <View>
+          <View>
             <View
               style={[
                 styles.inputGroup,
-                ...(errors.propertyValue ? [styles.inputError] : []),
+                errors.propertyValue && styles.inputError,
               ]}
             >
               <Icon
-                name="dollar-sign"
+                name="money-bill-wave"
                 type="font-awesome-5"
                 color="#8F94FB"
                 size={20}
@@ -175,17 +271,17 @@ export default function CalculateITBIScreen() {
               />
             </View>
             {renderError("propertyValue")}
-          </View> */}
+          </View>
 
-          {/* <View>
+          <View>
             <View
               style={[
                 styles.inputGroup,
-                ...(errors.propertyValue ? [styles.inputError] : []),
+                errors.venalValue && styles.inputError,
               ]}
             >
               <Icon
-                name="receipt"
+                name="balance-scale"
                 type="font-awesome-5"
                 color="#8F94FB"
                 size={20}
@@ -194,18 +290,18 @@ export default function CalculateITBIScreen() {
                 style={styles.input}
                 placeholder="Valor Venal"
                 placeholderTextColor="#8F94FB"
+                value={formData.venalValue}
                 keyboardType="numeric"
-                value={formData.propertyValue}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, propertyValue: text });
-                  if (errors.propertyValue) {
-                    setErrors({ ...errors, propertyValue: undefined });
+                  setFormData({ ...formData, venalValue: text });
+                  if (errors.venalValue) {
+                    setErrors({ ...errors, venalValue: undefined });
                   }
                 }}
               />
             </View>
-            {renderError("propertyValue")}
-          </View> */}
+            {renderError("venalValue")}
+          </View>
 
           <TouchableOpacity
             style={styles.calculateButton}
@@ -213,19 +309,6 @@ export default function CalculateITBIScreen() {
           >
             <Text style={styles.calculateButtonText}>Calcular ITBI</Text>
           </TouchableOpacity>
-
-          {result !== null && (
-            <View style={styles.resultContainer}>
-              <Text style={styles.resultLabel}>Valor do ITBI:</Text>
-              <Text style={styles.resultValue}>
-                R${" "}
-                {result.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-              </Text>
-              <Text style={styles.resultInfo}>
-                Taxa aplicada: 2% do valor do imóvel
-              </Text>
-            </View>
-          )}
         </View>
       </ScrollView>
 
@@ -240,13 +323,14 @@ export default function CalculateITBIScreen() {
         title="Selecione o Estado"
         options={ESTADOS_BRASILEIROS}
         onSelect={(estado) => {
-          setFormData({ ...formData, state: estado.sigla ?? "" }); // Atualiza o estado selecionado
-          if ("aliquota" in estado && typeof estado.aliquota === "number") {
-            setAliquota(estado.aliquota); // Atualiza a alíquota com base no estado
-          } else {
-            setAliquota(null); // Define como null caso a alíquota não esteja disponível
-          }
-          setShowStateModal(false); // Fecha o modal
+          const selectedState = estado as { sigla: string; aliquot?: number }; // Type assertion
+          setFormData({
+            ...formData,
+            state: selectedState.sigla ?? "",
+            aliquot: selectedState.aliquot?.toString() ?? "0", // Atualiza a alíquota no formData
+          });
+          setAliquot(selectedState.aliquot ?? null); // Atualiza o estado aliquot
+          setShowStateModal(false); // Fecha o modal após a seleção
         }}
         onClose={() => setShowStateModal(false)}
       />
@@ -255,13 +339,12 @@ export default function CalculateITBIScreen() {
         visible={showSuccessModal}
         title="Cálculo Realizado"
         message={
-          result
-            ? `Valor do ITBI: R$ ${result.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
-        
-        Taxa aplicada: 2% do valor do imóvel`
-            : ""
+          result !== null ? (
+            <>
+              <Text style={styles.itbiResult}>ITBI: R$ {result.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</Text>
+              <Text style={styles.aliquotResult}>Alíquota: {aliquot?.toString() ?? "0"}%</Text>
+            </>
+          ) : null
         }
         onClose={handleCloseSuccessModal}
       />
@@ -355,5 +438,17 @@ const styles = StyleSheet.create({
     color: "#8F94FB",
     fontSize: 14,
     opacity: 0.8,
+  },
+  itbiResult: {
+    color: "#8F94FB",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  aliquotResult: {
+    color: "#8F94FB",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 20,
   },
 });

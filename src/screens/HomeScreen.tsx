@@ -18,6 +18,7 @@ type RootStackParamList = {
   RegisterProperty: undefined;
   CalculateITBI: undefined;
   ListProperties: undefined;
+  AboutUs: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -52,7 +53,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo.png")}
-          style={{ width: '50%', height: 100, resizeMode: "contain" }}
+          style={{ width: "50%", height: 100, resizeMode: "contain" }}
         />
         <Text style={styles.headerTitle}>Cálculo de ITBI</Text>
         <Text style={styles.headerSubtitle}>Selecione uma opção</Text>
@@ -79,10 +80,10 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("ListProperties")}
           />
           <MenuItem
-            title="Relatórios"
-            icon="chart-bar"
+            title="Sobre Nós"
+            icon="info-circle"
             color="#11998e"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("AboutUs")}
           />
         </View>
       </View>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1A1A2E",
   },
   header: {
-    alignItems: "center",
+    // alignItems: "center",
     padding: 20,
     paddingTop: 40,
   },

@@ -6,6 +6,7 @@ import RegisterPropertyScreen from '../screens/RegisterPropertyScreen';
 import CalculateITBIScreen from '../screens/CalculateITBIScreen';
 import ListPropertiesScreen from '../screens/ListPropertiesScreen';
 import EditPropertyScreen from '../screens/EditPropertyScreen';
+import AboutUsScreen from '../screens/AboutUsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,13 @@ export default function AppNavigator() {
         <Stack.Screen
           name="EditProperty"
           component={EditPropertyScreen}
+          options={{
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="AboutUs"
+          component={AboutUsScreen}
           options={{
             animation: 'slide_from_right',
           }}

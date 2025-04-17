@@ -28,6 +28,7 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
+  cpf?: string;
 }
 
 export const ESTADOS_BRASILEIROS = [
@@ -83,6 +84,7 @@ export default function RegisterPropertyScreen() {
     area: "",
     property: "",
     type: "",
+    cpf: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -95,6 +97,11 @@ export default function RegisterPropertyScreen() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     let isValid = true;
+
+    if (!formData.type.trim()) {
+      newErrors.type = "Tipo do imóvel é obrigatório";
+      isValid = false;
+    }
 
     if (!formData.address.trim()) {
       newErrors.address = "Endereço é obrigatório";
@@ -129,8 +136,8 @@ export default function RegisterPropertyScreen() {
       isValid = false;
     }
 
-    if (!formData.type.trim()) {
-      newErrors.type = "Tipo do imóvel é obrigatório";
+    if (!formData.cpf.trim()) {
+      newErrors.cpf = "CPF é obrigatório";
       isValid = false;
     }
 
@@ -318,6 +325,35 @@ export default function RegisterPropertyScreen() {
               />
             </View>
             {renderError("area")}
+          </View>
+
+          <View>
+            <View
+              style={[styles.inputGroup, errors.cpf && styles.inputError]}
+            >
+              <Icon
+                name="id-card"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="CPF do Proprietário"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric" // Define o teclado numérico para CPF
+                value={formData.cpf}
+                maxLength={11}
+                onChangeText={(text) => {
+                  setFormData({ ...formData, cpf: text });
+
+                  if (errors.cpf) {
+                    setErrors({ ...errors, cpf: undefined });
+                  }
+                }}
+              />
+            </View>
+            {renderError("cpf")}
           </View>
 
           <View>

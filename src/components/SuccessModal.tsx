@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 interface SuccessModalProps {
     visible: boolean;
     title: string;
-    message: string;
+    message: string | React.ReactNode;
     onClose: () => void;
 }
 
@@ -30,7 +30,12 @@ export default function SuccessModal({ visible, title, message, onClose }: Succe
                     </View>
 
                     <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.message}>{message}</Text>
+                    
+                    {typeof message === "string" ? (
+                        <Text style={styles.message}>{message}</Text>
+                    ) : (
+                        <View>{message}</View>
+                    )}
 
                     <TouchableOpacity
                         style={styles.button}
@@ -95,4 +100,4 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
     },
-}); 
+});

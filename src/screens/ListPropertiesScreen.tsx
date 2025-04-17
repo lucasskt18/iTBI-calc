@@ -18,6 +18,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
+import propertyValue from "../../src/screens/CalculateITBIScreen";
+import venalValue from "../../src/screens/CalculateITBIScreen";
 
 type RootStackParamList = {
   EditProperty: {
@@ -36,6 +38,9 @@ interface Property {
   area: string;
   property: string;
   type: string;
+  venalValue: string;
+  propertyValue: string;
+  cpf: string;
 }
 
 export default function ListPropertiesScreen() {
@@ -108,12 +113,21 @@ export default function ListPropertiesScreen() {
       </View>
 
       <View style={styles.propertyInfo}>
-        <Text style={styles.propertyAddress}>{item.address}</Text>
+        <Text style={styles.propertyAddress}>
+          {item.address}, {item.neighborhood}
+        </Text>
         <Text style={styles.propertyLocation}>
-          {item.neighborhood}, {item.city}, {item.state}
+          {item.city}, {item.state}
         </Text>
         <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
+
         <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
+        <View style={{ marginVertical: -8 }} />
+
+        <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
+        <Text style={styles.propertyOwner}>Valor de Transação: R$ 400.000</Text>
+        <Text style={styles.propertyOwner}>Valor Venal: R$: 200.000</Text>
+        <Text style={styles.propertyOwner}>ITBI: R$: {}</Text>
       </View>
 
       <View style={styles.buttonGroup}>
@@ -238,16 +252,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   propertyArea: {
-    color: "#4E54C8",
+    color: "#8F94FB",
+    // color: "#4E54C8",
     fontSize: 14,
-    fontWeight: "bold",
-    // marginTop: -5,
+    // fontWeight: "bold",
+    marginTop: -8,
   },
   propertyOwner: {
-    color: "#4E54C8",
+    color: "#8F94FB",
+    // color: "#4E54C8",
+    fontSize: 14,
+    // fontWeight: "bold",
+    marginTop: -8,
+  },
+  titleAvaliations: {
+    color: "#8F94FB",
     fontSize: 14,
     fontWeight: "bold",
-    // marginTop: -5,
+    marginTop: 15,
   },
   buttonGroup: {
     flexDirection: "row",
