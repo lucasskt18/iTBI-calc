@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,12 +8,18 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
-} from 'react-native';
-import { Icon } from '@rneui/themed';
-import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BackButton from '../components/BackButton';
-import ConfirmationModal from '../components/ConfirmationModal';
+} from "react-native";
+import { Icon } from "@rneui/themed";
+import {
+  useNavigation,
+  NavigationProp,
+  useFocusEffect,
+} from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import BackButton from "../components/BackButton";
+import ConfirmationModal from "../components/ConfirmationModal";
+import propertyValue from "../../src/screens/CalculateITBIScreen";
+import venalValue from "../../src/screens/CalculateITBIScreen";
 
 type RootStackParamList = {
   EditProperty: {
@@ -28,8 +34,13 @@ interface Property {
   address: string;
   neighborhood: string;
   city: string;
-  value: string;
+  state: string;
+  area: string;
+  property: string;
   type: string;
+  venalValue: string;
+  propertyValue: string;
+  cpf: string;
 }
 
 export default function ListPropertiesScreen() {
@@ -47,13 +58,13 @@ export default function ListPropertiesScreen() {
 
   const loadProperties = async () => {
     try {
-      const storedProperties = await AsyncStorage.getItem('properties');
+      const storedProperties = await AsyncStorage.getItem("properties");
       if (storedProperties) {
         setProperties(JSON.parse(storedProperties));
       }
     } catch (error) {
-      console.error('Erro ao carregar imóveis:', error);
-      Alert.alert('Erro', 'Não foi possível carregar a lista de imóveis.');
+      console.error("Erro ao carregar imóveis:", error);
+      Alert.alert("Erro", "Não foi possível carregar a lista de imóveis.");
     } finally {
       setLoading(false);
     }
@@ -68,13 +79,18 @@ export default function ListPropertiesScreen() {
     if (!propertyToDelete) return;
 
     try {
-      const updatedProperties = properties.filter(prop => prop.id !== propertyToDelete);
-      await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
+      const updatedProperties = properties.filter(
+        (prop) => prop.id !== propertyToDelete
+      );
+      await AsyncStorage.setItem(
+        "properties",
+        JSON.stringify(updatedProperties)
+      );
       setProperties(updatedProperties);
       setShowDeleteModal(false);
       setPropertyToDelete(null);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível excluir o imóvel.');
+      Alert.alert("Erro", "Não foi possível excluir o imóvel.");
     }
   };
 
@@ -84,7 +100,7 @@ export default function ListPropertiesScreen() {
   };
 
   const handleEditProperty = (id: string) => {
-    navigation.navigate('EditProperty', { propertyId: id });
+    navigation.navigate("EditProperty", { propertyId: id });
   };
 
   const renderProperty = ({ item }: { item: Property }) => (
@@ -97,13 +113,21 @@ export default function ListPropertiesScreen() {
       </View>
 
       <View style={styles.propertyInfo}>
-        <Text style={styles.propertyAddress}>{item.address}</Text>
+        <Text style={styles.propertyAddress}>
+          {item.address}, {item.neighborhood}
+        </Text>
         <Text style={styles.propertyLocation}>
-          {item.neighborhood}, {item.city}
+          {item.city}, {item.state}
         </Text>
-        <Text style={styles.propertyValue}>
-          R$ {parseFloat(item.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </Text>
+        <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
+
+        <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
+        <View style={{ marginVertical: -8 }} />
+
+        <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
+        <Text style={styles.propertyOwner}>Valor de Transação: R$ 400.000</Text>
+        <Text style={styles.propertyOwner}>Valor Venal: R$: 200.000</Text>
+        <Text style={styles.propertyOwner}>ITBI: R$: {}</Text>
       </View>
 
       <View style={styles.buttonGroup}>
@@ -134,7 +158,8 @@ export default function ListPropertiesScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Imóveis Cadastrados</Text>
         <Text style={styles.headerSubtitle}>
-          {properties.length} {properties.length === 1 ? 'imóvel' : 'imóveis'} encontrados
+          {properties.length} {properties.length === 1 ? "imóvel" : "imóveis"}{" "}
+          encontrados
         </Text>
       </View>
 
@@ -148,7 +173,7 @@ export default function ListPropertiesScreen() {
           <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => navigation.navigate('RegisterProperty' as never)}
+            onPress={() => navigation.navigate("RegisterProperty" as never)}
           >
             <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
           </TouchableOpacity>
@@ -176,7 +201,7 @@ export default function ListPropertiesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: "#1A1A2E",
   },
   header: {
     padding: 20,
@@ -185,13 +210,13 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#8F94FB',
+    color: "#8F94FB",
     opacity: 0.8,
   },
   listContent: {
@@ -199,88 +224,102 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   propertyCard: {
-    backgroundColor: '#252544',
+    backgroundColor: "#252544",
     borderRadius: 12,
     padding: 20,
   },
   propertyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     marginBottom: 15,
   },
   propertyType: {
-    color: '#8F94FB',
+    color: "#8F94FB",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   propertyInfo: {
     gap: 8,
   },
   propertyAddress: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   propertyLocation: {
-    color: '#8F94FB',
+    color: "#8F94FB",
     fontSize: 14,
   },
-  propertyValue: {
-    color: '#4E54C8',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 5,
+  propertyArea: {
+    color: "#8F94FB",
+    // color: "#4E54C8",
+    fontSize: 14,
+    // fontWeight: "bold",
+    marginTop: -8,
+  },
+  propertyOwner: {
+    color: "#8F94FB",
+    // color: "#4E54C8",
+    fontSize: 14,
+    // fontWeight: "bold",
+    marginTop: -8,
+  },
+  titleAvaliations: {
+    color: "#8F94FB",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginTop: 15,
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     marginTop: 15,
   },
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     padding: 12,
     borderRadius: 8,
   },
   editButton: {
-    backgroundColor: '#4E54C8',
+    backgroundColor: "#4E54C8",
   },
   deleteButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
   },
   actionButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   centerContent: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 20,
   },
   loadingText: {
-    color: '#8F94FB',
+    color: "#8F94FB",
     fontSize: 16,
   },
   emptyText: {
-    color: '#8F94FB',
+    color: "#8F94FB",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   addButton: {
-    backgroundColor: '#4E54C8',
+    backgroundColor: "#4E54C8",
     padding: 16,
     borderRadius: 12,
     marginTop: 20,
   },
   addButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
-}); 
+});

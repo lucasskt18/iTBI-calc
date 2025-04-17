@@ -11,6 +11,7 @@ interface Option {
     id: string;
     nome: string;
     sigla?: string;
+    aliquot?: string;
 }
 
 interface SelectFieldProps {
