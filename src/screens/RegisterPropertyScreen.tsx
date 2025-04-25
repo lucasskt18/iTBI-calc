@@ -93,6 +93,8 @@ export default function RegisterPropertyScreen() {
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [bancoDeImoveis, setBancoDeImoveis] = useState([]);
+  const [phone, setPhone] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -138,7 +140,7 @@ export default function RegisterPropertyScreen() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Telefone é obrigatório";
-      isValid = false;
+      isValid = false;      
     }
 
     setErrors(newErrors);
