@@ -28,7 +28,7 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
-  cpf?: string;
+  phone?: string;
 }
 
 export const ESTADOS_BRASILEIROS = [
@@ -84,7 +84,7 @@ export default function RegisterPropertyScreen() {
     area: "",
     property: "",
     type: "",
-    cpf: "",
+    phone: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -136,8 +136,8 @@ export default function RegisterPropertyScreen() {
       isValid = false;
     }
 
-    if (!formData.cpf.trim()) {
-      newErrors.cpf = "CPF é obrigatório";
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Telefone é obrigatório";
       isValid = false;
     }
 
@@ -329,31 +329,31 @@ export default function RegisterPropertyScreen() {
 
           <View>
             <View
-              style={[styles.inputGroup, errors.cpf && styles.inputError]}
+              style={[styles.inputGroup, errors.phone && styles.inputError]}
             >
               <Icon
-                name="id-card"
+                name="phone-alt"
                 type="font-awesome-5"
                 color="#8F94FB"
                 size={20}
               />
               <TextInput
                 style={styles.input}
-                placeholder="CPF do Proprietário"
+                placeholder="Telefone do Proprietário"
                 placeholderTextColor="#8F94FB"
-                keyboardType="numeric" // Define o teclado numérico para CPF
-                value={formData.cpf}
+                keyboardType="numeric" // Define o teclado numérico para phone
+                value={formData.phone}
                 maxLength={11}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, cpf: text });
+                  setFormData({ ...formData, phone: text });
 
-                  if (errors.cpf) {
-                    setErrors({ ...errors, cpf: undefined });
+                  if (errors.phone) {
+                    setErrors({ ...errors, phone: undefined });
                   }
                 }}
               />
             </View>
-            {renderError("cpf")}
+            {renderError("phone")}
           </View>
 
           <View>

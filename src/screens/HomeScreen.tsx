@@ -53,10 +53,15 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo.png")}
-          style={{ width: "50%", height: 100, resizeMode: "contain" }}
+          style={{ width: "35%", height: 100, resizeMode: "contain" }}
         />
-        <Text style={styles.headerTitle}>Cálculo de ITBI</Text>
-        <Text style={styles.headerSubtitle}>Selecione uma opção</Text>
+        <Text style={styles.headerTitle}>Calculadora de ITBI</Text>
+      </View>
+
+
+      <View>
+        <Text style={styles.textFirstCta}>Vai comprar um imóvel?</Text>
+        <Text style={styles.textSecondCta}>Descubra o valor do seu ITBI de forma rápida, segura e descomplicada. Começe agora!</Text>
       </View>
 
       <View style={styles.content}>
@@ -93,29 +98,44 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     flex: 1,
     backgroundColor: "#1A1A2E",
   },
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    paddingTop: 40,
+    // paddingTop: 40,
   },
   headerTitle: {
-    marginTop: 40,
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#FFF",
-    marginBottom: 8,
   },
-  headerSubtitle: {
+  textFirstCta: {
+    textAlign: "center",
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FFF",
+    marginTop: 50,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  textSecondCta: {
+    textAlign: "center",
     fontSize: 16,
     color: "#8F94FB",
     opacity: 0.8,
+    lineHeight: 22,
+    paddingHorizontal: 20,
   },
   content: {
     flex: 1,
     padding: 20,
+    position: 'absolute',
+    bottom: 100
   },
   grid: {
     flexDirection: "row",

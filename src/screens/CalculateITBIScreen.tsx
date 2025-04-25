@@ -17,6 +17,7 @@ import SuccessModal from "../components/SuccessModal";
 import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import { ESTADOS_BRASILEIROS } from "./RegisterPropertyScreen";
+import calculateITBI from "../utils/calculeteITBI"; // Import the calculateITBI function
 
 interface ESTADOS_BRASILEIROS {
   id: string;
@@ -30,7 +31,7 @@ interface FormErrors {
   aliquot?: string;
   propertyValue?: string;
   venalValue?: string;
-  cpf?: string;
+  phone?: string;
 }
 
 interface SelectFieldProps {
@@ -74,7 +75,7 @@ export default function CalculateITBIScreen() {
     aliquot: "",
     propertyValue: "",
     venalValue: "",
-    cpf: "",
+    phone: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -108,8 +109,8 @@ export default function CalculateITBIScreen() {
       isValid = false;
     }
 
-    if (!formData.cpf.trim()) {
-      newErrors.cpf = "CPF é obrigatório";
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Telefone é obrigatório";
       isValid = false;
     }
 
@@ -117,29 +118,6 @@ export default function CalculateITBIScreen() {
     return isValid;
   };
 
-  const calculateITBI = () => {
-    if (!validateForm()) {
-      setErrorMessage("Por favor, preencha todos os campos corretamente.");
-      setShowErrorModal(true);
-      return;
-    }
-
-    const propertyValue = parseFloat(formData.propertyValue);
-    const venalValue = parseFloat(formData.venalValue);
-
-    let itbi = 0;
-
-    if (propertyValue > venalValue) {
-      itbi = (propertyValue * aliquot!) / 100;
-    } else if (propertyValue < venalValue) {
-      itbi = (venalValue * aliquot!) / 100;
-    } else {
-      itbi = (propertyValue * aliquot!) / 100;
-    }
-
-    setResult(itbi);
-    setShowSuccessModal(true);
-  };
 
 
   const handleCloseSuccessModal = () => {
@@ -149,7 +127,7 @@ export default function CalculateITBIScreen() {
       aliquot: "",
       propertyValue: "",
       venalValue: "",
-      cpf: ""
+      phone: "",
     });
     setResult(null);
   };
@@ -174,10 +152,9 @@ export default function CalculateITBIScreen() {
 
       <ScrollView style={styles.content}>
         <View style={styles.formContainer}>
-
           <View>
             <View
-              style={[styles.inputGroup, errors.cpf && styles.inputError]}
+              style={[styles.inputGroup, errors.phone && styles.inputError]}
             >
               <Icon
                 name="id-card"
@@ -187,21 +164,21 @@ export default function CalculateITBIScreen() {
               />
               <TextInput
                 style={styles.input}
-                placeholder="CPF do Proprietário"
+                placeholder="Telefone do Proprietário"
                 placeholderTextColor="#8F94FB"
-                keyboardType="numeric" // Define o teclado numérico para CPF
-                value={formData.cpf}
+                keyboardType="numeric"
+                value={formData.phone}
                 maxLength={11}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, cpf: text });
+                  setFormData({ ...formData, phone: text });
 
-                  if (errors.cpf) {
-                    setErrors({ ...errors, cpf: undefined });
+                  if (errors.phone) {
+                    setErrors({ ...errors, phone: undefined });
                   }
                 }}
               />
             </View>
-            {renderError("cpf")}
+            {renderError("phone")}
           </View>
 
           <View>
@@ -305,7 +282,8 @@ export default function CalculateITBIScreen() {
 
           <TouchableOpacity
             style={styles.calculateButton}
-            onPress={calculateITBI}
+            onPress={() => calculateITBI(formData, aliquot ?? 0, validateForm, setErrorMessage, setShowErrorModal, setResult, setShowSuccessModal)}
+
           >
             <Text style={styles.calculateButtonText}>Calcular ITBI</Text>
           </TouchableOpacity>
@@ -341,8 +319,13 @@ export default function CalculateITBIScreen() {
         message={
           result !== null ? (
             <>
-              <Text style={styles.itbiResult}>ITBI: R$ {result.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</Text>
-              <Text style={styles.aliquotResult}>Alíquota: {aliquot?.toString() ?? "0"}%</Text>
+              <Text style={styles.itbiResult}>
+                ITBI: R${" "}
+                {result.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={styles.aliquotResult}>
+                Alíquota: {aliquot?.toString() ?? "0"}%
+              </Text>
             </>
           ) : null
         }

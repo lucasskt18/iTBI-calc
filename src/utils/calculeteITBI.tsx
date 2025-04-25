@@ -1,0 +1,38 @@
+type FormData = {
+  propertyValue: string;
+  venalValue: string;
+};
+
+const calculateITBI = (
+  formData: FormData,
+  aliquot: number,
+  validateForm: () => boolean,
+  setErrorMessage: (message: string) => void,
+  setShowErrorModal: (show: boolean) => void,
+  setResult: (result: number) => void,
+  setShowSuccessModal: (show: boolean) => void
+) => {
+  if (!validateForm()) {
+    setErrorMessage("Por favor, preencha todos os campos corretamente.");
+    setShowErrorModal(true);
+    return;
+  }
+
+  const propertyValue = parseFloat(formData.propertyValue);
+  const venalValue = parseFloat(formData.venalValue);
+
+  let itbi = 0;
+
+  if (propertyValue > venalValue) {
+    itbi = (propertyValue * aliquot) / 100;
+  } else if (propertyValue < venalValue) {
+    itbi = (venalValue * aliquot) / 100;
+  } else {
+    itbi = (propertyValue * aliquot) / 100;
+  }
+
+  setResult(itbi);
+  setShowSuccessModal(true);
+};
+
+export default calculateITBI;

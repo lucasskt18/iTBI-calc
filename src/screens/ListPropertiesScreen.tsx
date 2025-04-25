@@ -14,16 +14,22 @@ import {
   useNavigation,
   NavigationProp,
   useFocusEffect,
+  useRoute,
 } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
-import propertyValue from "../../src/screens/CalculateITBIScreen";
-import venalValue from "../../src/screens/CalculateITBIScreen";
+import calculateITBI from "../utils/calculeteITBI";
+
 
 type RootStackParamList = {
   EditProperty: {
     propertyId: string;
+  };
+  ListPropertiesScreen: {
+    itbiValue: number | null;
+    propertyValue: string;
+    venalValue: string;
   };
 };
 
@@ -38,9 +44,10 @@ interface Property {
   area: string;
   property: string;
   type: string;
+  phone: string;
   venalValue: string;
   propertyValue: string;
-  cpf: string;
+  propertyPhone: string;
 }
 
 export default function ListPropertiesScreen() {
@@ -49,6 +56,13 @@ export default function ListPropertiesScreen() {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
+  const [result, setResult] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    propertyValue: "",
+    venalValue: "",
+  });
+  const route = useRoute();
+  const {itbiValue, propertyValue, venalValue} = route.params as any;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -70,10 +84,12 @@ export default function ListPropertiesScreen() {
     }
   };
 
+
   const handleDeleteProperty = (id: string) => {
     setPropertyToDelete(id);
     setShowDeleteModal(true);
   };
+
 
   const handleConfirmDelete = async () => {
     if (!propertyToDelete) return;
@@ -94,6 +110,17 @@ export default function ListPropertiesScreen() {
     }
   };
 
+  useEffect(() => {
+    if (result !== null) {
+      navigation.navigate('ListPropertiesScreen', {
+        itbiValue: result,
+        propertyValue: formData.propertyValue,
+        venalValue: formData.venalValue,
+      });
+    }
+  }, [result, formData]);
+  
+  
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setPropertyToDelete(null);
@@ -122,12 +149,13 @@ export default function ListPropertiesScreen() {
         <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
 
         <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
+        <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
         <View style={{ marginVertical: -8 }} />
 
         <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
-        <Text style={styles.propertyOwner}>Valor de Transação: R$ 400.000</Text>
-        <Text style={styles.propertyOwner}>Valor Venal: R$: 200.000</Text>
-        <Text style={styles.propertyOwner}>ITBI: R$: {}</Text>
+        <Text style={styles.propertyOwner}>Valor de Transação: R$ {propertyValue}</Text>
+        <Text style={styles.propertyOwner}>Valor Venal: R$: {venalValue}</Text>
+        <Text style={styles.propertyOwner}>ITBI: R$ {itbiValue}</Text>
       </View>
 
       <View style={styles.buttonGroup}>
@@ -263,6 +291,11 @@ const styles = StyleSheet.create({
     // color: "#4E54C8",
     fontSize: 14,
     // fontWeight: "bold",
+    marginTop: -8,
+  },
+  propertyPhone: {
+    color: "#8F94FB",
+    fontSize: 14,
     marginTop: -8,
   },
   titleAvaliations: {

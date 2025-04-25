@@ -32,6 +32,7 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
+  telefone?: string;
 }
 
 interface Property {
@@ -43,50 +44,9 @@ interface Property {
   area: string;
   property: string;
   type: string;
+  telefone: string;
 }
 
-// const ESTADOS_BRASILEIROS = [
-//     { id: 'AC', nome: 'Acre', sigla: 'AC' },
-//     { id: 'AL', nome: 'Alagoas', sigla: 'AL' },
-//     { id: 'AP', nome: 'Amapá', sigla: 'AP' },
-//     { id: 'AM', nome: 'Amazonas', sigla: 'AM' },
-//     { id: 'BA', nome: 'Bahia', sigla: 'BA' },
-//     { id: 'CE', nome: 'Ceará', sigla: 'CE' },
-//     { id: 'DF', nome: 'Distrito Federal', sigla: 'DF' },
-//     { id: 'ES', nome: 'Espírito Santo', sigla: 'ES' },
-//     { id: 'GO', nome: 'Goiás', sigla: 'GO' },
-//     { id: 'MA', nome: 'Maranhão', sigla: 'MA' },
-//     { id: 'MT', nome: 'Mato Grosso', sigla: 'MT' },
-//     { id: 'MS', nome: 'Mato Grosso do Sul', sigla: 'MS' },
-//     { id: 'MG', nome: 'Minas Gerais', sigla: 'MG' },
-//     { id: 'PA', nome: 'Pará', sigla: 'PA' },
-//     { id: 'PB', nome: 'Paraíba', sigla: 'PB' },
-//     { id: 'PR', nome: 'Paraná', sigla: 'PR' },
-//     { id: 'PE', nome: 'Pernambuco', sigla: 'PE' },
-//     { id: 'PI', nome: 'Piauí', sigla: 'PI' },
-//     { id: 'RJ', nome: 'Rio de Janeiro', sigla: 'RJ' },
-//     { id: 'RN', nome: 'Rio Grande do Norte', sigla: 'RN' },
-//     { id: 'RS', nome: 'Rio Grande do Sul', sigla: 'RS' },
-//     { id: 'RO', nome: 'Rondônia', sigla: 'RO' },
-//     { id: 'RR', nome: 'Roraima', sigla: 'RR' },
-//     { id: 'SC', nome: 'Santa Catarina', sigla: 'SC' },
-//     { id: 'SP', nome: 'São Paulo', sigla: 'SP' },
-//     { id: 'SE', nome: 'Sergipe', sigla: 'SE' },
-//     { id: 'TO', nome: 'Tocantins', sigla: 'TO' },
-// ];
-
-// export const TIPOS_IMOVEIS = [
-//     { id: "casa", nome: "Casa" },
-//     { id: "apartamento", nome: "Apartamento" },
-//     { id: "terreno", nome: "Terreno" },
-//     { id: "sala_comercial", nome: "Sala Comercial" },
-//     { id: "loja", nome: "Loja" },
-//     { id: "chácara", nome: "Chácara" },
-//     { id: "predio", nome: "Prédio Comercial" },
-//     { id: "sitio", nome: "Sítio" },
-//     { id: "fazenda", nome: "Fazenda" },
-//     { id: "outro", nome: "Outro" },
-//   ];
 
 type RootStackParamList = {
   EditProperty: {
@@ -113,6 +73,7 @@ export default function EditPropertyScreen() {
     area: "",
     property: "",
     type: "",
+    telefone: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -430,32 +391,6 @@ export default function EditPropertyScreen() {
             {renderError("property")}
           </View>
 
-          {/* <View>
-            <View
-              style={[styles.inputGroup, errors.value && styles.inputError]}
-            >
-              <Icon
-                name="dollar-sign"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Valor"
-                placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                value={formData.value}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, value: text });
-                  if (errors.value) {
-                    setErrors({ ...errors, value: undefined });
-                  }
-                }}
-              />
-            </View>
-            {renderError("value")}
-          </View> */}
 
           <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
             <Text style={styles.submitButtonText}>Salvar Alterações</Text>
