@@ -138,7 +138,7 @@ export default function RegisterPropertyScreen() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Telefone é obrigatório";
-      isValid = false;
+      isValid = false;      
     }
 
     setErrors(newErrors);
