@@ -21,7 +21,6 @@ import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
 import calculateITBI from "../utils/calculeteITBI";
 
-
 type RootStackParamList = {
   EditProperty: {
     propertyId: string;
@@ -42,6 +41,7 @@ interface RouteParams {
 type NavigationProps = NavigationProp<RootStackParamList>;
 
 interface Property {
+  cep: string;
   id: string;
   address: string;
   neighborhood: string;
@@ -90,12 +90,10 @@ export default function ListPropertiesScreen() {
     }
   };
 
-
   const handleDeleteProperty = (id: string) => {
     setPropertyToDelete(id);
     setShowDeleteModal(true);
   };
-
 
   const handleConfirmDelete = async () => {
     if (!propertyToDelete) return;
@@ -153,15 +151,19 @@ export default function ListPropertiesScreen() {
           {item.city}, {item.state}
         </Text>
         <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
-
+        <Text style={styles.propertyOwner}>CEP: {item.cep}</Text>
         <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
         <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
         <View style={{ marginVertical: -8 }} />
 
-        <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
-        <Text style={styles.propertyOwner}>Valor de Transação: R$ {propertyValue}</Text>
-        <Text style={styles.propertyOwner}>Valor Venal: R$: {venalValue}</Text>
-        <Text style={styles.propertyOwner}>ITBI: R$ {itbiValue}</Text>
+        <View style={styles.propertyInfo}>
+          <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
+          <Text style={styles.propertyOwner}>
+            Valor de Transação: R$ 200.000
+          </Text>
+          <Text style={styles.propertyOwner}>Valor Venal: R$: 100.000</Text>
+          <Text style={styles.propertyOwner}>ITBI: R$ 30.000</Text>
+        </View>
       </View>
 
       <View style={styles.buttonGroup}>
@@ -260,7 +262,8 @@ const styles = StyleSheet.create({
   propertyCard: {
     backgroundColor: "#252544",
     borderRadius: 12,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   propertyHeader: {
     flexDirection: "row",
@@ -305,10 +308,12 @@ const styles = StyleSheet.create({
     marginTop: -8,
   },
   titleAvaliations: {
+    // color: '#fff',
     color: "#8F94FB",
     fontSize: 14,
     fontWeight: "bold",
     marginTop: 15,
+    marginBottom: 5,
   },
   buttonGroup: {
     flexDirection: "row",

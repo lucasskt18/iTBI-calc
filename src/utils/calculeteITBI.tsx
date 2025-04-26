@@ -3,6 +3,10 @@ type FormData = {
   venalValue: string;
 };
 
+const formatValue = (value: string) => {
+  return parseFloat(value.replace(/\./g, "").replace(",", "."));
+};
+
 const calculateITBI = (
   formData: FormData,
   aliquot: number,
@@ -18,17 +22,15 @@ const calculateITBI = (
     return;
   }
 
-  const propertyValue = parseFloat(formData.propertyValue);
-  const venalValue = parseFloat(formData.venalValue);
+  const propertyValue = formatValue(formData.propertyValue);
+  const venalValue = formatValue(formData.venalValue);
 
   let itbi = 0;
 
   if (propertyValue > venalValue) {
     itbi = (propertyValue * aliquot) / 100;
-  } else if (propertyValue < venalValue) {
-    itbi = (venalValue * aliquot) / 100;
   } else {
-    itbi = (propertyValue * aliquot) / 100;
+    itbi = (venalValue * aliquot) / 100;
   }
 
   setResult(itbi);

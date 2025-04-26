@@ -16,9 +16,11 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import SuccessModal from "../components/SuccessModal";
-import SelectField from "../components/SelectField";
+// import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
+import axios from "axios"; // Importa o axios
+import SelectField from "../components/SelectField";
 
 interface FormErrors {
   address?: string;
@@ -28,6 +30,7 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
+  cep?: string;
   phone?: string;
 }
 
@@ -65,7 +68,7 @@ export const TIPOS_IMOVEIS = [
   { id: "casa", nome: "Casa" },
   { id: "apartamento", nome: "Apartamento" },
   { id: "terreno", nome: "Terreno" },
-  { id: "sala_comercial", nome: "Sala Comercial" },
+  { id: "galpao", nome: "Galpão" },
   { id: "loja", nome: "Loja" },
   { id: "chácara", nome: "Chácara" },
   { id: "predio", nome: "Prédio Comercial" },
@@ -77,13 +80,14 @@ export const TIPOS_IMOVEIS = [
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
+    cep: "",
     address: "",
     neighborhood: "",
     city: "",
     state: "",
     area: "",
-    property: "",
     type: "",
+    property: "",
     phone: "",
   });
 
@@ -94,6 +98,53 @@ export default function RegisterPropertyScreen() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Função para buscar o endereço pelo CEP
+  const fetchAddressByCep = async (cep: string) => {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      if (response.data.erro) {
+        setErrorMessage("CEP inválido.");
+        setShowErrorModal(true);
+        return;
+      }
+
+      const { logradouro, bairro, localidade, uf } = response.data;
+
+      setFormData({
+        ...formData,
+        address: logradouro || "",
+        neighborhood: bairro || "",
+        city: localidade || "",
+        state: uf || "",
+      });
+
+      // Limpa os erros relacionados ao endereço
+      setErrors({
+        ...errors,
+        address: undefined,
+        neighborhood: undefined,
+        city: undefined,
+        state: undefined,
+      });
+    } catch (error) {
+      setErrorMessage("Erro ao buscar o endereço. Verifique o CEP.");
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleCepChange = (text: string) => {
+    setFormData({ ...formData, cep: text });
+
+    // Remove o erro de validação do CEP se ele existir
+    if (errors.cep) {
+      setErrors({ ...errors, cep: undefined });
+    }
+
+    if (text.length === 8) {
+      fetchAddressByCep(text);
+    }
+  };
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     let isValid = true;
@@ -103,8 +154,13 @@ export default function RegisterPropertyScreen() {
       isValid = false;
     }
 
+    if (!formData.cep.trim()) {
+      newErrors.cep = "CEP é obrigatório";
+      isValid = false;
+    }
+
     if (!formData.address.trim()) {
-      newErrors.address = "Endereço é obrigatório";
+      newErrors.address = "Rua é obrigatório";
       isValid = false;
     }
 
@@ -138,7 +194,7 @@ export default function RegisterPropertyScreen() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Telefone é obrigatório";
-      isValid = false;      
+      isValid = false;
     }
 
     setErrors(newErrors);
@@ -153,9 +209,15 @@ export default function RegisterPropertyScreen() {
     }
 
     try {
+      // Busca o nome do tipo de imóvel selecionado
+      const tipoImovel = TIPOS_IMOVEIS.find(
+        (tipo) => tipo.id === formData.type
+      );
+
       const newProperty = {
         id: Date.now().toString(),
         ...formData,
+        type: tipoImovel ? tipoImovel.nome : formData.type, // Salva o nome ao invés do id
       };
 
       const storedProperties = await AsyncStorage.getItem("properties");
@@ -199,19 +261,41 @@ export default function RegisterPropertyScreen() {
             <SelectField
               value={formData.type}
               placeholder="Tipo do Imóvel"
-              icon="building"
+              icon="home"
               options={TIPOS_IMOVEIS}
               error={!!errors.type}
               onPress={() => setShowTypeModal(true)}
             />
             {renderError("type")}
           </View>
+
+          <View>
+            <View style={[styles.inputGroup, errors.cep && styles.inputError]}>
+              <Icon
+                name="map-pin"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="CEP"
+                placeholderTextColor="#8F94FB"
+                keyboardType="numeric"
+                maxLength={8} // Ajustado para 8 dígitos
+                value={formData.cep}
+                onChangeText={handleCepChange}
+              />
+            </View>
+            {errors.cep && <Text style={styles.errorText}>{errors.cep}</Text>}
+          </View>
+
           <View>
             <View
               style={[styles.inputGroup, errors.address && styles.inputError]}
             >
               <Icon
-                name="home"
+                name="road"
                 type="font-awesome-5"
                 color="#8F94FB"
                 size={20}
@@ -221,12 +305,7 @@ export default function RegisterPropertyScreen() {
                 placeholder="Rua"
                 placeholderTextColor="#8F94FB"
                 value={formData.address}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, address: text });
-                  if (errors.address) {
-                    setErrors({ ...errors, address: undefined });
-                  }
-                }}
+                editable={false}
               />
             </View>
             {renderError("address")}
@@ -250,12 +329,7 @@ export default function RegisterPropertyScreen() {
                 placeholder="Bairro"
                 placeholderTextColor="#8F94FB"
                 value={formData.neighborhood}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, neighborhood: text });
-                  if (errors.neighborhood) {
-                    setErrors({ ...errors, neighborhood: undefined });
-                  }
-                }}
+                editable={false}
               />
             </View>
             {renderError("neighborhood")}
@@ -274,31 +348,30 @@ export default function RegisterPropertyScreen() {
                 placeholder="Cidade"
                 placeholderTextColor="#8F94FB"
                 value={formData.city}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, city: text });
-                  if (errors.city) {
-                    setErrors({ ...errors, city: undefined });
-                  }
-                }}
+                editable={false}
               />
             </View>
             {renderError("city")}
           </View>
 
           <View>
-            <SelectField
-              value={formData.state}
-              placeholder="Estado"
-              icon="flag"
-              options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla, aliquot }) => ({
-                id,
-                nome,
-                sigla,
-                aliquot: aliquot.toString(),
-              }))}
-              error={!!errors.state}
-              onPress={() => setShowStateModal(true)}
-            />
+            <View
+              style={[styles.inputGroup, errors.state && styles.inputError]}
+            >
+              <Icon
+                name="flag"
+                type="font-awesome-5"
+                color="#8F94FB"
+                size={20}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Estado"
+                placeholderTextColor="#8F94FB"
+                value={formData.state}
+                editable={false}
+              />
+            </View>
             {renderError("state")}
           </View>
 
@@ -317,9 +390,22 @@ export default function RegisterPropertyScreen() {
                 keyboardType="numeric"
                 value={formData.area}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, area: text });
-                  if (errors.area) {
-                    setErrors({ ...errors, area: undefined });
+                  const numericValue = text.replace(/[^0-9]/g, ""); // Remove caracteres não numéricos
+                  setFormData({ ...formData, area: numericValue });
+
+                  // Validação dinâmica
+                  if (!numericValue.trim()) {
+                    setErrors({ ...errors, area: "Área é obrigatória" });
+                  } else if (
+                    isNaN(Number(numericValue)) ||
+                    Number(numericValue) <= 0
+                  ) {
+                    setErrors({
+                      ...errors,
+                      area: "Área deve ser um número válido",
+                    });
+                  } else if (errors.area) {
+                    setErrors({ ...errors, area: undefined }); // Remove o erro se válido
                   }
                 }}
               />
@@ -343,9 +429,15 @@ export default function RegisterPropertyScreen() {
                 placeholderTextColor="#8F94FB"
                 keyboardType="numeric" // Define o teclado numérico para phone
                 value={formData.phone}
-                maxLength={11}
+                maxLength={15} // Ajusta o tamanho máximo para incluir o formato com máscara
                 onChangeText={(text) => {
-                  setFormData({ ...formData, phone: text });
+                  const formattedPhone = text
+                    .replace(/\D/g, "") // Remove caracteres não numéricos
+                    .replace(/^(\d{2})(\d)/, "($1) $2") // Adiciona parênteses ao DDD
+                    .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o hífen
+                    .slice(0, 15); // Limita o tamanho máximo
+
+                  setFormData({ ...formData, phone: formattedPhone });
 
                   if (errors.phone) {
                     setErrors({ ...errors, phone: undefined });
@@ -415,7 +507,7 @@ export default function RegisterPropertyScreen() {
         title="Selecione o Tipo do Imóvel"
         options={TIPOS_IMOVEIS}
         onSelect={(tipo) => {
-          setFormData({ ...formData, type: tipo.id });
+          setFormData({ ...formData, type: tipo.id }); // Atualiza o campo 'type' corretamente
           if (errors.type) {
             setErrors({ ...errors, type: undefined });
           }
@@ -456,7 +548,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   formContainer: {
     gap: 20,
@@ -491,7 +584,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   submitButtonText: {
     color: "#FFF",
