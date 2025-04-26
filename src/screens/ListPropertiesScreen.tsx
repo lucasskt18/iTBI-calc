@@ -27,11 +27,17 @@ type RootStackParamList = {
     propertyId: string;
   };
   ListPropertiesScreen: {
-    itbiValue: number | null;
-    propertyValue: string;
-    venalValue: string;
+    itbiValue?: number | null;
+    propertyValue?: string;
+    venalValue?: string;
   };
 };
+
+interface RouteParams {
+  itbiValue?: number | null;
+  propertyValue?: string;
+  venalValue?: string;
+}
 
 type NavigationProps = NavigationProp<RootStackParamList>;
 
@@ -62,7 +68,7 @@ export default function ListPropertiesScreen() {
     venalValue: "",
   });
   const route = useRoute();
-  const {itbiValue, propertyValue, venalValue} = route.params as any;
+  const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -119,8 +125,8 @@ export default function ListPropertiesScreen() {
       });
     }
   }, [result, formData]);
-  
-  
+
+
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setPropertyToDelete(null);
