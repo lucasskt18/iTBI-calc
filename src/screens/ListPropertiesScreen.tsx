@@ -26,11 +26,17 @@ type RootStackParamList = {
     propertyId: string;
   };
   ListPropertiesScreen: {
-    itbiValue: number | null;
-    propertyValue: string;
-    venalValue: string;
+    itbiValue?: number | null;
+    propertyValue?: string;
+    venalValue?: string;
   };
 };
+
+interface RouteParams {
+  itbiValue?: number | null;
+  propertyValue?: string;
+  venalValue?: string;
+}
 
 type NavigationProps = NavigationProp<RootStackParamList>;
 
@@ -57,6 +63,12 @@ export default function ListPropertiesScreen() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [result, setResult] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    propertyValue: "",
+    venalValue: "",
+  });
+  const route = useRoute();
+  const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -102,6 +114,17 @@ export default function ListPropertiesScreen() {
     }
   };
 
+  useEffect(() => {
+    if (result !== null) {
+      navigation.navigate('ListPropertiesScreen', {
+        itbiValue: result,
+        propertyValue: formData.propertyValue,
+        venalValue: formData.venalValue,
+      });
+    }
+  }, [result, formData]);
+
+
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setPropertyToDelete(null);
@@ -133,7 +156,7 @@ export default function ListPropertiesScreen() {
         <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
         <View style={{ marginVertical: -8 }} />
 
-        <View style={  styles.propertyInfo}>
+        <View style={styles.propertyInfo}>
           <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
           <Text style={styles.propertyOwner}>
             Valor de Transação: R$ 200.000
