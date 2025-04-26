@@ -118,8 +118,6 @@ export default function CalculateITBIScreen() {
     return isValid;
   };
 
-
-
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setFormData({
@@ -166,11 +164,17 @@ export default function CalculateITBIScreen() {
                 style={styles.input}
                 placeholder="Telefone do Proprietário"
                 placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
+                keyboardType="numeric" // Define o teclado numérico para phone
                 value={formData.phone}
-                maxLength={11}
+                maxLength={15} // Ajusta o tamanho máximo para incluir o formato com máscara
                 onChangeText={(text) => {
-                  setFormData({ ...formData, phone: text });
+                  const formattedPhone = text
+                    .replace(/\D/g, "") // Remove caracteres não numéricos
+                    .replace(/^(\d{2})(\d)/, "($1) $2") // Adiciona parênteses ao DDD
+                    .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o hífen
+                    .slice(0, 15); // Limita o tamanho máximo
+
+                  setFormData({ ...formData, phone: formattedPhone });
 
                   if (errors.phone) {
                     setErrors({ ...errors, phone: undefined });
@@ -240,7 +244,18 @@ export default function CalculateITBIScreen() {
                 keyboardType="numeric"
                 value={formData.propertyValue}
                 onChangeText={(text) => {
-                  setFormData({ ...formData, propertyValue: text });
+                  const numericText = text.replace(/\D/g, "");
+
+                  const floatNumber = (parseInt(numericText, 10) / 100).toFixed(
+                    2
+                  );
+
+                  const formattedValue = floatNumber
+                    .replace(".", ",")
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                  setFormData({ ...formData, propertyValue: formattedValue });
+
                   if (errors.propertyValue) {
                     setErrors({ ...errors, propertyValue: undefined });
                   }
@@ -270,7 +285,18 @@ export default function CalculateITBIScreen() {
                 value={formData.venalValue}
                 keyboardType="numeric"
                 onChangeText={(text) => {
-                  setFormData({ ...formData, venalValue: text });
+                  const numericText = text.replace(/\D/g, "");
+
+                  const floatNumber = (parseInt(numericText, 10) / 100).toFixed(
+                    2
+                  );
+
+                  const formattedValue = floatNumber
+                    .replace(".", ",")
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                  setFormData({ ...formData, venalValue: formattedValue });
+
                   if (errors.venalValue) {
                     setErrors({ ...errors, venalValue: undefined });
                   }
@@ -282,8 +308,17 @@ export default function CalculateITBIScreen() {
 
           <TouchableOpacity
             style={styles.calculateButton}
-            onPress={() => calculateITBI(formData, aliquot ?? 0, validateForm, setErrorMessage, setShowErrorModal, setResult, setShowSuccessModal)}
-
+            onPress={() =>
+              calculateITBI(
+                formData,
+                aliquot ?? 0,
+                validateForm,
+                setErrorMessage,
+                setShowErrorModal,
+                setResult,
+                setShowSuccessModal
+              )
+            }
           >
             <Text style={styles.calculateButtonText}>Calcular ITBI</Text>
           </TouchableOpacity>
@@ -358,7 +393,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   formContainer: {
     gap: 20,
@@ -393,7 +429,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   calculateButtonText: {
     color: "#FFF",

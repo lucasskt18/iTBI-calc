@@ -134,13 +134,6 @@ export default function EditPropertyScreen() {
       isValid = false;
     }
 
-    // if (!formData.value.trim()) {
-    //     newErrors.value = 'Valor é obrigatório';
-    //     isValid = false;
-    // } else if (isNaN(Number(formData.value)) || Number(formData.value) <= 0) {
-    //     newErrors.value = 'Valor deve ser um número válido';
-    //     isValid = false;
-    // }
 
     if (!formData.type.trim()) {
       newErrors.type = "Tipo do imóvel é obrigatório";
@@ -241,7 +234,7 @@ export default function EditPropertyScreen() {
             <SelectField
               value={formData.type}
               placeholder="Tipo do Imóvel"
-              icon="building"
+              icon="home"
               options={TIPOS_IMOVEIS}
               error={!!errors.type}
               onPress={() => setShowTypeModal(true)}
@@ -253,14 +246,14 @@ export default function EditPropertyScreen() {
               style={[styles.inputGroup, errors.address && styles.inputError]}
             >
               <Icon
-                name="home"
+                name="road"
                 type="font-awesome-5"
                 color="#8F94FB"
                 size={20}
               />
               <TextInput
                 style={styles.input}
-                placeholder="Endereço"
+                placeholder="Rua"
                 placeholderTextColor="#8F94FB"
                 value={formData.address}
                 onChangeText={(text) => {
@@ -465,7 +458,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   formContainer: {
     gap: 20,
@@ -500,7 +494,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   submitButtonText: {
     color: "#FFF",
