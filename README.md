@@ -1,4 +1,4 @@
-# iTBI-calc - Gestão de Imóveis e Cálculo de ITBI
+# Gestão de Imóveis e Cálculo de ITBI
 
 Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóveis e cálculo de ITBI (Imposto sobre Transmissão de Bens Imóveis).
 
