@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
 import calculateITBI from "../utils/calculeteITBI";
+import CalculatorVenalITBI from '../components/CalculatorVenalITBI';
 
 type RootStackParamList = {
   EditProperty: {
@@ -54,6 +55,7 @@ interface Property {
   venalValue: string;
   propertyValue: string;
   propertyPhone: string;
+  itbiValue?: string;
 }
 
 export default function ListPropertiesScreen() {
@@ -69,6 +71,7 @@ export default function ListPropertiesScreen() {
   });
   const route = useRoute();
   const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
+  const [showCalculator, setShowCalculator] = useState<string | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -134,57 +137,99 @@ export default function ListPropertiesScreen() {
     navigation.navigate("EditProperty", { propertyId: id });
   };
 
-  const renderProperty = ({ item }: { item: Property }) => (
-    <View style={styles.propertyCard}>
-      <View style={styles.propertyHeader}>
-        <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
-        <Text style={styles.propertyType}>
-          {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-        </Text>
-      </View>
+  const renderProperty = ({ item }: { item: Property }) => {
+    const handleSaveCalculation = async (result: { valorVenal: number; baseCalculo: number; itbi: number }) => {
+      const updatedProperties = properties.map((prop) =>
+        prop.id === item.id
+          ? {
+            ...prop,
+            venalValue: result.valorVenal.toString(),
+            propertyValue: result.baseCalculo.toString(),
+            itbiValue: result.itbi.toString(),
+          }
+          : prop
+      );
+      setProperties(updatedProperties);
+      await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
+    };
 
-      <View style={styles.propertyInfo}>
-        <Text style={styles.propertyAddress}>
-          {item.address}, {item.neighborhood}
-        </Text>
-        <Text style={styles.propertyLocation}>
-          {item.city}, {item.state}
-        </Text>
-        <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
-        <Text style={styles.propertyOwner}>CEP: {item.cep}</Text>
-        <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
-        <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
-        <View style={{ marginVertical: -8 }} />
+    return (
+      <View style={styles.propertyCard}>
+        <View style={styles.propertyHeader}>
+          <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
+          <Text style={styles.propertyType}>
+            {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+          </Text>
+        </View>
 
         <View style={styles.propertyInfo}>
-          <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
-          <Text style={styles.propertyOwner}>
-            Valor de Transação: R$ 200.000
+          <Text style={styles.propertyAddress}>
+            {item.address}, {item.neighborhood}
           </Text>
-          <Text style={styles.propertyOwner}>Valor Venal: R$: 100.000</Text>
-          <Text style={styles.propertyOwner}>ITBI: R$ 30.000</Text>
+          <Text style={styles.propertyLocation}>
+            {item.city}, {item.state}
+          </Text>
+          <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
+          <Text style={styles.propertyOwner}>CEP: {item.cep}</Text>
+          <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
+          <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
+          <View style={{ marginVertical: -8 }} />
+          <View style={styles.propertyInfo}>
+            <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
+            <Text style={styles.propertyOwner}>
+              Valor de Transação: R$ {item.propertyValue ? Number(item.propertyValue).toLocaleString('pt-BR') : '-'}
+            </Text>
+            <Text style={styles.propertyOwner}>
+              Valor Venal: R$ {item.venalValue ? Number(item.venalValue).toLocaleString('pt-BR') : '-'}
+            </Text>
+            <Text style={styles.propertyOwner}>
+              ITBI: R$ {item.itbiValue ? Number(item.itbiValue).toLocaleString('pt-BR') : '-'}
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.editButton]}
-          onPress={() => handleEditProperty(item.id)}
-        >
-          <Icon name="edit" type="font-awesome-5" color="#FFF" size={14} />
-          <Text style={styles.actionButtonText}>Editar</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => handleEditProperty(item.id)}
+          >
+            <Icon name="edit" type="font-awesome-5" color="#FFF" size={14} />
+            <Text style={styles.actionButtonText}>Editar</Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[styles.actionButton, styles.deleteButton]}
+            onPress={() => handleDeleteProperty(item.id)}
+          >
+            <Icon name="trash-alt" type="font-awesome-5" color="#FFF" size={14} />
+            <Text style={styles.actionButtonText}>Excluir</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => handleDeleteProperty(item.id)}
+          style={[styles.actionButton, { backgroundColor: '#8F94FB', marginTop: 10 }]}
+          onPress={() => setShowCalculator(item.id)}
         >
-          <Icon name="trash-alt" type="font-awesome-5" color="#FFF" size={14} />
-          <Text style={styles.actionButtonText}>Excluir</Text>
+          <Icon name="calculator" type="font-awesome-5" color="#FFF" size={14} />
+          <Text style={styles.actionButtonText}>Calcular Valor Venal/ITBI</Text>
         </TouchableOpacity>
+        {showCalculator === item.id && (
+          <View style={{ marginTop: 16 }}>
+            <CalculatorVenalITBI
+              initialAreaConstruida={item.area}
+              initialValorTransacao={item.propertyValue}
+              onSave={handleSaveCalculation}
+            />
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: '#FF6B6B', marginTop: 10 }]}
+              onPress={() => setShowCalculator(null)}
+            >
+              <Text style={styles.actionButtonText}>Fechar Cálculo</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
