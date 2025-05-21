@@ -17,7 +17,7 @@ import SuccessModal from "../components/SuccessModal";
 import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import { ESTADOS_BRASILEIROS } from "./RegisterPropertyScreen";
-import calculateITBI from "../utils/calculeteITBI"; // Import the calculateITBI function
+import calculateITBI from "../utils/calculateITBI"; // Import the calculateITBI function
 
 interface ESTADOS_BRASILEIROS {
   id: string;

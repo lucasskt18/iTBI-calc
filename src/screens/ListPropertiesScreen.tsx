@@ -19,7 +19,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
-import calculateITBI from "../utils/calculeteITBI";
+import calculateITBI from "../utils/calculateITBI";
 import CalculatorVenalITBI from '../components/CalculatorVenalITBI';
 
 type RootStackParamList = {

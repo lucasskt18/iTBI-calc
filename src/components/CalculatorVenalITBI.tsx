@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { calcularValorVenal, calcularITBI } from '../utils/calculeteITBI';
+import { calcularValorVenal, calcularITBI } from '../utils/calculateITBI';
 
 interface CalculatorVenalITBIProps {
     initialAreaConstruida?: string;
