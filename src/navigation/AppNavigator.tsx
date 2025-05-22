@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from '../screens/HomeScreen';
 import RegisterPropertyScreen from '../screens/RegisterPropertyScreen';
-import CalculateITBIScreen from '../screens/CalculateITBIScreen';
+// import CalculateITBIScreen from '../screens/CalculateITBIScreen';
 import ListPropertiesScreen from '../screens/ListPropertiesScreen';
 import EditPropertyScreen from '../screens/EditPropertyScreen';
 import AboutUsScreen from '../screens/AboutUsScreen';
@@ -38,13 +38,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="RegisterProperty"
           component={RegisterPropertyScreen}
-          options={{
-            animation: 'slide_from_right',
-          }}
-        />
-        <Stack.Screen
-          name="CalculateITBI"
-          component={CalculateITBIScreen}
           options={{
             animation: 'slide_from_right',
           }}

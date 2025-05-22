@@ -73,13 +73,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("RegisterProperty")}
           />
           <MenuItem
-            title="Calcular ITBI"
-            icon="calculator"
-            color="#4E54C8"
-            onPress={() => navigation.navigate("CalculateITBI")}
-          />
-          <MenuItem
-            title="Consultar Imóveis"
+            title="Consultar Imóveis & Calcular ITBI"
             icon="list"
             color="#00B4DB"
             onPress={() => navigation.navigate("ListProperties")}
@@ -133,32 +127,34 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
-    position: 'absolute',
-    bottom: 100
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 0,
+    position: 'relative',
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 20,
+    width: '100%',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 28,
   },
   card: {
-    width: cardWidth,
-    height: 160,
+    width: "100%",
+    maxWidth: 350,
+    minHeight: 70,
     borderRadius: 20,
-    padding: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginBottom: 0,
   },
   cardText: {
     color: "#FFF",
