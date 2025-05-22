@@ -53,7 +53,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo.png")}
-          style={{ width: "35%", height: 100, resizeMode: "contain" }}
+          style={{ width: "40%", height: 100, resizeMode: "contain" }}
         />
         <Text style={styles.headerTitle}>Calculadora de ITBI</Text>
       </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    // paddingTop: 40,
+    paddingTop: 50,
   },
   headerTitle: {
     fontSize: 20,
@@ -110,20 +110,20 @@ const styles = StyleSheet.create({
   },
   textFirstCta: {
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#FFF",
     marginTop: 50,
     marginBottom: 10,
-    paddingHorizontal: 20,
+    // paddingHorizontal: ,
   },
   textSecondCta: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 18,
     color: "#8F94FB",
     opacity: 0.8,
-    lineHeight: 22,
-    paddingHorizontal: 20,
+    lineHeight: 25,
+    paddingHorizontal: 30,
   },
   content: {
     flex: 1,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 28,
+    gap: 20,
   },
   card: {
     width: "100%",
