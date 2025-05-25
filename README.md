@@ -89,10 +89,10 @@ npx expo start
 
 ## 📓 Acesse Nossa Documentação!
 <p>
-  <a href="https://drive.google.com/file/d/1TacRJokpeL5ZtLSPH4vPiuPFz2nQUKmK/view?usp=drive_link">1 - Carta de Apresentação</a>
+  <a href="https://drive.google.com/file/d/1TacRJokpeL5ZtLSPH4vPiuPFz2nQUKmK/view?usp=drive_link">Carta de Apresentação</a>
 </p>
 <p>
-  <a href="https://docs.google.com/document/d/13PA4Xut0ibwTJEob-NygCCLbVxBaCYJy/edit?usp=drive_link&ouid=116550957341629840960&rtpof=true&sd=true">2 - Diagnóstico e Teorização</a>
+  <a href="https://docs.google.com/document/d/19HdPLXhG-DyQA6vMqrFrlCkmMjMlJkaj/edit?usp=sharing&ouid=116550957341629840960&rtpof=true&sd=true">Roteiro de Extensão</a>
 </p>
 
 
