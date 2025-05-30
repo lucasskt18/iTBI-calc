@@ -19,8 +19,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
-import calculateITBI from "../utils/calculateITBI";
-import CalculatorVenalITBI from '../components/CalculatorVenalITBI';
+import CalculatorITBI from '../components/CalculatorITBI';
 
 type RootStackParamList = {
   EditProperty: {
@@ -70,7 +69,7 @@ export default function ListPropertiesScreen() {
     venalValue: "",
   });
   const route = useRoute();
-  const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
+  // const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
   const [showCalculator, setShowCalculator] = useState<string | null>(null);
 
   useFocusEffect(
@@ -210,12 +209,11 @@ export default function ListPropertiesScreen() {
           onPress={() => setShowCalculator(item.id)}
         >
           <Icon name="calculator" type="font-awesome-5" color="#FFF" size={14} />
-          <Text style={styles.actionButtonText}>Calcular Valor Venal/ITBI</Text>
+          <Text style={styles.actionButtonText}>Calcular ITBI</Text>
         </TouchableOpacity>
         {showCalculator === item.id && (
           <View style={{ marginTop: 16 }}>
-            <CalculatorVenalITBI
-              initialAreaConstruida={item.area}
+            <CalculatorITBI
               initialValorTransacao={item.propertyValue}
               onSave={handleSaveCalculation}
             />
