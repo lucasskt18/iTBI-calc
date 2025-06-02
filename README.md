@@ -43,7 +43,7 @@ Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóve
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/lucasskt18/Dispositivos-Moveis.git
+git clone https://github.com/lucasskt18/iTBI-calc.git
 ```
 
 2. Entre na pasta do projeto:
