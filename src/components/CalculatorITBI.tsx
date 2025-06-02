@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-// import { calcularValorVenal, calcularITBI } from "../utils/calculateITBI";
 
 interface CalculatorVenalITBIProps {
   initialValorVenal?: string;
@@ -51,10 +50,10 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
     const itbi = baseCalculo * aliq;
 
     setResultado({
-        valorVenal: vVenal,
-        valorTransacao: vTrans,
-        baseCalculo,
-        itbi,
+      valorVenal: vVenal,
+      valorTransacao: vTrans,
+      baseCalculo,
+      itbi,
     });
   };
 
@@ -76,20 +75,23 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       <TextInput
         style={styles.input}
         placeholder="Valor de Transação (R$)"
+        placeholderTextColor="#8F94FB"
         keyboardType="numeric"
         value={valorTransacao}
-        onChangeText={text => setValorTransacao(formatarMoeda(text))}
+        onChangeText={(text) => setValorTransacao(formatarMoeda(text))}
       />
       <TextInput
         style={styles.input}
         placeholder="Valor Venal (R$)"
+        placeholderTextColor="#8F94FB"
         keyboardType="numeric"
         value={valorVenal}
-        onChangeText={text => setValorVenal(formatarMoeda(text))}
+        onChangeText={(text) => setValorVenal(formatarMoeda(text))}
       />
       <TextInput
         style={styles.input}
         placeholder="Alíquota (%)"
+        placeholderTextColor="#8F94FB"
         keyboardType="numeric"
         value={aliquota}
         onChangeText={setAliquota}
