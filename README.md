@@ -48,7 +48,7 @@ git clone https://github.com/lucasskt18/iTBI-calc.git
 
 2. Entre na pasta do projeto:
 ```bash
-cd Dispositivos-Moveis
+cd iTBI-calc
 ```
 
 3. Instale as dependências:
