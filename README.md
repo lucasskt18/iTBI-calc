@@ -1,8 +1,8 @@
-# Gestão de Imóveis e Cálculo de ITBI
+# Gestão de Imóveis & Cálculo de ITBI
 
 Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóveis e cálculo de ITBI (Imposto sobre Transmissão de Bens Imóveis).
 
-## 📱 Funcionalidades
+## 📱 Funcionalidades:
 
 - **Cadastro de Imóveis**: Registre imóveis com informações detalhadas
   - Endereço completo
@@ -22,7 +22,7 @@ Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóve
   - Exclusão de registros
   - Visualização detalhada
 
-## 🚀 Tecnologias
+## 🚀 Tecnologias:
 
 - [React Native](https://reactnative.dev/)
 - [Expo](https://expo.dev/)
@@ -31,7 +31,7 @@ Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóve
 - [React Native Elements](https://reactnativeelements.com/)
 - [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
 
-## 📋 Pré-requisitos
+## 📋 Pré-requisitos:
 
 - [Node.js](https://nodejs.org/) (versão 16 ou superior)
 - [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
@@ -39,7 +39,7 @@ Um aplicativo móvel desenvolvido com React Native e Expo para gestão de imóve
 - [Android Studio](https://developer.android.com/studio) (para emulador Android)
 - Ou dispositivo físico com [Expo Go](https://expo.dev/client)
 
-## 🔧 Instalação
+## 🔧 Instalação:
 
 1. Clone o repositório:
 ```bash
@@ -65,7 +65,7 @@ yarn install
 npx expo start
 ```
 
-## 📱 Executando no Emulador
+## 📱 Executando no Emulador:
 
 1. Instale e configure o Android Studio
 2. Crie um dispositivo virtual (AVD) no AVD Manager
@@ -75,7 +75,7 @@ npx expo start
 npx expo start --android
 ```
 
-## 📱 Executando no Dispositivo Físico
+## 📱 Executando no Dispositivo Físico:
 
 1. Instale o aplicativo Expo Go no seu dispositivo
 2. Execute o projeto:
