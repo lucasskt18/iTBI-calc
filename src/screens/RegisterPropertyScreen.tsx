@@ -98,7 +98,6 @@ export default function RegisterPropertyScreen() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Função para buscar o endereço pelo CEP
   const fetchAddressByCep = async (cep: string) => {
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
@@ -118,7 +117,6 @@ export default function RegisterPropertyScreen() {
         state: uf || "",
       });
 
-      // Limpa os erros relacionados ao endereço
       setErrors({
         ...errors,
         address: undefined,
@@ -135,7 +133,6 @@ export default function RegisterPropertyScreen() {
   const handleCepChange = (text: string) => {
     setFormData({ ...formData, cep: text });
 
-    // Remove o erro de validação do CEP se ele existir
     if (errors.cep) {
       setErrors({ ...errors, cep: undefined });
     }
@@ -282,7 +279,7 @@ export default function RegisterPropertyScreen() {
                 placeholder="CEP"
                 placeholderTextColor="#8F94FB"
                 keyboardType="numeric"
-                maxLength={8} // Ajustado para 8 dígitos
+                maxLength={8}
                 value={formData.cep}
                 onChangeText={handleCepChange}
               />
@@ -390,10 +387,9 @@ export default function RegisterPropertyScreen() {
                 keyboardType="numeric"
                 value={formData.area}
                 onChangeText={(text) => {
-                  const numericValue = text.replace(/[^0-9]/g, ""); // Remove caracteres não numéricos
+                  const numericValue = text.replace(/[^0-9]/g, "");
                   setFormData({ ...formData, area: numericValue });
 
-                  // Validação dinâmica
                   if (!numericValue.trim()) {
                     setErrors({ ...errors, area: "Área é obrigatória" });
                   } else if (
@@ -405,7 +401,7 @@ export default function RegisterPropertyScreen() {
                       area: "Área deve ser um número válido",
                     });
                   } else if (errors.area) {
-                    setErrors({ ...errors, area: undefined }); // Remove o erro se válido
+                    setErrors({ ...errors, area: undefined });
                   }
                 }}
               />
@@ -427,15 +423,15 @@ export default function RegisterPropertyScreen() {
                 style={styles.input}
                 placeholder="Telefone do Proprietário"
                 placeholderTextColor="#8F94FB"
-                keyboardType="numeric" // Define o teclado numérico para phone
+                keyboardType="numeric"
                 value={formData.phone}
-                maxLength={15} // Ajusta o tamanho máximo para incluir o formato com máscara
+                maxLength={15}
                 onChangeText={(text) => {
                   const formattedPhone = text
-                    .replace(/\D/g, "") // Remove caracteres não numéricos
-                    .replace(/^(\d{2})(\d)/, "($1) $2") // Adiciona parênteses ao DDD
-                    .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o hífen
-                    .slice(0, 15); // Limita o tamanho máximo
+                    .replace(/\D/g, "")
+                    .replace(/^(\d{2})(\d)/, "($1) $2")
+                    .replace(/(\d{5})(\d)/, "$1-$2")
+                    .slice(0, 15);
 
                   setFormData({ ...formData, phone: formattedPhone });
 
@@ -507,7 +503,7 @@ export default function RegisterPropertyScreen() {
         title="Selecione o Tipo do Imóvel"
         options={TIPOS_IMOVEIS}
         onSelect={(tipo) => {
-          setFormData({ ...formData, type: tipo.id }); // Atualiza o campo 'type' corretamente
+          setFormData({ ...formData, type: tipo.id });
           if (errors.type) {
             setErrors({ ...errors, type: undefined });
           }
