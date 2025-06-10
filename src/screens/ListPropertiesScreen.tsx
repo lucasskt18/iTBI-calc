@@ -69,7 +69,6 @@ export default function ListPropertiesScreen() {
     venalValue: "",
   });
   const route = useRoute();
-  // const { itbiValue = null, propertyValue = '0', venalValue = '0' } = (route.params as RouteParams) || {};
   const [showCalculator, setShowCalculator] = useState<string | null>(null);
 
   useFocusEffect(
