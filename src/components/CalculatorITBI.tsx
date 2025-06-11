@@ -23,6 +23,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
   initialValorVenal = "",
   initialValorTransacao = "",
   initialAliquota = "",
+  onSave,
 }) => {
   const [valorVenal, setValorVenal] = useState(initialValorVenal);
   const [valorTransacao, setValorTransacao] = useState(initialValorTransacao);
@@ -55,6 +56,14 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       baseCalculo,
       itbi,
     });
+
+    if (onSave) {
+      onSave({
+        valorVenal: vVenal,
+        baseCalculo,
+        itbi,
+      });
+    }
   };
 
   // Função utilitária para formatar como moeda BRL
