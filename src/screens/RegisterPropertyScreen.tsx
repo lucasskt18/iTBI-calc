@@ -8,8 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  // Alert,
-  // Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
@@ -252,230 +252,236 @@ export default function RegisterPropertyScreen() {
         <Text style={styles.headerSubtitle}>Preencha os dados do imóvel</Text>
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.formContainer}>
-          <View>
-            <SelectField
-              value={formData.type}
-              placeholder="Tipo do Imóvel"
-              icon="home"
-              options={TIPOS_IMOVEIS}
-              error={!!errors.type}
-              onPress={() => setShowTypeModal(true)}
-            />
-            {renderError("type")}
-          </View>
-
-          <View>
-            <View style={[styles.inputGroup, errors.cep && styles.inputError]}>
-              <Icon
-                name="map-pin"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <View>
+              <SelectField
+                value={formData.type}
+                placeholder="Tipo do Imóvel"
+                icon="home"
+                options={TIPOS_IMOVEIS}
+                error={!!errors.type}
+                onPress={() => setShowTypeModal(true)}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="CEP"
-                placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                maxLength={8}
-                value={formData.cep}
-                onChangeText={handleCepChange}
-              />
+              {renderError("type")}
             </View>
-            {errors.cep && <Text style={styles.errorText}>{errors.cep}</Text>}
-          </View>
 
-          <View>
-            <View
-              style={[styles.inputGroup, errors.address && styles.inputError]}
-            >
-              <Icon
-                name="road"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Rua"
-                placeholderTextColor="#8F94FB"
-                value={formData.address}
-                editable={false}
-              />
+            <View>
+              <View style={[styles.inputGroup, errors.cep && styles.inputError]}>
+                <Icon
+                  name="map-pin"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="CEP"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  maxLength={8}
+                  value={formData.cep}
+                  onChangeText={handleCepChange}
+                />
+              </View>
+              {errors.cep && <Text style={styles.errorText}>{errors.cep}</Text>}
             </View>
-            {renderError("address")}
-          </View>
 
-          <View>
-            <View
-              style={[
-                styles.inputGroup,
-                errors.neighborhood && styles.inputError,
-              ]}
-            >
-              <Icon
-                name="map-marker-alt"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Bairro"
-                placeholderTextColor="#8F94FB"
-                value={formData.neighborhood}
-                editable={false}
-              />
+            <View>
+              <View
+                style={[styles.inputGroup, errors.address && styles.inputError]}
+              >
+                <Icon
+                  name="road"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Rua"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.address}
+                  editable={false}
+                />
+              </View>
+              {renderError("address")}
             </View>
-            {renderError("neighborhood")}
-          </View>
 
-          <View>
-            <View style={[styles.inputGroup, errors.city && styles.inputError]}>
-              <Icon
-                name="city"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Cidade"
-                placeholderTextColor="#8F94FB"
-                value={formData.city}
-                editable={false}
-              />
+            <View>
+              <View
+                style={[
+                  styles.inputGroup,
+                  errors.neighborhood && styles.inputError,
+                ]}
+              >
+                <Icon
+                  name="map-marker-alt"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Bairro"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.neighborhood}
+                  editable={false}
+                />
+              </View>
+              {renderError("neighborhood")}
             </View>
-            {renderError("city")}
-          </View>
 
-          <View>
-            <View
-              style={[styles.inputGroup, errors.state && styles.inputError]}
-            >
-              <Icon
-                name="flag"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Estado"
-                placeholderTextColor="#8F94FB"
-                value={formData.state}
-                editable={false}
-              />
+            <View>
+              <View style={[styles.inputGroup, errors.city && styles.inputError]}>
+                <Icon
+                  name="city"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Cidade"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.city}
+                  editable={false}
+                />
+              </View>
+              {renderError("city")}
             </View>
-            {renderError("state")}
-          </View>
 
-          <View>
-            <View style={[styles.inputGroup, errors.area && styles.inputError]}>
-              <Icon
-                name="ruler-combined"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Área (m²)"
-                placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                value={formData.area}
-                onChangeText={(text) => {
-                  const numericValue = text.replace(/[^0-9]/g, "");
-                  setFormData({ ...formData, area: numericValue });
-
-                  if (!numericValue.trim()) {
-                    setErrors({ ...errors, area: "Área é obrigatória" });
-                  } else if (
-                    isNaN(Number(numericValue)) ||
-                    Number(numericValue) <= 0
-                  ) {
-                    setErrors({
-                      ...errors,
-                      area: "Área deve ser um número válido",
-                    });
-                  } else if (errors.area) {
-                    setErrors({ ...errors, area: undefined });
-                  }
-                }}
-              />
+            <View>
+              <View
+                style={[styles.inputGroup, errors.state && styles.inputError]}
+              >
+                <Icon
+                  name="flag"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Estado"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.state}
+                  editable={false}
+                />
+              </View>
+              {renderError("state")}
             </View>
-            {renderError("area")}
-          </View>
 
-          <View>
-            <View
-              style={[styles.inputGroup, errors.phone && styles.inputError]}
-            >
-              <Icon
-                name="phone-alt"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Telefone do Proprietário"
-                placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                value={formData.phone}
-                maxLength={15}
-                onChangeText={(text) => {
-                  const formattedPhone = text
-                    .replace(/\D/g, "")
-                    .replace(/^(\d{2})(\d)/, "($1) $2")
-                    .replace(/(\d{5})(\d)/, "$1-$2")
-                    .slice(0, 15);
+            <View>
+              <View style={[styles.inputGroup, errors.area && styles.inputError]}>
+                <Icon
+                  name="ruler-combined"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Área (m²)"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  value={formData.area}
+                  onChangeText={(text) => {
+                    const numericValue = text.replace(/[^0-9]/g, "");
+                    setFormData({ ...formData, area: numericValue });
 
-                  setFormData({ ...formData, phone: formattedPhone });
-
-                  if (errors.phone) {
-                    setErrors({ ...errors, phone: undefined });
-                  }
-                }}
-              />
+                    if (!numericValue.trim()) {
+                      setErrors({ ...errors, area: "Área é obrigatória" });
+                    } else if (
+                      isNaN(Number(numericValue)) ||
+                      Number(numericValue) <= 0
+                    ) {
+                      setErrors({
+                        ...errors,
+                        area: "Área deve ser um número válido",
+                      });
+                    } else if (errors.area) {
+                      setErrors({ ...errors, area: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("area")}
             </View>
-            {renderError("phone")}
-          </View>
 
-          <View>
-            <View
-              style={[styles.inputGroup, errors.property && styles.inputError]}
-            >
-              <Icon
-                name="user"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Proprietário"
-                placeholderTextColor="#8F94FB"
-                value={formData.property}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, property: text });
+            <View>
+              <View
+                style={[styles.inputGroup, errors.phone && styles.inputError]}
+              >
+                <Icon
+                  name="phone-alt"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Telefone do Proprietário"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  value={formData.phone}
+                  maxLength={15}
+                  onChangeText={(text) => {
+                    const formattedPhone = text
+                      .replace(/\D/g, "")
+                      .replace(/^(\d{2})(\d)/, "($1) $2")
+                      .replace(/(\d{5})(\d)/, "$1-$2")
+                      .slice(0, 15);
 
-                  if (errors.property) {
-                    setErrors({ ...errors, property: undefined });
-                  }
-                }}
-              />
+                    setFormData({ ...formData, phone: formattedPhone });
+
+                    if (errors.phone) {
+                      setErrors({ ...errors, phone: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("phone")}
             </View>
-            {renderError("property")}
-          </View>
 
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Cadastrar Imóvel</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <View>
+              <View
+                style={[styles.inputGroup, errors.property && styles.inputError]}
+              >
+                <Icon
+                  name="user"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Proprietário"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.property}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, property: text });
+
+                    if (errors.property) {
+                      setErrors({ ...errors, property: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("property")}
+            </View>
+
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Cadastrar Imóvel</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <SuccessModal
         visible={showSuccessModal}

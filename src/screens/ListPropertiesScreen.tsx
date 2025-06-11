@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import {
@@ -274,29 +276,35 @@ export default function ListPropertiesScreen() {
         </Text>
       </View>
 
-      {loading ? (
-        <View style={styles.centerContent}>
-          <Text style={styles.loadingText}>Carregando...</Text>
-        </View>
-      ) : properties.length === 0 ? (
-        <View style={styles.centerContent}>
-          <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
-          <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => navigation.navigate("RegisterProperty" as never)}
-          >
-            <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <FlatList
-          data={properties}
-          renderItem={renderProperty}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        {loading ? (
+          <View style={styles.centerContent}>
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        ) : properties.length === 0 ? (
+          <View style={styles.centerContent}>
+            <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
+            <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => navigation.navigate("RegisterProperty" as never)}
+            >
+              <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={properties}
+            renderItem={renderProperty}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+      </KeyboardAvoidingView>
 
       <ConfirmationModal
         visible={showDeleteModal}
