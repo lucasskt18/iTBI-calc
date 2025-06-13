@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import {
@@ -19,7 +21,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
-import CalculatorITBI from '../components/CalculatorITBI';
+import CalculatorITBI from "../components/CalculatorITBI";
 
 type RootStackParamList = {
   EditProperty: {
@@ -117,14 +119,13 @@ export default function ListPropertiesScreen() {
 
   useEffect(() => {
     if (result !== null) {
-      navigation.navigate('ListPropertiesScreen', {
+      navigation.navigate("ListPropertiesScreen", {
         itbiValue: result,
         propertyValue: formData.propertyValue,
         venalValue: formData.venalValue,
       });
     }
   }, [result, formData]);
-
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
@@ -136,19 +137,26 @@ export default function ListPropertiesScreen() {
   };
 
   const renderProperty = ({ item }: { item: Property }) => {
-    const handleSaveCalculation = async (result: { valorVenal: number; baseCalculo: number; itbi: number }) => {
+    const handleSaveCalculation = async (result: {
+      valorVenal: number;
+      baseCalculo: number;
+      itbi: number;
+    }) => {
       const updatedProperties = properties.map((prop) =>
         prop.id === item.id
           ? {
-            ...prop,
-            venalValue: result.valorVenal.toString(),
-            propertyValue: result.baseCalculo.toString(),
-            itbiValue: result.itbi.toString(),
-          }
+              ...prop,
+              venalValue: result.valorVenal.toString(),
+              propertyValue: result.baseCalculo.toString(),
+              itbiValue: result.itbi.toString(),
+            }
           : prop
       );
       setProperties(updatedProperties);
-      await AsyncStorage.setItem('properties', JSON.stringify(updatedProperties));
+      await AsyncStorage.setItem(
+        "properties",
+        JSON.stringify(updatedProperties)
+      );
     };
 
     return (
@@ -169,19 +177,30 @@ export default function ListPropertiesScreen() {
           </Text>
           <Text style={styles.propertyArea}>Área: {item.area} m²</Text>
           <Text style={styles.propertyOwner}>CEP: {item.cep}</Text>
-          <Text style={styles.propertyOwner}>Proprietário: {item.property}</Text>
+          <Text style={styles.propertyOwner}>
+            Proprietário: {item.property}
+          </Text>
           <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
           <View style={{ marginVertical: -8 }} />
           <View style={styles.propertyInfo}>
             <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
             <Text style={styles.propertyOwner}>
-              Valor de Transação: R$ {item.propertyValue ? Number(item.propertyValue).toLocaleString('pt-BR') : '-'}
+              Valor de Transação: R${" "}
+              {item.propertyValue
+                ? Number(item.propertyValue).toLocaleString("pt-BR")
+                : "-"}
             </Text>
             <Text style={styles.propertyOwner}>
-              Valor Venal: R$ {item.venalValue ? Number(item.venalValue).toLocaleString('pt-BR') : '-'}
+              Valor Venal: R${" "}
+              {item.venalValue
+                ? Number(item.venalValue).toLocaleString("pt-BR")
+                : "-"}
             </Text>
             <Text style={styles.propertyOwner}>
-              ITBI: R$ {item.itbiValue ? Number(item.itbiValue).toLocaleString('pt-BR') : '-'}
+              ITBI: R${" "}
+              {item.itbiValue
+                ? Number(item.itbiValue).toLocaleString("pt-BR")
+                : "-"}
             </Text>
           </View>
         </View>
@@ -199,15 +218,28 @@ export default function ListPropertiesScreen() {
             style={[styles.actionButton, styles.deleteButton]}
             onPress={() => handleDeleteProperty(item.id)}
           >
-            <Icon name="trash-alt" type="font-awesome-5" color="#FFF" size={14} />
+            <Icon
+              name="trash-alt"
+              type="font-awesome-5"
+              color="#FFF"
+              size={14}
+            />
             <Text style={styles.actionButtonText}>Excluir</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#8F94FB', marginTop: 10 }]}
+          style={[
+            styles.actionButton,
+            { backgroundColor: "#8F94FB", marginTop: 10 },
+          ]}
           onPress={() => setShowCalculator(item.id)}
         >
-          <Icon name="calculator" type="font-awesome-5" color="#FFF" size={14} />
+          <Icon
+            name="calculator"
+            type="font-awesome-5"
+            color="#FFF"
+            size={14}
+          />
           <Text style={styles.actionButtonText}>Calcular ITBI</Text>
         </TouchableOpacity>
         {showCalculator === item.id && (
@@ -217,7 +249,10 @@ export default function ListPropertiesScreen() {
               onSave={handleSaveCalculation}
             />
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: '#FF6B6B', marginTop: 10 }]}
+              style={[
+                styles.actionButton,
+                { backgroundColor: "#FF6B6B", marginTop: 10 },
+              ]}
               onPress={() => setShowCalculator(null)}
             >
               <Text style={styles.actionButtonText}>Fechar Cálculo</Text>
@@ -241,29 +276,35 @@ export default function ListPropertiesScreen() {
         </Text>
       </View>
 
-      {loading ? (
-        <View style={styles.centerContent}>
-          <Text style={styles.loadingText}>Carregando...</Text>
-        </View>
-      ) : properties.length === 0 ? (
-        <View style={styles.centerContent}>
-          <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
-          <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => navigation.navigate("RegisterProperty" as never)}
-          >
-            <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <FlatList
-          data={properties}
-          renderItem={renderProperty}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        {loading ? (
+          <View style={styles.centerContent}>
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        ) : properties.length === 0 ? (
+          <View style={styles.centerContent}>
+            <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
+            <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => navigation.navigate("RegisterProperty" as never)}
+            >
+              <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={properties}
+            renderItem={renderProperty}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+      </KeyboardAvoidingView>
 
       <ConfirmationModal
         visible={showDeleteModal}

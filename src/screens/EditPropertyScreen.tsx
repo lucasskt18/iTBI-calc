@@ -10,6 +10,8 @@ import {
   StatusBar,
   Alert,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -46,7 +48,6 @@ interface Property {
   type: string;
   telefone: string;
 }
-
 
 type RootStackParamList = {
   EditProperty: {
@@ -133,7 +134,6 @@ export default function EditPropertyScreen() {
       newErrors.area = "Área deve ser um número válido";
       isValid = false;
     }
-
 
     if (!formData.type.trim()) {
       newErrors.type = "Tipo do imóvel é obrigatório";
@@ -228,168 +228,173 @@ export default function EditPropertyScreen() {
         <Text style={styles.headerSubtitle}>Atualize os dados do imóvel</Text>
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.formContainer}>
-          <View>
-            <SelectField
-              value={formData.type}
-              placeholder="Tipo do Imóvel"
-              icon="home"
-              options={TIPOS_IMOVEIS}
-              error={!!errors.type}
-              onPress={() => setShowTypeModal(true)}
-            />
-            {renderError("type")}
-          </View>
-          <View>
-            <View
-              style={[styles.inputGroup, errors.address && styles.inputError]}
-            >
-              <Icon
-                name="road"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <View>
+              <SelectField
+                value={formData.type}
+                placeholder="Tipo do Imóvel"
+                icon="home"
+                options={TIPOS_IMOVEIS}
+                error={!!errors.type}
+                onPress={() => setShowTypeModal(true)}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Rua"
-                placeholderTextColor="#8F94FB"
-                value={formData.address}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, address: text });
-                  if (errors.address) {
-                    setErrors({ ...errors, address: undefined });
-                  }
-                }}
-              />
+              {renderError("type")}
             </View>
-            {renderError("address")}
-          </View>
-
-          <View>
-            <View
-              style={[
-                styles.inputGroup,
-                errors.neighborhood && styles.inputError,
-              ]}
-            >
-              <Icon
-                name="map-marker-alt"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Bairro"
-                placeholderTextColor="#8F94FB"
-                value={formData.neighborhood}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, neighborhood: text });
-                  if (errors.neighborhood) {
-                    setErrors({ ...errors, neighborhood: undefined });
-                  }
-                }}
-              />
+            <View>
+              <View
+                style={[styles.inputGroup, errors.address && styles.inputError]}
+              >
+                <Icon
+                  name="road"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Rua"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.address}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, address: text });
+                    if (errors.address) {
+                      setErrors({ ...errors, address: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("address")}
             </View>
-            {renderError("neighborhood")}
-          </View>
 
-          <View>
-            <View style={[styles.inputGroup, errors.city && styles.inputError]}>
-              <Icon
-                name="city"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Cidade"
-                placeholderTextColor="#8F94FB"
-                value={formData.city}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, city: text });
-                  if (errors.city) {
-                    setErrors({ ...errors, city: undefined });
-                  }
-                }}
-              />
+            <View>
+              <View
+                style={[
+                  styles.inputGroup,
+                  errors.neighborhood && styles.inputError,
+                ]}
+              >
+                <Icon
+                  name="map-marker-alt"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Bairro"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.neighborhood}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, neighborhood: text });
+                    if (errors.neighborhood) {
+                      setErrors({ ...errors, neighborhood: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("neighborhood")}
             </View>
-            {renderError("city")}
-          </View>
 
-          <View>
-            <SelectField
-              value={formData.state}
-              placeholder="Estado"
-              icon="flag"
-              options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla }) => ({ id, nome, sigla }))}
-              error={!!errors.state}
-              onPress={() => setShowStateModal(true)}
-            />
-            {renderError("state")}
-          </View>
-
-          <View>
-            <View style={[styles.inputGroup, errors.area && styles.inputError]}>
-              <Icon
-                name="ruler-combined"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Área (m²)"
-                placeholderTextColor="#8F94FB"
-                keyboardType="numeric"
-                value={formData.area}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, area: text });
-                  if (errors.area) {
-                    setErrors({ ...errors, area: undefined });
-                  }
-                }}
-              />
+            <View>
+              <View style={[styles.inputGroup, errors.city && styles.inputError]}>
+                <Icon
+                  name="city"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Cidade"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.city}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, city: text });
+                    if (errors.city) {
+                      setErrors({ ...errors, city: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("city")}
             </View>
-            {renderError("area")}
-          </View>
 
-          <View>
-            <View
-              style={[styles.inputGroup, errors.property && styles.inputError]}
-            >
-              <Icon
-                name="user"
-                type="font-awesome-5"
-                color="#8F94FB"
-                size={20}
+            <View>
+              <SelectField
+                value={formData.state}
+                placeholder="Estado"
+                icon="flag"
+                options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla }) => ({ id, nome, sigla }))}
+                error={!!errors.state}
+                onPress={() => setShowStateModal(true)}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Proprietário"
-                placeholderTextColor="#8F94FB"
-                value={formData.property}
-                onChangeText={(text) => {
-                  setFormData({ ...formData, property: text });
-
-                  if (errors.property) {
-                    setErrors({ ...errors, property: undefined });
-                  }
-                }}
-              />
+              {renderError("state")}
             </View>
-            {renderError("property")}
+
+            <View>
+              <View style={[styles.inputGroup, errors.area && styles.inputError]}>
+                <Icon
+                  name="ruler-combined"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Área (m²)"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  value={formData.area}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, area: text });
+                    if (errors.area) {
+                      setErrors({ ...errors, area: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("area")}
+            </View>
+
+            <View>
+              <View
+                style={[styles.inputGroup, errors.property && styles.inputError]}
+              >
+                <Icon
+                  name="user"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Proprietário"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.property}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, property: text });
+
+                    if (errors.property) {
+                      setErrors({ ...errors, property: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("property")}
+            </View>
+
+            <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
+              <Text style={styles.submitButtonText}>Salvar Alterações</Text>
+            </TouchableOpacity>
           </View>
-
-
-          <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
-            <Text style={styles.submitButtonText}>Salvar Alterações</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <SuccessModal
         visible={showSuccessModal}
