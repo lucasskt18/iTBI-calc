@@ -64,6 +64,8 @@ export default function ListPropertiesScreen() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [calculo, setCalculo] = useState("");
+
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [result, setResult] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -253,7 +255,10 @@ export default function ListPropertiesScreen() {
                 styles.actionButton,
                 { backgroundColor: "#FF6B6B", marginTop: 10 },
               ]}
-              onPress={() => setShowCalculator(null)}
+              onPress={() => {
+                setShowCalculator(null); // Fecha a calculadora
+                setCalculo("");          // Limpa o input
+              }}
             >
               <Text style={styles.actionButtonText}>Fechar Cálculo</Text>
             </TouchableOpacity>

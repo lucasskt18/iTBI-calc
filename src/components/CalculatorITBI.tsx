@@ -57,6 +57,11 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       itbi,
     });
 
+    // Limpa o campo Valor de Transação
+    setValorTransacao("");
+    setAliquota("");
+    setValorVenal("");
+
     if (onSave) {
       onSave({
         valorVenal: vVenal,
@@ -117,7 +122,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
             })}
           </Text>
           <Text style={styles.resultText}>
-            Valor de Transação: R${" "}
+            Valor de Transação: R${""}
             {resultado.valorTransacao.toLocaleString("pt-BR", {
               minimumFractionDigits: 2,
             })}

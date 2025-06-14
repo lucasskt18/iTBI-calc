@@ -27,6 +27,7 @@ import {
 } from "../../src/screens/RegisterPropertyScreen";
 
 interface FormErrors {
+  phone?: string | { borderWidth: number; borderColor: string };
   address?: string;
   neighborhood?: string;
   city?: string;
@@ -38,6 +39,7 @@ interface FormErrors {
 }
 
 interface Property {
+  phone: string | undefined;
   id: string;
   address: string;
   neighborhood: string;
@@ -66,6 +68,7 @@ export default function EditPropertyScreen() {
   const propertyId = route.params.propertyId;
 
   const [formData, setFormData] = useState<Property>({
+    phone: "",
     id: "",
     address: "",
     neighborhood: "",
@@ -135,6 +138,16 @@ export default function EditPropertyScreen() {
       isValid = false;
     }
 
+    if (!(formData.property ?? "").trim()) {
+      newErrors.property = "Telefone é obrigatório";
+      isValid = false;
+    }
+
+    if (!(formData.phone ?? "").trim()) {
+      newErrors.phone = "Telefone é obrigatório";
+      isValid = false;
+    }
+
     if (!formData.type.trim()) {
       newErrors.type = "Tipo do imóvel é obrigatório";
       isValid = false;
@@ -174,8 +187,9 @@ export default function EditPropertyScreen() {
   };
 
   const renderError = (field: keyof FormErrors) => {
-    return errors[field] ? (
-      <Text style={styles.errorText}>{errors[field]}</Text>
+    const error = errors[field];
+    return typeof error === "string" ? (
+      <Text style={styles.errorText}>{error}</Text>
     ) : null;
   };
 
@@ -235,17 +249,17 @@ export default function EditPropertyScreen() {
       >
         <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
           <View style={styles.formContainer}>
-            <View>
+            {/* <View>
               <SelectField
-                value={formData.type}
+                value={formData.type} // Mostra o valor do cadastro, se existir
                 placeholder="Tipo do Imóvel"
                 icon="home"
                 options={TIPOS_IMOVEIS}
                 error={!!errors.type}
-                onPress={() => setShowTypeModal(true)}
+                onPress={() => setShowTypeModal(false)} // Adicione se for obrigatório
               />
               {renderError("type")}
-            </View>
+            </View> */}
             <View>
               <View
                 style={[styles.inputGroup, errors.address && styles.inputError]}
@@ -302,7 +316,9 @@ export default function EditPropertyScreen() {
             </View>
 
             <View>
-              <View style={[styles.inputGroup, errors.city && styles.inputError]}>
+              <View
+                style={[styles.inputGroup, errors.city && styles.inputError]}
+              >
                 <Icon
                   name="city"
                   type="font-awesome-5"
@@ -314,12 +330,7 @@ export default function EditPropertyScreen() {
                   placeholder="Cidade"
                   placeholderTextColor="#8F94FB"
                   value={formData.city}
-                  onChangeText={(text) => {
-                    setFormData({ ...formData, city: text });
-                    if (errors.city) {
-                      setErrors({ ...errors, city: undefined });
-                    }
-                  }}
+                  editable={false} // Bloqueia a edição
                 />
               </View>
               {renderError("city")}
@@ -330,15 +341,21 @@ export default function EditPropertyScreen() {
                 value={formData.state}
                 placeholder="Estado"
                 icon="flag"
-                options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla }) => ({ id, nome, sigla }))}
+                options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla }) => ({
+                  id,
+                  nome,
+                  sigla,
+                }))}
                 error={!!errors.state}
-                onPress={() => setShowStateModal(true)}
+                onPress={() => setShowStateModal(false)}
               />
               {renderError("state")}
             </View>
 
             <View>
-              <View style={[styles.inputGroup, errors.area && styles.inputError]}>
+              <View
+                style={[styles.inputGroup, errors.area && styles.inputError]}
+              >
                 <Icon
                   name="ruler-combined"
                   type="font-awesome-5"
@@ -364,7 +381,10 @@ export default function EditPropertyScreen() {
 
             <View>
               <View
-                style={[styles.inputGroup, errors.property && styles.inputError]}
+                style={[
+                  styles.inputGroup,
+                  errors.property && styles.inputError,
+                ]}
               >
                 <Icon
                   name="user"
@@ -387,6 +407,37 @@ export default function EditPropertyScreen() {
                 />
               </View>
               {renderError("property")}
+            </View>
+
+            <View>
+              <View
+                style={[styles.inputGroup, errors.phone && styles.inputError]}
+              >
+                <Icon
+                  name="phone-alt"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Telefone do Proprietário"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  value={formData.phone}
+                  maxLength={15}
+                  onChangeText={(text) => {
+                    const formattedPhone = text
+                      .replace(/\D/g, "")
+                      .replace(/^(\d{2})(\d)/, "($1) $2")
+                      .replace(/(\d{5})(\d)/, "$1-$2")
+                      .slice(0, 15);
+
+                    setFormData({ ...formData, phone: formattedPhone });
+                  }}
+                />
+              </View>
+              {renderError("phone")}
             </View>
 
             <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
