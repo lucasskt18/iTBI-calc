@@ -309,7 +309,11 @@ export default function RegisterPropertyScreen() {
                   placeholder="Rua"
                   placeholderTextColor="#8F94FB"
                   value={formData.address}
-                  editable={false}
+                  editable={true}
+                  maxLength={30}
+                  onChangeText={(text) =>
+                    setFormData({ ...formData, address: text })
+                  }
                 />
               </View>
               {renderError("address")}
@@ -333,7 +337,11 @@ export default function RegisterPropertyScreen() {
                   placeholder="Bairro"
                   placeholderTextColor="#8F94FB"
                   value={formData.neighborhood}
-                  editable={false}
+                  editable={true}
+                  maxLength={30}
+                  onChangeText={(text) =>
+                    setFormData({ ...formData, neighborhood: text })
+                  }
                 />
               </View>
               {renderError("neighborhood")}
