@@ -156,15 +156,15 @@ export default function RegisterPropertyScreen() {
       isValid = false;
     }
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Rua é obrigatório";
-      isValid = false;
-    }
+    // if (!formData.address.trim()) {
+    //   newErrors.address = "Rua é obrigatório";
+    //   isValid = false;
+    // }
 
-    if (!formData.neighborhood.trim()) {
-      newErrors.neighborhood = "Bairro é obrigatório";
-      isValid = false;
-    }
+    // if (!formData.neighborhood.trim()) {
+    //   newErrors.neighborhood = "Bairro é obrigatório";
+    //   isValid = false;
+    // }
 
     if (!formData.city.trim()) {
       newErrors.city = "Cidade é obrigatória";
@@ -272,7 +272,9 @@ export default function RegisterPropertyScreen() {
             </View>
 
             <View>
-              <View style={[styles.inputGroup, errors.cep && styles.inputError]}>
+              <View
+                style={[styles.inputGroup, errors.cep && styles.inputError]}
+              >
                 <Icon
                   name="map-pin"
                   type="font-awesome-5"
@@ -338,7 +340,9 @@ export default function RegisterPropertyScreen() {
             </View>
 
             <View>
-              <View style={[styles.inputGroup, errors.city && styles.inputError]}>
+              <View
+                style={[styles.inputGroup, errors.city && styles.inputError]}
+              >
                 <Icon
                   name="city"
                   type="font-awesome-5"
@@ -378,7 +382,9 @@ export default function RegisterPropertyScreen() {
             </View>
 
             <View>
-              <View style={[styles.inputGroup, errors.area && styles.inputError]}>
+              <View
+                style={[styles.inputGroup, errors.area && styles.inputError]}
+              >
                 <Icon
                   name="ruler-combined"
                   type="font-awesome-5"
@@ -416,6 +422,36 @@ export default function RegisterPropertyScreen() {
 
             <View>
               <View
+                style={[
+                  styles.inputGroup,
+                  errors.property && styles.inputError,
+                ]}
+              >
+                <Icon
+                  name="user"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Proprietário"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.property}
+                  onChangeText={(text) => {
+                    setFormData({ ...formData, property: text });
+
+                    if (errors.property) {
+                      setErrors({ ...errors, property: undefined });
+                    }
+                  }}
+                />
+              </View>
+              {renderError("property")}
+            </View>
+
+            <View>
+              <View
                 style={[styles.inputGroup, errors.phone && styles.inputError]}
               >
                 <Icon
@@ -449,34 +485,10 @@ export default function RegisterPropertyScreen() {
               {renderError("phone")}
             </View>
 
-            <View>
-              <View
-                style={[styles.inputGroup, errors.property && styles.inputError]}
-              >
-                <Icon
-                  name="user"
-                  type="font-awesome-5"
-                  color="#8F94FB"
-                  size={20}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Proprietário"
-                  placeholderTextColor="#8F94FB"
-                  value={formData.property}
-                  onChangeText={(text) => {
-                    setFormData({ ...formData, property: text });
-
-                    if (errors.property) {
-                      setErrors({ ...errors, property: undefined });
-                    }
-                  }}
-                />
-              </View>
-              {renderError("property")}
-            </View>
-
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleSubmit}
+            >
               <Text style={styles.submitButtonText}>Cadastrar Imóvel</Text>
             </TouchableOpacity>
           </View>
