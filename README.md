@@ -92,7 +92,7 @@ npx expo start
   <a href="https://drive.google.com/file/d/1TacRJokpeL5ZtLSPH4vPiuPFz2nQUKmK/view?usp=sharing">Carta de Apresentação</a>
 </p>
 <p>
-  <a href="https://docs.google.com/document/d/19HdPLXhG-DyQA6vMqrFrlCkmMjMlJkaj/edit?usp=sharing&ouid=116550957341629840960&rtpof=true&sd=true">Roteiro de Extensão</a>
+  <a href="https://drive.google.com/file/d/1YyZEVGYEve-Y3kIm3ZnxyWJmDAkcQzap/view?usp=sharing">Roteiro de Extensão</a>
 </p>
 
 
