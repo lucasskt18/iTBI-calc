@@ -181,12 +181,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     marginTop: 20,
+    gap: 10,
     width: "100%",
   },
   resultText: {
     color: "#8F94FB",
     fontSize: 16,
-    marginBottom: 8,
   },
 });
 

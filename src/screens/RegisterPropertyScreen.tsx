@@ -34,35 +34,35 @@ interface FormErrors {
   phone?: string;
 }
 
-export const ESTADOS_BRASILEIROS = [
-  { id: "AC", nome: "Acre", sigla: "AC", aliquot: 2.0 },
-  { id: "AL", nome: "Alagoas", sigla: "AL", aliquot: 2.5 },
-  { id: "AP", nome: "Amapá", sigla: "AP", aliquot: 3.0 },
-  { id: "AM", nome: "Amazonas", sigla: "AM", aliquot: 2.8 },
-  { id: "BA", nome: "Bahia", sigla: "BA", aliquot: 2.2 },
-  { id: "CE", nome: "Ceará", sigla: "CE", aliquot: 2.7 },
-  { id: "DF", nome: "Distrito Federal", sigla: "DF", aliquot: 3.5 },
-  { id: "ES", nome: "Espírito Santo", sigla: "ES", aliquot: 2.4 },
-  { id: "GO", nome: "Goiás", sigla: "GO", aliquot: 2.6 },
-  { id: "MA", nome: "Maranhão", sigla: "MA", aliquot: 2.3 },
-  { id: "MT", nome: "Mato Grosso", sigla: "MT", aliquot: 3.0 },
-  { id: "MS", nome: "Mato Grosso do Sul", sigla: "MS", aliquot: 2.9 },
-  { id: "MG", nome: "Minas Gerais", sigla: "MG", aliquot: 2.1 },
-  { id: "PA", nome: "Pará", sigla: "PA", aliquot: 2.8 },
-  { id: "PB", nome: "Paraíba", sigla: "PB", aliquot: 2.5 },
-  { id: "PR", nome: "Paraná", sigla: "PR", aliquot: 2.0 },
-  { id: "PE", nome: "Pernambuco", sigla: "PE", aliquot: 2.6 },
-  { id: "PI", nome: "Piauí", sigla: "PI", aliquot: 2.4 },
-  { id: "RJ", nome: "Rio de Janeiro", sigla: "RJ", aliquot: 3.0 },
-  { id: "RN", nome: "Rio Grande do Norte", sigla: "RN", aliquot: 2.7 },
-  { id: "RS", nome: "Rio Grande do Sul", sigla: "RS", aliquot: 2.3 },
-  { id: "RO", nome: "Rondônia", sigla: "RO", aliquot: 2.9 },
-  { id: "RR", nome: "Roraima", sigla: "RR", aliquot: 2.8 },
-  { id: "SC", nome: "Santa Catarina", sigla: "SC", aliquot: 2.2 },
-  { id: "SP", nome: "São Paulo", sigla: "SP", aliquot: 3.2 },
-  { id: "SE", nome: "Sergipe", sigla: "SE", aliquot: 2.5 },
-  { id: "TO", nome: "Tocantins", sigla: "TO", aliquot: 2.6 },
-];
+// export const ESTADOS_BRASILEIROS = [
+//   { id: "AC", nome: "Acre", sigla: "AC", aliquot: 2.0 },
+//   { id: "AL", nome: "Alagoas", sigla: "AL", aliquot: 2.5 },
+//   { id: "AP", nome: "Amapá", sigla: "AP", aliquot: 3.0 },
+//   { id: "AM", nome: "Amazonas", sigla: "AM", aliquot: 2.8 },
+//   { id: "BA", nome: "Bahia", sigla: "BA", aliquot: 2.2 },
+//   { id: "CE", nome: "Ceará", sigla: "CE", aliquot: 2.7 },
+//   { id: "DF", nome: "Distrito Federal", sigla: "DF", aliquot: 3.5 },
+//   { id: "ES", nome: "Espírito Santo", sigla: "ES", aliquot: 2.4 },
+//   { id: "GO", nome: "Goiás", sigla: "GO", aliquot: 2.6 },
+//   { id: "MA", nome: "Maranhão", sigla: "MA", aliquot: 2.3 },
+//   { id: "MT", nome: "Mato Grosso", sigla: "MT", aliquot: 3.0 },
+//   { id: "MS", nome: "Mato Grosso do Sul", sigla: "MS", aliquot: 2.9 },
+//   { id: "MG", nome: "Minas Gerais", sigla: "MG", aliquot: 2.1 },
+//   { id: "PA", nome: "Pará", sigla: "PA", aliquot: 2.8 },
+//   { id: "PB", nome: "Paraíba", sigla: "PB", aliquot: 2.5 },
+//   { id: "PR", nome: "Paraná", sigla: "PR", aliquot: 2.0 },
+//   { id: "PE", nome: "Pernambuco", sigla: "PE", aliquot: 2.6 },
+//   { id: "PI", nome: "Piauí", sigla: "PI", aliquot: 2.4 },
+//   { id: "RJ", nome: "Rio de Janeiro", sigla: "RJ", aliquot: 3.0 },
+//   { id: "RN", nome: "Rio Grande do Norte", sigla: "RN", aliquot: 2.7 },
+//   { id: "RS", nome: "Rio Grande do Sul", sigla: "RS", aliquot: 2.3 },
+//   { id: "RO", nome: "Rondônia", sigla: "RO", aliquot: 2.9 },
+//   { id: "RR", nome: "Roraima", sigla: "RR", aliquot: 2.8 },
+//   { id: "SC", nome: "Santa Catarina", sigla: "SC", aliquot: 2.2 },
+//   { id: "SP", nome: "São Paulo", sigla: "SP", aliquot: 3.2 },
+//   { id: "SE", nome: "Sergipe", sigla: "SE", aliquot: 2.5 },
+//   { id: "TO", nome: "Tocantins", sigla: "TO", aliquot: 2.6 },
+// ];
 
 export const TIPOS_IMOVEIS = [
   { id: "casa", nome: "Casa" },
@@ -510,7 +510,7 @@ export default function RegisterPropertyScreen() {
         onClose={handleCloseSuccessModal}
       />
 
-      <SelectModal
+      {/* <SelectModal
         visible={showStateModal}
         title="Selecione o Estado"
         options={ESTADOS_BRASILEIROS}
@@ -522,7 +522,7 @@ export default function RegisterPropertyScreen() {
           setShowStateModal(false);
         }}
         onClose={() => setShowStateModal(false)}
-      />
+      /> */}
 
       <SelectModal
         visible={showTypeModal}

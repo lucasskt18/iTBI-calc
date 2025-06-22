@@ -14,14 +14,13 @@ export default function AboutUsScreen() {
             <ScrollView style={styles.scrollView}>
                 <View style={styles.header}>
                     <Icon name="info-circle" type="font-awesome-5" color="#414692" size={50} />
-                    <Text style={styles.title}>Sobre Nós</Text>
+                    <Text style={styles.title}>Sobre o Projeto</Text>
                 </View>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Sobre o Aplicativo</Text>
                     <Text style={styles.text}>
-                        O iTBI-calc é um aplicativo criado para simplificar o cálculo e a gestão do Imposto sobre Transmissão de Bens Imóveis (ITBI).
-                        Com uma interface intuitiva e funcionalidades inteligentes, ele oferece uma solução prática tanto para proprietários quanto para profissionais do mercado imobiliário, tornando a administração de imóveis e tributos muito mais eficiente.
+                        O iTBI-calc é um aplicativo desenvolvido para facilitar o cálculo e a gestão do Imposto sobre Transmissão de Bens Imóveis (ITBI). Com uma interface amigável e recursos inteligentes, o app oferece uma solução prática e eficiente tanto para proprietários quanto para profissionais do setor imobiliário, otimizando o processo de administração de imóveis e tributos.
                     </Text>
 
                     <Video
@@ -51,21 +50,32 @@ export default function AboutUsScreen() {
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Desenvolvedores</Text>
+                    <Text style={styles.sectionTitle}>Equipe de Desenvolvimento</Text>
                     <View style={styles.teamMember}>
-                        <Icon name="user" type="font-awesome-5" color="#414692" size={24} />
-                        <Text style={styles.teamMemberName}>Equipe de Desenvolvimento</Text>
+                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Text style={styles.teamMemberName}>Arthur Moreira</Text>
+                    </View>
+                    <View style={styles.teamMember}>
+                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Text style={styles.teamMemberName}>Daniel Formoso</Text>
+                    </View>
+                    <View style={styles.teamMember}>
+                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Text style={styles.teamMemberName}>Guilherme Pereira</Text>
+                    </View>
+                    <View style={styles.teamMember}>
+                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Text style={styles.teamMemberName}>Lucas Amancio</Text>
                     </View>
                     <Text style={styles.text}>
-                    Somos um grupo de alunos dedicados, interessados em tecnologia e focados em criar soluções que proporcionem uma boa experiência para os nossos usuários.
+                    Somos um grupo de estudantes dedicados e apaixonados por tecnologia, com o objetivo de desenvolver soluções inovadoras que ofereçam uma experiência positiva, prática e eficiente para nossos usuários.
                     </Text>
                 </View>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Contato</Text>
                     <Text style={styles.text}>
-                        Para sugestões, dúvidas ou feedback, entre em contato conosco através do email:
-                        suporte@itbicalc.com.br
+                    Para mais informações sobre este projeto, entre em contato com a equipe de desenvolvimento através da instituição de ensino.
                     </Text>
                 </View>
             </ScrollView>
@@ -84,7 +94,7 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         padding: 20,
-        paddingTop: 40,
+        paddingTop: 60,
     },
     title: {
         fontSize: 28,
@@ -93,7 +103,8 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     section: {
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         marginBottom: 20,
         position: 'relative',
     },
@@ -114,7 +125,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     teamMemberName: {
-        fontSize: 19,
+        fontSize: 17,
         fontWeight: '600',
         color: '#FFF',
         marginLeft: 12,
@@ -128,13 +139,13 @@ const styles = StyleSheet.create({
     },
 
     loadingIndicator: {
-        position: 'absolute', 
-        top: 0,  
-        left: 0, 
+        position: 'absolute',
+        top: 0,
+        left: 0,
         right: 0,
-        bottom: 0, 
+        bottom: 0,
         marginTop: 250,
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-}); 
+});
