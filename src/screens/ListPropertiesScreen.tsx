@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,63 +16,34 @@ import {
   useNavigation,
   NavigationProp,
   useFocusEffect,
-  useRoute,
 } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
 import CalculatorITBI from "../components/CalculatorITBI";
+import { getPropertyTypeLabel } from "../constants/propertyTypes";
+import {
+  listProperties,
+  removeProperty,
+  updateProperty,
+} from "../storage/propertiesStorage";
+import { Property } from "../types/property";
 
 type RootStackParamList = {
   EditProperty: {
     propertyId: string;
   };
-  ListPropertiesScreen: {
-    itbiValue?: number | null;
-    propertyValue?: string;
-    venalValue?: string;
-  };
+  RegisterProperty: undefined;
 };
 
-interface RouteParams {
-  itbiValue?: number | null;
-  propertyValue?: string;
-  venalValue?: string;
-}
-
 type NavigationProps = NavigationProp<RootStackParamList>;
-
-interface Property {
-  cep: string;
-  id: string;
-  address: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  area: string;
-  property: string;
-  type: string;
-  phone: string;
-  venalValue: string;
-  propertyValue: string;
-  propertyPhone: string;
-  itbiValue?: string;
-}
 
 export default function ListPropertiesScreen() {
   const navigation = useNavigation<NavigationProps>();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [calculo, setCalculo] = useState("");
 
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
-  const [result, setResult] = useState<number | null>(null);
-  const [formData, setFormData] = useState({
-    propertyValue: "",
-    venalValue: "",
-  });
-  const route = useRoute();
   const [showCalculator, setShowCalculator] = useState<string | null>(null);
 
   useFocusEffect(
@@ -83,10 +54,8 @@ export default function ListPropertiesScreen() {
 
   const loadProperties = async () => {
     try {
-      const storedProperties = await AsyncStorage.getItem("properties");
-      if (storedProperties) {
-        setProperties(JSON.parse(storedProperties));
-      }
+      const storedProperties = await listProperties();
+      setProperties(storedProperties);
     } catch (error) {
       console.error("Erro ao carregar imóveis:", error);
       Alert.alert("Erro", "Não foi possível carregar a lista de imóveis.");
@@ -104,30 +73,16 @@ export default function ListPropertiesScreen() {
     if (!propertyToDelete) return;
 
     try {
-      const updatedProperties = properties.filter(
-        (prop) => prop.id !== propertyToDelete
+      await removeProperty(propertyToDelete);
+      setProperties((current) =>
+        current.filter((prop) => prop.id !== propertyToDelete)
       );
-      await AsyncStorage.setItem(
-        "properties",
-        JSON.stringify(updatedProperties)
-      );
-      setProperties(updatedProperties);
       setShowDeleteModal(false);
       setPropertyToDelete(null);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível excluir o imóvel.");
     }
   };
-
-  useEffect(() => {
-    if (result !== null) {
-      navigation.navigate("ListPropertiesScreen", {
-        itbiValue: result,
-        propertyValue: formData.propertyValue,
-        venalValue: formData.venalValue,
-      });
-    }
-  }, [result, formData]);
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
@@ -144,21 +99,18 @@ export default function ListPropertiesScreen() {
       baseCalculo: number;
       itbi: number;
     }) => {
-      const updatedProperties = properties.map((prop) =>
-        prop.id === item.id
-          ? {
-              ...prop,
-              venalValue: result.valorVenal.toString(),
-              propertyValue: result.baseCalculo.toString(),
-              itbiValue: result.itbi.toString(),
-            }
-          : prop
-      );
-      setProperties(updatedProperties);
-      await AsyncStorage.setItem(
-        "properties",
-        JSON.stringify(updatedProperties)
-      );
+      try {
+        const updated = await updateProperty(item.id, {
+          venalValue: result.valorVenal.toString(),
+          propertyValue: result.baseCalculo.toString(),
+          itbiValue: result.itbi.toString(),
+        });
+        setProperties((current) =>
+          current.map((prop) => (prop.id === item.id ? updated : prop))
+        );
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível salvar o cálculo de ITBI.");
+      }
     };
 
     return (
@@ -166,7 +118,7 @@ export default function ListPropertiesScreen() {
         <View style={styles.propertyHeader}>
           <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
           <Text style={styles.propertyType}>
-            {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+            {getPropertyTypeLabel(item.type)}
           </Text>
         </View>
 
@@ -256,8 +208,7 @@ export default function ListPropertiesScreen() {
                 { backgroundColor: "#FF6B6B", marginTop: 10 },
               ]}
               onPress={() => {
-                setShowCalculator(null); // Fecha a calculadora
-                setCalculo("");          // Limpa o input
+                setShowCalculator(null);
               }}
             >
               <Text style={styles.actionButtonText}>Fechar Cálculo</Text>
@@ -296,7 +247,7 @@ export default function ListPropertiesScreen() {
             <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => navigation.navigate("RegisterProperty" as never)}
+              onPress={() => navigation.navigate("RegisterProperty")}
             >
               <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
             </TouchableOpacity>

@@ -13,14 +13,14 @@ import {
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import SuccessModal from "../components/SuccessModal";
-// import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
-import axios from "axios"; // Importa o axios
+import axios from "axios";
 import SelectField from "../components/SelectField";
+import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
+import { createProperty } from "../storage/propertiesStorage";
 
 interface FormErrors {
   address?: string;
@@ -33,49 +33,6 @@ interface FormErrors {
   cep?: string;
   phone?: string;
 }
-
-// export const ESTADOS_BRASILEIROS = [
-//   { id: "AC", nome: "Acre", sigla: "AC", aliquot: 2.0 },
-//   { id: "AL", nome: "Alagoas", sigla: "AL", aliquot: 2.5 },
-//   { id: "AP", nome: "Amapá", sigla: "AP", aliquot: 3.0 },
-//   { id: "AM", nome: "Amazonas", sigla: "AM", aliquot: 2.8 },
-//   { id: "BA", nome: "Bahia", sigla: "BA", aliquot: 2.2 },
-//   { id: "CE", nome: "Ceará", sigla: "CE", aliquot: 2.7 },
-//   { id: "DF", nome: "Distrito Federal", sigla: "DF", aliquot: 3.5 },
-//   { id: "ES", nome: "Espírito Santo", sigla: "ES", aliquot: 2.4 },
-//   { id: "GO", nome: "Goiás", sigla: "GO", aliquot: 2.6 },
-//   { id: "MA", nome: "Maranhão", sigla: "MA", aliquot: 2.3 },
-//   { id: "MT", nome: "Mato Grosso", sigla: "MT", aliquot: 3.0 },
-//   { id: "MS", nome: "Mato Grosso do Sul", sigla: "MS", aliquot: 2.9 },
-//   { id: "MG", nome: "Minas Gerais", sigla: "MG", aliquot: 2.1 },
-//   { id: "PA", nome: "Pará", sigla: "PA", aliquot: 2.8 },
-//   { id: "PB", nome: "Paraíba", sigla: "PB", aliquot: 2.5 },
-//   { id: "PR", nome: "Paraná", sigla: "PR", aliquot: 2.0 },
-//   { id: "PE", nome: "Pernambuco", sigla: "PE", aliquot: 2.6 },
-//   { id: "PI", nome: "Piauí", sigla: "PI", aliquot: 2.4 },
-//   { id: "RJ", nome: "Rio de Janeiro", sigla: "RJ", aliquot: 3.0 },
-//   { id: "RN", nome: "Rio Grande do Norte", sigla: "RN", aliquot: 2.7 },
-//   { id: "RS", nome: "Rio Grande do Sul", sigla: "RS", aliquot: 2.3 },
-//   { id: "RO", nome: "Rondônia", sigla: "RO", aliquot: 2.9 },
-//   { id: "RR", nome: "Roraima", sigla: "RR", aliquot: 2.8 },
-//   { id: "SC", nome: "Santa Catarina", sigla: "SC", aliquot: 2.2 },
-//   { id: "SP", nome: "São Paulo", sigla: "SP", aliquot: 3.2 },
-//   { id: "SE", nome: "Sergipe", sigla: "SE", aliquot: 2.5 },
-//   { id: "TO", nome: "Tocantins", sigla: "TO", aliquot: 2.6 },
-// ];
-
-export const TIPOS_IMOVEIS = [
-  { id: "casa", nome: "Casa" },
-  { id: "apartamento", nome: "Apartamento" },
-  { id: "terreno", nome: "Terreno" },
-  { id: "galpao", nome: "Galpão" },
-  { id: "loja", nome: "Loja" },
-  { id: "chácara", nome: "Chácara" },
-  { id: "predio", nome: "Prédio Comercial" },
-  { id: "sitio", nome: "Sítio" },
-  { id: "fazenda", nome: "Fazenda" },
-  { id: "outro", nome: "Outro" },
-];
 
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
@@ -93,7 +50,6 @@ export default function RegisterPropertyScreen() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showStateModal, setShowStateModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -206,24 +162,7 @@ export default function RegisterPropertyScreen() {
     }
 
     try {
-      // Busca o nome do tipo de imóvel selecionado
-      const tipoImovel = TIPOS_IMOVEIS.find(
-        (tipo) => tipo.id === formData.type
-      );
-
-      const newProperty = {
-        id: Date.now().toString(),
-        ...formData,
-        type: tipoImovel ? tipoImovel.nome : formData.type, // Salva o nome ao invés do id
-      };
-
-      const storedProperties = await AsyncStorage.getItem("properties");
-      const properties = storedProperties ? JSON.parse(storedProperties) : [];
-
-      await AsyncStorage.setItem(
-        "properties",
-        JSON.stringify([...properties, newProperty])
-      );
+      await createProperty(formData);
       setShowSuccessModal(true);
     } catch (error) {
       setErrorMessage("Ocorreu um erro ao salvar o imóvel.");
@@ -509,20 +448,6 @@ export default function RegisterPropertyScreen() {
         message="Imóvel cadastrado com sucesso!"
         onClose={handleCloseSuccessModal}
       />
-
-      {/* <SelectModal
-        visible={showStateModal}
-        title="Selecione o Estado"
-        options={ESTADOS_BRASILEIROS}
-        onSelect={(estado) => {
-          setFormData({ ...formData, state: estado.sigla! });
-          if (errors.state) {
-            setErrors({ ...errors, state: undefined });
-          }
-          setShowStateModal(false);
-        }}
-        onClose={() => setShowStateModal(false)}
-      /> */}
 
       <SelectModal
         visible={showTypeModal}
