@@ -22,7 +22,7 @@ import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
 import {
-  ESTADOS_BRASILEIROS,
+  // ESTADOS_BRASILEIROS,
   TIPOS_IMOVEIS,
 } from "../../src/screens/RegisterPropertyScreen";
 
@@ -337,6 +337,27 @@ export default function EditPropertyScreen() {
             </View>
 
             <View>
+              <View
+                style={[styles.inputGroup, errors.state && styles.inputError]}
+              >
+                <Icon
+                  name="flag"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Estado"
+                  placeholderTextColor="#8F94FB"
+                  value={formData.state}
+                  editable={false} // Bloqueia a edição
+                />
+              </View>
+              {renderError("state")}
+            </View>
+
+            {/* <View>
               <SelectField
                 value={formData.state}
                 placeholder="Estado"
@@ -350,7 +371,7 @@ export default function EditPropertyScreen() {
                 onPress={() => setShowStateModal(false)}
               />
               {renderError("state")}
-            </View>
+            </View> */}
 
             <View>
               <View
@@ -454,7 +475,7 @@ export default function EditPropertyScreen() {
         onClose={handleCloseSuccessModal}
       />
 
-      <SelectModal
+      {/* <SelectModal
         visible={showStateModal}
         title="Selecione o Estado"
         options={ESTADOS_BRASILEIROS}
@@ -466,7 +487,7 @@ export default function EditPropertyScreen() {
           setShowStateModal(false);
         }}
         onClose={() => setShowStateModal(false)}
-      />
+      /> */}
 
       <SelectModal
         visible={showTypeModal}
