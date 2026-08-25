@@ -14,7 +14,11 @@ function asOptionalString(value: unknown): string | undefined {
   return text ? text : undefined;
 }
 
-/** Normaliza registros antigos (telefone vs phone, tipo nome vs id). */
+/**
+ * Normaliza registros antigos.
+ * `propertyValue` no legado era a base de cálculo, não a transação —
+ * por isso não é copiado para transactionValue.
+ */
 export function normalizeProperty(raw: Record<string, unknown>): Property {
   return {
     id: asString(raw.id),
@@ -27,8 +31,11 @@ export function normalizeProperty(raw: Record<string, unknown>): Property {
     type: getPropertyTypeId(asString(raw.type)),
     property: asString(raw.property),
     phone: asString(raw.phone || raw.telefone || raw.propertyPhone),
+    transactionValue: asOptionalString(raw.transactionValue),
     venalValue: asOptionalString(raw.venalValue),
-    propertyValue: asOptionalString(raw.propertyValue),
+    aliquota: asOptionalString(raw.aliquota),
+    baseCalculo:
+      asOptionalString(raw.baseCalculo) || asOptionalString(raw.propertyValue),
     itbiValue: asOptionalString(raw.itbiValue),
   };
 }

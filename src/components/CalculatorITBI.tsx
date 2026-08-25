@@ -8,15 +8,19 @@ import {
   ScrollView,
 } from "react-native";
 
+export type CalculationResult = {
+  valorVenal: number;
+  valorTransacao: number;
+  aliquotaPercent: number;
+  baseCalculo: number;
+  itbi: number;
+};
+
 interface CalculatorVenalITBIProps {
   initialValorVenal?: string;
   initialValorTransacao?: string;
   initialAliquota?: string;
-  onSave?: (result: {
-    valorVenal: number;
-    baseCalculo: number;
-    itbi: number;
-  }) => void;
+  onSave?: (result: CalculationResult) => void;
 }
 
 const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
@@ -45,7 +49,8 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
   const handleCalcular = () => {
     const vVenal = moedaParaNumero(valorVenal) || 0;
     const vTrans = moedaParaNumero(valorTransacao) || 0;
-    const aliq = (parseFloat(aliquota.replace(",", ".")) || 0) / 100;
+    const aliquotaPercent = parseFloat(aliquota.replace(",", ".")) || 0;
+    const aliq = aliquotaPercent / 100;
 
     const baseCalculo = Math.max(vVenal, vTrans);
     const itbi = baseCalculo * aliq;
@@ -65,6 +70,8 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
     if (onSave) {
       onSave({
         valorVenal: vVenal,
+        valorTransacao: vTrans,
+        aliquotaPercent,
         baseCalculo,
         itbi,
       });
@@ -122,8 +129,14 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
             })}
           </Text>
           <Text style={styles.resultText}>
-            Valor de Transação: R${""}
+            Valor de Transação: R${" "}
             {resultado.valorTransacao.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+            })}
+          </Text>
+          <Text style={styles.resultText}>
+            Base de cálculo: R${" "}
+            {resultado.baseCalculo.toLocaleString("pt-BR", {
               minimumFractionDigits: 2,
             })}
           </Text>

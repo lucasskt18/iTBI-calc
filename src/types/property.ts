@@ -11,13 +11,20 @@ export interface Property {
   /** Nome do proprietário. */
   property: string;
   phone: string;
+  transactionValue?: string;
   venalValue?: string;
-  /** Legado: a lista trata como transação, mas o save da calculadora grava a base. */
-  propertyValue?: string;
+  /** Alíquota em percentual (ex: "2" para 2%). */
+  aliquota?: string;
+  baseCalculo?: string;
   itbiValue?: string;
 }
 
 export type NewProperty = Omit<
   Property,
-  "id" | "venalValue" | "propertyValue" | "itbiValue"
+  | "id"
+  | "transactionValue"
+  | "venalValue"
+  | "aliquota"
+  | "baseCalculo"
+  | "itbiValue"
 >;

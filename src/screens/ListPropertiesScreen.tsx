@@ -27,6 +27,7 @@ import {
   updateProperty,
 } from "../storage/propertiesStorage";
 import { Property } from "../types/property";
+import { formatNumberToCurrencyInput, formatStoredMoney, formatStoredPercent } from "../utils/formatCurrency";
 
 type RootStackParamList = {
   EditProperty: {
@@ -96,13 +97,17 @@ export default function ListPropertiesScreen() {
   const renderProperty = ({ item }: { item: Property }) => {
     const handleSaveCalculation = async (result: {
       valorVenal: number;
+      valorTransacao: number;
+      aliquotaPercent: number;
       baseCalculo: number;
       itbi: number;
     }) => {
       try {
         const updated = await updateProperty(item.id, {
           venalValue: result.valorVenal.toString(),
-          propertyValue: result.baseCalculo.toString(),
+          transactionValue: result.valorTransacao.toString(),
+          aliquota: result.aliquotaPercent.toString(),
+          baseCalculo: result.baseCalculo.toString(),
           itbiValue: result.itbi.toString(),
         });
         setProperties((current) =>
@@ -139,22 +144,19 @@ export default function ListPropertiesScreen() {
           <View style={styles.propertyInfo}>
             <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
             <Text style={styles.propertyOwner}>
-              Valor de Transação: R${" "}
-              {item.propertyValue
-                ? Number(item.propertyValue).toLocaleString("pt-BR")
-                : "-"}
+              Valor de Transação: R$ {formatStoredMoney(item.transactionValue)}
             </Text>
             <Text style={styles.propertyOwner}>
-              Valor Venal: R${" "}
-              {item.venalValue
-                ? Number(item.venalValue).toLocaleString("pt-BR")
-                : "-"}
+              Valor Venal: R$ {formatStoredMoney(item.venalValue)}
             </Text>
             <Text style={styles.propertyOwner}>
-              ITBI: R${" "}
-              {item.itbiValue
-                ? Number(item.itbiValue).toLocaleString("pt-BR")
-                : "-"}
+              Base de cálculo: R$ {formatStoredMoney(item.baseCalculo)}
+            </Text>
+            <Text style={styles.propertyOwner}>
+              Alíquota: {formatStoredPercent(item.aliquota)}
+            </Text>
+            <Text style={styles.propertyOwner}>
+              ITBI: R$ {formatStoredMoney(item.itbiValue)}
             </Text>
           </View>
         </View>
@@ -199,7 +201,11 @@ export default function ListPropertiesScreen() {
         {showCalculator === item.id && (
           <View style={{ marginTop: 16 }}>
             <CalculatorITBI
-              initialValorTransacao={item.propertyValue}
+              initialValorTransacao={formatNumberToCurrencyInput(
+                item.transactionValue
+              )}
+              initialValorVenal={formatNumberToCurrencyInput(item.venalValue)}
+              initialAliquota={item.aliquota ?? ""}
               onSave={handleSaveCalculation}
             />
             <TouchableOpacity
