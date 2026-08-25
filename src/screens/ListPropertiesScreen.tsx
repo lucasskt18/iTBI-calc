@@ -113,6 +113,7 @@ export default function ListPropertiesScreen() {
         setProperties((current) =>
           current.map((prop) => (prop.id === item.id ? updated : prop))
         );
+        setShowCalculator(null);
       } catch (error) {
         Alert.alert("Erro", "Não foi possível salvar o cálculo de ITBI.");
       }
@@ -206,6 +207,7 @@ export default function ListPropertiesScreen() {
               )}
               initialValorVenal={formatNumberToCurrencyInput(item.venalValue)}
               initialAliquota={item.aliquota ?? ""}
+              hasSavedCalculation={!!item.itbiValue}
               onSave={handleSaveCalculation}
             />
             <TouchableOpacity

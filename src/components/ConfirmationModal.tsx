@@ -8,6 +8,8 @@ interface ConfirmationModalProps {
     message: string;
     onConfirm: () => void;
     onCancel: () => void;
+    confirmLabel?: string;
+    confirmColor?: string;
 }
 
 export default function ConfirmationModal({
@@ -15,7 +17,9 @@ export default function ConfirmationModal({
     title,
     message,
     onConfirm,
-    onCancel
+    onCancel,
+    confirmLabel = "Excluir",
+    confirmColor = "#FF6B6B",
 }: ConfirmationModalProps) {
     return (
         <Modal
@@ -48,10 +52,10 @@ export default function ConfirmationModal({
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.button, styles.confirmButton]}
+                            style={[styles.button, styles.confirmButton, { backgroundColor: confirmColor }]}
                             onPress={onConfirm}
                         >
-                            <Text style={styles.buttonText}>Excluir</Text>
+                            <Text style={styles.buttonText}>{confirmLabel}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
