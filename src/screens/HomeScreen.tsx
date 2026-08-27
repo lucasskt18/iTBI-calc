@@ -7,19 +7,11 @@ import {
   StatusBar,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-type RootStackParamList = {
-  Home: undefined;
-  RegisterProperty: undefined;
-  CalculateITBI: undefined;
-  ListProperties: undefined;
-  AboutUs: undefined;
-};
+import type { RootStackParamList } from "../navigation/types";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -40,9 +32,6 @@ const MenuItem = ({ title, icon, color, onPress }: MenuItemProps) => (
   </TouchableOpacity>
 );
 
-const { width } = Dimensions.get("window");
-const cardWidth = (width - 60) / 2;
-
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
 
@@ -61,7 +50,7 @@ export default function HomeScreen() {
 
       <View>
         <Text style={styles.textFirstCta}>Vai comprar um imóvel?</Text>
-        <Text style={styles.textSecondCta}>Descubra o valor do seu ITBI de forma rápida, segura e descomplicada. Começe agora!</Text>
+        <Text style={styles.textSecondCta}>Descubra o valor do seu ITBI de forma rápida, segura e descomplicada. Comece agora!</Text>
       </View>
 
       <View style={styles.content}>
@@ -115,7 +104,6 @@ const styles = StyleSheet.create({
     color: "#FFF",
     marginTop: 50,
     marginBottom: 10,
-    // paddingHorizontal: ,
   },
   textSecondCta: {
     textAlign: "center",

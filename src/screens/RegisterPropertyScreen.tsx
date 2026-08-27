@@ -109,16 +109,6 @@ export default function RegisterPropertyScreen() {
       isValid = false;
     }
 
-    // if (!formData.address.trim()) {
-    //   newErrors.address = "Rua é obrigatório";
-    //   isValid = false;
-    // }
-
-    // if (!formData.neighborhood.trim()) {
-    //   newErrors.neighborhood = "Bairro é obrigatório";
-    //   isValid = false;
-    // }
-
     if (!formData.city.trim()) {
       newErrors.city = "Cidade é obrigatória";
       isValid = false;

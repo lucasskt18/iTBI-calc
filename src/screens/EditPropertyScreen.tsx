@@ -22,6 +22,7 @@ import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
 import { getProperty, updateProperty } from "../storage/propertiesStorage";
 import { Property } from "../types/property";
 import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
+import type { RootStackParamList } from "../navigation/types";
 
 interface FormErrors {
   phone?: string;
@@ -34,12 +35,6 @@ interface FormErrors {
   type?: string;
   cep?: string;
 }
-
-type RootStackParamList = {
-  EditProperty: {
-    propertyId: string;
-  };
-};
 
 type EditPropertyScreenRouteProp = RouteProp<
   RootStackParamList,

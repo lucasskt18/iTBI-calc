@@ -14,9 +14,9 @@ import {
 import { Icon } from "@rneui/themed";
 import {
   useNavigation,
-  NavigationProp,
   useFocusEffect,
 } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import BackButton from "../components/BackButton";
 import ConfirmationModal from "../components/ConfirmationModal";
 import CalculatorITBI from "../components/CalculatorITBI";
@@ -28,15 +28,9 @@ import {
 } from "../storage/propertiesStorage";
 import { Property } from "../types/property";
 import { formatNumberToCurrencyInput, formatStoredMoney, formatStoredPercent } from "../utils/formatCurrency";
+import type { RootStackParamList } from "../navigation/types";
 
-type RootStackParamList = {
-  EditProperty: {
-    propertyId: string;
-  };
-  RegisterProperty: undefined;
-};
-
-type NavigationProps = NavigationProp<RootStackParamList>;
+type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ListPropertiesScreen() {
   const navigation = useNavigation<NavigationProps>();
