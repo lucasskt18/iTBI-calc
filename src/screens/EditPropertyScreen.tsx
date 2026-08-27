@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -22,6 +21,7 @@ import ErrorModal from "../components/ErrorModal";
 import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
 import { getProperty, updateProperty } from "../storage/propertiesStorage";
 import { Property } from "../types/property";
+import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
 
 interface FormErrors {
   phone?: string;
@@ -32,6 +32,7 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
+  cep?: string;
 }
 
 type RootStackParamList = {
@@ -79,10 +80,52 @@ export default function EditPropertyScreen() {
       const property = await getProperty(propertyId);
       if (property) {
         setFormData(property);
+      } else {
+        setErrorMessage("Imóvel não encontrado.");
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error("Erro ao carregar imóvel:", error);
-      Alert.alert("Erro", "Não foi possível carregar os dados do imóvel.");
+      setErrorMessage("Não foi possível carregar os dados do imóvel.");
+      setShowErrorModal(true);
+    }
+  };
+
+  const lookupAddressByCep = async (cep: string) => {
+    try {
+      const address = await fetchAddressByCep(cep);
+      setFormData((current) => ({
+        ...current,
+        ...address,
+      }));
+      setErrors((current) => ({
+        ...current,
+        address: undefined,
+        neighborhood: undefined,
+        city: undefined,
+        state: undefined,
+        cep: undefined,
+      }));
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar o endereço. Verifique o CEP."
+      );
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleCepChange = (text: string) => {
+    const cep = digitsOnlyCep(text);
+    setFormData((current) => ({ ...current, cep }));
+
+    if (errors.cep) {
+      setErrors((current) => ({ ...current, cep: undefined }));
+    }
+
+    if (cep.length === 8) {
+      lookupAddressByCep(cep);
     }
   };
 
@@ -90,13 +133,11 @@ export default function EditPropertyScreen() {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Endereço é obrigatório";
+    if (!formData.cep.trim()) {
+      newErrors.cep = "CEP é obrigatório";
       isValid = false;
-    }
-
-    if (!formData.neighborhood.trim()) {
-      newErrors.neighborhood = "Bairro é obrigatório";
+    } else if (digitsOnlyCep(formData.cep).length !== 8) {
+      newErrors.cep = "CEP deve ter 8 dígitos";
       isValid = false;
     }
 
@@ -196,6 +237,29 @@ export default function EditPropertyScreen() {
                 onPress={() => setShowTypeModal(true)}
               />
               {renderError("type")}
+            </View>
+
+            <View>
+              <View
+                style={[styles.inputGroup, errors.cep && styles.inputError]}
+              >
+                <Icon
+                  name="map-pin"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="CEP"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  maxLength={8}
+                  value={formData.cep}
+                  onChangeText={handleCepChange}
+                />
+              </View>
+              {renderError("cep")}
             </View>
 
             <View>

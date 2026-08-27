@@ -17,10 +17,10 @@ import BackButton from "../components/BackButton";
 import SuccessModal from "../components/SuccessModal";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
-import axios from "axios";
 import SelectField from "../components/SelectField";
 import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
 import { createProperty } from "../storage/propertiesStorage";
+import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
 
 interface FormErrors {
   address?: string;
@@ -54,47 +54,41 @@ export default function RegisterPropertyScreen() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const fetchAddressByCep = async (cep: string) => {
+  const lookupAddressByCep = async (cep: string) => {
     try {
-      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-      if (response.data.erro) {
-        setErrorMessage("CEP inválido.");
-        setShowErrorModal(true);
-        return;
-      }
-
-      const { logradouro, bairro, localidade, uf } = response.data;
-
-      setFormData({
-        ...formData,
-        address: logradouro || "",
-        neighborhood: bairro || "",
-        city: localidade || "",
-        state: uf || "",
-      });
-
-      setErrors({
-        ...errors,
+      const address = await fetchAddressByCep(cep);
+      setFormData((current) => ({
+        ...current,
+        ...address,
+      }));
+      setErrors((current) => ({
+        ...current,
         address: undefined,
         neighborhood: undefined,
         city: undefined,
         state: undefined,
-      });
+        cep: undefined,
+      }));
     } catch (error) {
-      setErrorMessage("Erro ao buscar o endereço. Verifique o CEP.");
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar o endereço. Verifique o CEP."
+      );
       setShowErrorModal(true);
     }
   };
 
   const handleCepChange = (text: string) => {
-    setFormData({ ...formData, cep: text });
+    const cep = digitsOnlyCep(text);
+    setFormData((current) => ({ ...current, cep }));
 
     if (errors.cep) {
-      setErrors({ ...errors, cep: undefined });
+      setErrors((current) => ({ ...current, cep: undefined }));
     }
 
-    if (text.length === 8) {
-      fetchAddressByCep(text);
+    if (cep.length === 8) {
+      lookupAddressByCep(cep);
     }
   };
 
@@ -109,6 +103,9 @@ export default function RegisterPropertyScreen() {
 
     if (!formData.cep.trim()) {
       newErrors.cep = "CEP é obrigatório";
+      isValid = false;
+    } else if (digitsOnlyCep(formData.cep).length !== 8) {
+      newErrors.cep = "CEP deve ter 8 dígitos";
       isValid = false;
     }
 
