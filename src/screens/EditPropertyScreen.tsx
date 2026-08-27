@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   SafeAreaView,
   ScrollView,
@@ -22,6 +21,8 @@ import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
 import { getProperty, updateProperty } from "../storage/propertiesStorage";
 import { Property } from "../types/property";
 import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
+import { colors } from "../theme";
+import { formStyles as styles } from "../theme/forms";
 import type { RootStackParamList } from "../navigation/types";
 
 interface FormErrors {
@@ -207,7 +208,7 @@ export default function EditPropertyScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <BackButton />
 
       <View style={styles.header}>
@@ -241,13 +242,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="map-pin"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="CEP"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   maxLength={8}
                   value={formData.cep}
@@ -264,13 +265,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="road"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Rua"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.address}
                   onChangeText={(text) => {
                     setFormData({ ...formData, address: text });
@@ -293,13 +294,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="map-marker-alt"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Bairro"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.neighborhood}
                   onChangeText={(text) => {
                     setFormData({ ...formData, neighborhood: text });
@@ -319,13 +320,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="city"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Cidade"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.city}
                   editable={false}
                 />
@@ -340,13 +341,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="flag"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Estado"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.state}
                   editable={false}
                 />
@@ -361,13 +362,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="ruler-combined"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Área (m²)"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   value={formData.area}
                   onChangeText={(text) => {
@@ -391,13 +392,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="user"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Proprietário"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.property}
                   onChangeText={(text) => {
                     setFormData({ ...formData, property: text });
@@ -418,13 +419,13 @@ export default function EditPropertyScreen() {
                 <Icon
                   name="phone-alt"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Telefone do Proprietário"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   value={formData.phone}
                   maxLength={15}
@@ -478,71 +479,3 @@ export default function EditPropertyScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1A1A2E",
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    marginLeft: 50,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#8F94FB",
-    opacity: 0.8,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-  },
-  formContainer: {
-    gap: 20,
-  },
-  inputGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#252544",
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    gap: 15,
-  },
-  inputError: {
-    borderWidth: 1,
-    borderColor: "#FF6B6B",
-  },
-  input: {
-    flex: 1,
-    color: "#FFF",
-    fontSize: 16,
-    padding: 0,
-  },
-  errorText: {
-    color: "#FF6B6B",
-    fontSize: 12,
-    marginTop: 5,
-    marginLeft: 15,
-  },
-  submitButton: {
-    backgroundColor: "#4E54C8",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  submitButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

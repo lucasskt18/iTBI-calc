@@ -8,27 +8,47 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
+import { colors, radii } from "../theme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface MenuItemProps {
   title: string;
+  subtitle: string;
   icon: string;
-  color: string;
+  primary?: boolean;
   onPress: () => void;
 }
 
-const MenuItem = ({ title, icon, color, onPress }: MenuItemProps) => (
+const MenuItem = ({ title, subtitle, icon, primary, onPress }: MenuItemProps) => (
   <TouchableOpacity
     onPress={onPress}
-    style={[styles.card, { backgroundColor: color }]}
+    activeOpacity={0.85}
+    style={[styles.menuRow, primary && styles.menuRowPrimary]}
   >
-    <Icon name={icon} type="font-awesome-5" color="#FFF" size={24} />
-    <Text style={styles.cardText}>{title}</Text>
+    <View style={[styles.iconWrap, primary && styles.iconWrapPrimary]}>
+      <Icon
+        name={icon}
+        type="font-awesome-5"
+        color={primary ? colors.text : colors.accent}
+        size={18}
+      />
+    </View>
+    <View style={styles.menuCopy}>
+      <Text style={[styles.menuTitle, primary && styles.menuTitlePrimary]}>{title}</Text>
+      <Text style={[styles.menuSubtitle, primary && styles.menuSubtitlePrimary]}>{subtitle}</Text>
+    </View>
+    <Icon
+      name="chevron-right"
+      type="font-awesome-5"
+      color={primary ? "rgba(255,255,255,0.7)" : colors.muted}
+      size={12}
+    />
   </TouchableOpacity>
 );
 
@@ -37,43 +57,50 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+      <LinearGradient
+        colors={[colors.bg, "#12151F", colors.bg]}
+        style={StyleSheet.absoluteFill}
+      />
 
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo.png")}
-          style={{ width: "40%", height: 100, resizeMode: "contain" }}
+          style={styles.logo}
         />
-        <Text style={styles.headerTitle}>Calculadora de ITBI</Text>
+        <View style={styles.headerBadge}>
+          <Text style={styles.headerBadgeText}>ITBI</Text>
+        </View>
       </View>
 
-
-      <View>
+      <View style={styles.hero}>
+        <Text style={styles.kicker}>Estimativa municipal</Text>
         <Text style={styles.textFirstCta}>Vai comprar um imóvel?</Text>
-        <Text style={styles.textSecondCta}>Descubra o valor do seu ITBI de forma rápida, segura e descomplicada. Comece agora!</Text>
+        <Text style={styles.textSecondCta}>
+          Descubra o valor do seu ITBI de forma rápida, segura e descomplicada.
+        </Text>
       </View>
 
       <View style={styles.content}>
-        <View style={styles.grid}>
-          <MenuItem
-            title="Cadastrar Imóvel"
-            icon="home"
-            color="#FF6B6B"
-            onPress={() => navigation.navigate("RegisterProperty")}
-          />
-          <MenuItem
-            title="Consultar Imóveis & Calcular ITBI"
-            icon="list"
-            color="#00B4DB"
-            onPress={() => navigation.navigate("ListProperties")}
-          />
-          <MenuItem
-            title="Sobre Nós"
-            icon="info-circle"
-            color="#11998e"
-            onPress={() => navigation.navigate("AboutUs")}
-          />
-        </View>
+        <MenuItem
+          title="Cadastrar Imóvel"
+          subtitle="Endereço, área e proprietário"
+          icon="home"
+          primary
+          onPress={() => navigation.navigate("RegisterProperty")}
+        />
+        <MenuItem
+          title="Consultar e calcular"
+          subtitle="Lista, edição e ITBI"
+          icon="list"
+          onPress={() => navigation.navigate("ListProperties")}
+        />
+        <MenuItem
+          title="Sobre o projeto"
+          subtitle="Equipe e apresentação"
+          icon="info-circle"
+          onPress={() => navigation.navigate("AboutUs")}
+        />
       </View>
     </SafeAreaView>
   );
@@ -81,74 +108,111 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
     flex: 1,
-    backgroundColor: "#1A1A2E",
+    backgroundColor: colors.bg,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
-    paddingTop: 60,
+    paddingHorizontal: 24,
+    paddingTop: 20,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFF",
+  logo: {
+    width: 148,
+    height: 48,
+    resizeMode: "contain",
+  },
+  headerBadge: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: radii.pill,
+  },
+  headerBadgeText: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 1.4,
+  },
+  hero: {
+    paddingHorizontal: 24,
+    paddingTop: 36,
+    paddingBottom: 12,
+  },
+  kicker: {
+    color: colors.accent,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 1.6,
+    textTransform: "uppercase",
+    marginBottom: 10,
   },
   textFirstCta: {
-    textAlign: "center",
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginTop: 50,
+    fontSize: 32,
+    fontWeight: "700",
+    color: colors.text,
+    letterSpacing: -0.6,
     marginBottom: 10,
   },
   textSecondCta: {
-    textAlign: "center",
-    fontSize: 18,
-    color: "#8F94FB",
-    opacity: 0.8,
-    lineHeight: 25,
-    paddingHorizontal: 30,
+    fontSize: 16,
+    color: colors.muted,
+    lineHeight: 24,
+    maxWidth: 320,
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "flex-end",
     paddingHorizontal: 20,
-    paddingVertical: 0,
-    position: 'relative',
+    paddingBottom: 28,
+    gap: 12,
   },
-  grid: {
-    width: '100%',
-    flexDirection: "column",
+  menuRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    gap: 14,
+  },
+  menuRowPrimary: {
+    backgroundColor: colors.accent,
+    borderColor: "transparent",
+  },
+  iconWrap: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: colors.accentMuted,
     alignItems: "center",
     justifyContent: "center",
-    gap: 20,
   },
-  card: {
-    width: "100%",
-    maxWidth: 350,
-    minHeight: 70,
-    borderRadius: 20,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: 0,
+  iconWrapPrimary: {
+    backgroundColor: "rgba(255,255,255,0.16)",
   },
-  cardText: {
-    color: "#FFF",
+  menuCopy: {
+    flex: 1,
+  },
+  menuTitle: {
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "600",
-    marginTop: 12,
-    textAlign: "center",
+    fontWeight: "700",
+  },
+  menuTitlePrimary: {
+    color: "#FFF",
+  },
+  menuSubtitle: {
+    color: colors.muted,
+    fontSize: 13,
+    marginTop: 2,
+  },
+  menuSubtitlePrimary: {
+    color: "rgba(255,255,255,0.82)",
   },
 });

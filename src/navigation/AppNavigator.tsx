@@ -7,6 +7,7 @@ import ListPropertiesScreen from "../screens/ListPropertiesScreen";
 import EditPropertyScreen from "../screens/EditPropertyScreen";
 import AboutUsScreen from "../screens/AboutUsScreen";
 import { RootStackParamList } from "./types";
+import { colors } from "../theme";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -14,10 +15,10 @@ const CustomDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    background: "#1A1A2E",
-    card: "#1A1A2E",
-    border: "#1A1A2E",
-    primary: "#4E54C8",
+    background: colors.bg,
+    card: colors.bg,
+    border: colors.bg,
+    primary: colors.accent,
   },
 };
 
@@ -27,7 +28,7 @@ export default function AppNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#1A1A2E" },
+          contentStyle: { backgroundColor: colors.bg },
           animation: "fade",
           animationDuration: 500,
           presentation: "transparentModal",

@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
+import { colors, radii } from '../theme';
 
 interface ErrorModalProps {
     visible: boolean;
@@ -27,7 +28,7 @@ export default function ErrorModal({ visible, onClose, message = 'Por favor, cor
                     <Icon
                         name="exclamation-circle"
                         type="font-awesome-5"
-                        color="#FF6B6B"
+                        color={colors.danger}
                         size={50}
                         solid
                     />
@@ -47,41 +48,44 @@ export default function ErrorModal({ visible, onClose, message = 'Por favor, cor
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: colors.overlay,
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalContent: {
-        backgroundColor: '#252544',
-        borderRadius: 16,
+        backgroundColor: colors.surface,
+        borderRadius: radii.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
         padding: 24,
         width: '85%',
         alignItems: 'center',
         gap: 16,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#FFF',
+        fontSize: 22,
+        fontWeight: '700',
+        color: colors.text,
         marginTop: 8,
     },
     message: {
-        fontSize: 16,
-        color: '#8F94FB',
+        fontSize: 15,
+        color: colors.muted,
         textAlign: 'center',
         marginBottom: 8,
+        lineHeight: 22,
     },
     button: {
-        backgroundColor: '#4E54C8',
+        backgroundColor: colors.accent,
         paddingVertical: 12,
         paddingHorizontal: 24,
-        borderRadius: 8,
+        borderRadius: radii.sm,
         width: '100%',
         alignItems: 'center',
     },
     buttonText: {
-        color: '#FFF',
+        color: colors.text,
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
     },
 }); 

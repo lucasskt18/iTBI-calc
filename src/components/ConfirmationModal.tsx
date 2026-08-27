@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Icon } from '@rneui/themed';
+import { colors, radii } from '../theme';
 
 interface ConfirmationModalProps {
     visible: boolean;
@@ -19,7 +20,7 @@ export default function ConfirmationModal({
     onConfirm,
     onCancel,
     confirmLabel = "Excluir",
-    confirmColor = "#FF6B6B",
+    confirmColor = colors.danger,
 }: ConfirmationModalProps) {
     return (
         <Modal
@@ -34,7 +35,7 @@ export default function ConfirmationModal({
                         <Icon
                             name="exclamation-circle"
                             type="font-awesome-5"
-                            color="#FF6B6B"
+                            color={colors.danger}
                             size={50}
                             solid
                         />
@@ -67,40 +68,35 @@ export default function ConfirmationModal({
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: colors.overlay,
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalContainer: {
-        backgroundColor: '#252544',
-        borderRadius: 20,
+        backgroundColor: colors.surface,
+        borderRadius: radii.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
         padding: 24,
         width: '85%',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
     },
     iconContainer: {
         marginBottom: 16,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#FFF',
+        fontSize: 22,
+        fontWeight: '700',
+        color: colors.text,
         marginBottom: 8,
         textAlign: 'center',
     },
     message: {
-        fontSize: 16,
-        color: '#8F94FB',
+        fontSize: 15,
+        color: colors.muted,
         marginBottom: 24,
         textAlign: 'center',
+        lineHeight: 22,
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -110,23 +106,23 @@ const styles = StyleSheet.create({
     button: {
         flex: 1,
         paddingVertical: 12,
-        borderRadius: 12,
+        borderRadius: radii.sm,
         alignItems: 'center',
     },
     cancelButton: {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: '#8F94FB',
+        borderColor: colors.border,
     },
     confirmButton: {
-        backgroundColor: '#FF6B6B',
+        backgroundColor: colors.danger,
     },
     buttonText: {
         fontSize: 16,
-        fontWeight: '600',
-        color: '#FFF',
+        fontWeight: '700',
+        color: colors.text,
     },
     cancelButtonText: {
-        color: '#8F94FB',
+        color: colors.muted,
     },
 }); 

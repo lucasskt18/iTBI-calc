@@ -7,6 +7,7 @@ import {
     ScrollView,
     StyleSheet,
 } from 'react-native';
+import { colors, radii } from '../theme';
 
 interface Option {
     id: string;
@@ -69,45 +70,47 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: colors.overlay,
     },
     modalContent: {
-        backgroundColor: '#252544',
-        borderRadius: 12,
+        backgroundColor: colors.surface,
+        borderRadius: radii.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
         padding: 20,
         width: '90%',
         maxHeight: '80%',
     },
     modalTitle: {
-        color: '#FFF',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        color: colors.text,
+        fontSize: 18,
+        fontWeight: '700',
+        marginBottom: 16,
         textAlign: 'center',
     },
     optionsList: {
         maxHeight: 400,
     },
     optionItem: {
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#1A1A2E',
+        borderBottomColor: colors.border,
     },
     optionText: {
-        color: '#FFF',
+        color: colors.text,
         fontSize: 16,
     },
     closeButton: {
-        backgroundColor: '#4E54C8',
-        padding: 15,
-        borderRadius: 8,
-        marginTop: 20,
+        backgroundColor: colors.accent,
+        padding: 14,
+        borderRadius: radii.sm,
+        marginTop: 16,
         alignItems: 'center',
     },
     closeButtonText: {
-        color: '#FFF',
+        color: colors.text,
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '700',
     },
 }); 

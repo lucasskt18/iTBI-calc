@@ -4,16 +4,17 @@ import { Video, ResizeMode } from 'expo-av';
 import { ActivityIndicator } from 'react-native';
 import { Icon } from '@rneui/themed';
 import BackButton from '../components/BackButton';
+import { colors, radii } from '../theme';
 
 export default function AboutUsScreen() {
     const [videoLoaded, setVideoLoaded] = useState<boolean>(false);
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+            <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
             <BackButton />
             <ScrollView style={styles.scrollView}>
                 <View style={styles.header}>
-                    <Icon name="info-circle" type="font-awesome-5" color="#414692" size={50} />
+                    <Icon name="info-circle" type="font-awesome-5" color={colors.accent} size={36} />
                     <Text style={styles.title}>Sobre o Projeto</Text>
                 </View>
 
@@ -35,7 +36,7 @@ export default function AboutUsScreen() {
                     />
 
                     {!videoLoaded && (
-                        <ActivityIndicator size="large" color="#8F94FB" style={styles.loadingIndicator} />
+                        <ActivityIndicator size="large" color={colors.accent} style={styles.loadingIndicator} />
                     )}
 
 
@@ -52,19 +53,19 @@ export default function AboutUsScreen() {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Equipe de Desenvolvimento</Text>
                     <View style={styles.teamMember}>
-                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Icon name="user" type="font-awesome-5" color={colors.accent} size={14} />
                         <Text style={styles.teamMemberName}>Arthur Moreira</Text>
                     </View>
                     <View style={styles.teamMember}>
-                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Icon name="user" type="font-awesome-5" color={colors.accent} size={14} />
                         <Text style={styles.teamMemberName}>Daniel Formoso</Text>
                     </View>
                     <View style={styles.teamMember}>
-                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Icon name="user" type="font-awesome-5" color={colors.accent} size={14} />
                         <Text style={styles.teamMemberName}>Guilherme Valentim</Text>
                     </View>
                     <View style={styles.teamMember}>
-                        <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
+                        <Icon name="user" type="font-awesome-5" color={colors.accent} size={14} />
                         <Text style={styles.teamMemberName}>Lucas Amancio</Text>
                     </View>
                     <Text style={styles.text}>
@@ -86,7 +87,7 @@ export default function AboutUsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#1A1A2E',
+        backgroundColor: colors.bg,
     },
     scrollView: {
         flex: 1,
@@ -94,50 +95,55 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         padding: 20,
-        paddingTop: 60,
+        paddingTop: 72,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#FFF',
-        marginTop: 16,
+        fontSize: 26,
+        fontWeight: '700',
+        color: colors.text,
+        marginTop: 14,
+        letterSpacing: -0.4,
     },
     section: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        marginBottom: 20,
+        marginHorizontal: 20,
+        marginBottom: 16,
+        padding: 18,
+        backgroundColor: colors.surface,
+        borderRadius: radii.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
         position: 'relative',
     },
     sectionTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#8F94FB',
-        marginBottom: 12,
+        fontSize: 18,
+        fontWeight: '700',
+        color: colors.text,
+        marginBottom: 10,
     },
     text: {
-        fontSize: 17,
-        color: '#FFF',
-        lineHeight: 24,
+        fontSize: 15,
+        color: colors.muted,
+        lineHeight: 23,
     },
     teamMember: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 10,
     },
     teamMemberName: {
-        fontSize: 17,
+        fontSize: 15,
         fontWeight: '600',
-        color: '#FFF',
+        color: colors.text,
         marginLeft: 12,
     },
-
     video: {
         width: '100%',
         height: 200,
-        marginTop: 20,
-        borderRadius: 8,
+        marginTop: 16,
+        borderRadius: radii.md,
+        overflow: 'hidden',
+        backgroundColor: colors.surfaceAlt,
     },
-
     loadingIndicator: {
         position: 'absolute',
         top: 0,

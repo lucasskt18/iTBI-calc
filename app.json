@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1A1A2E"
+      "backgroundColor": "#0B0D14"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#1A1A2E"
+        "backgroundColor": "#0B0D14"
       }
     },
     "web": {

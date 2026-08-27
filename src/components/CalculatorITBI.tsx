@@ -13,6 +13,7 @@ import {
   parseCurrencyInput,
   parsePercentInput,
 } from "../utils/formatCurrency";
+import { colors, radii } from "../theme";
 
 export type CalculationResult = ItbiCalculation;
 
@@ -101,7 +102,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       <TextInput
         style={styles.input}
         placeholder="Valor de Transação (R$)"
-        placeholderTextColor="#8F94FB"
+        placeholderTextColor={colors.muted}
         keyboardType="numeric"
         value={valorTransacao}
         onChangeText={(text) => {
@@ -112,7 +113,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       <TextInput
         style={styles.input}
         placeholder="Valor Venal (R$)"
-        placeholderTextColor="#8F94FB"
+        placeholderTextColor={colors.muted}
         keyboardType="numeric"
         value={valorVenal}
         onChangeText={(text) => {
@@ -123,7 +124,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
       <TextInput
         style={styles.input}
         placeholder="Alíquota (%)"
-        placeholderTextColor="#8F94FB"
+        placeholderTextColor={colors.muted}
         keyboardType="numeric"
         value={aliquota}
         onChangeText={(text) => {
@@ -189,7 +190,7 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
         title="Substituir cálculo?"
         message="Este imóvel já tem um ITBI salvo. Deseja substituir pelos valores atuais?"
         confirmLabel="Substituir"
-        confirmColor="#4E54C8"
+        confirmColor={colors.accent}
         onConfirm={handleConfirmOverwrite}
         onCancel={() => setShowOverwriteModal(false)}
       />
@@ -199,76 +200,81 @@ const CalculatorITBI: React.FC<CalculatorVenalITBIProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1A1A2E",
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
+    backgroundColor: colors.bg,
+    padding: 16,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   input: {
     width: "100%",
-    backgroundColor: "#252544",
-    color: "#FFF",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    color: colors.text,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 14,
+    marginBottom: 10,
     fontSize: 16,
   },
   disclaimer: {
     width: "100%",
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 12,
-    lineHeight: 16,
-    opacity: 0.85,
+    lineHeight: 18,
     marginBottom: 8,
   },
   errorText: {
     width: "100%",
-    color: "#FF6B6B",
+    color: colors.danger,
     fontSize: 13,
     marginBottom: 8,
   },
   button: {
-    backgroundColor: "#4E54C8",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 14,
+    borderRadius: radii.sm,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 8,
     width: "100%",
   },
   saveButton: {
-    backgroundColor: "#11998e",
+    backgroundColor: colors.accent,
+    borderColor: "transparent",
   },
   buttonDisabled: {
     opacity: 0.45,
   },
   buttonText: {
-    color: "#FFF",
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "700",
   },
   resultContainer: {
-    backgroundColor: "#252544",
-    borderRadius: 10,
-    padding: 20,
-    marginTop: 20,
-    gap: 10,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 16,
+    marginTop: 16,
+    gap: 8,
     width: "100%",
   },
   resultText: {
-    color: "#8F94FB",
-    fontSize: 16,
+    color: colors.muted,
+    fontSize: 15,
   },
   resultHighlight: {
-    color: "#FFF",
+    color: colors.accent,
     fontSize: 18,
     fontWeight: "700",
   },
   previewHint: {
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 12,
     marginTop: 4,
-    opacity: 0.85,
   },
 });
 

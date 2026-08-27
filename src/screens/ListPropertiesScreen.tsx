@@ -29,6 +29,7 @@ import {
 import { Property } from "../types/property";
 import { formatNumberToCurrencyInput, formatStoredMoney, formatStoredPercent } from "../utils/formatCurrency";
 import type { RootStackParamList } from "../navigation/types";
+import { colors, radii } from "../theme";
 
 type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -116,7 +117,7 @@ export default function ListPropertiesScreen() {
     return (
       <View style={styles.propertyCard}>
         <View style={styles.propertyHeader}>
-          <Icon name="home" type="font-awesome-5" color="#8F94FB" size={20} />
+          <Icon name="home" type="font-awesome-5" color={colors.accent} size={16} />
           <Text style={styles.propertyType}>
             {getPropertyTypeLabel(item.type)}
           </Text>
@@ -135,7 +136,6 @@ export default function ListPropertiesScreen() {
             Proprietário: {item.property}
           </Text>
           <Text style={styles.propertyPhone}>Telefone: {item.phone}</Text>
-          <View style={{ marginVertical: -8 }} />
           <View style={styles.propertyInfo}>
             <Text style={styles.titleAvaliations}>Avaliação do Imóvel</Text>
             <Text style={styles.propertyOwner}>
@@ -179,10 +179,7 @@ export default function ListPropertiesScreen() {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={[
-            styles.actionButton,
-            { backgroundColor: "#8F94FB", marginTop: 10 },
-          ]}
+          style={[styles.actionButton, styles.calcButton]}
           onPress={() => setShowCalculator(item.id)}
         >
           <Icon
@@ -205,10 +202,7 @@ export default function ListPropertiesScreen() {
               onSave={handleSaveCalculation}
             />
             <TouchableOpacity
-              style={[
-                styles.actionButton,
-                { backgroundColor: "#FF6B6B", marginTop: 10 },
-              ]}
+              style={[styles.actionButton, styles.closeCalcButton]}
               onPress={() => {
                 setShowCalculator(null);
               }}
@@ -223,7 +217,7 @@ export default function ListPropertiesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <BackButton />
 
       <View style={styles.header}>
@@ -245,7 +239,7 @@ export default function ListPropertiesScreen() {
           </View>
         ) : properties.length === 0 ? (
           <View style={styles.centerContent}>
-            <Icon name="home" type="font-awesome-5" color="#8F94FB" size={50} />
+            <Icon name="home" type="font-awesome-5" color={colors.accent} size={44} />
             <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
             <TouchableOpacity
               style={styles.addButton}
@@ -278,88 +272,86 @@ export default function ListPropertiesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1A1A2E",
+    backgroundColor: colors.bg,
   },
   header: {
-    padding: 20,
-    paddingTop: 60,
-    marginLeft: 50,
+    paddingHorizontal: 24,
+    paddingTop: 64,
+    paddingBottom: 8,
+    marginLeft: 44,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 8,
+    fontSize: 26,
+    fontWeight: "700",
+    color: colors.text,
+    letterSpacing: -0.4,
+    marginBottom: 6,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: "#8F94FB",
-    opacity: 0.8,
+    fontSize: 15,
+    color: colors.muted,
   },
   listContent: {
     padding: 20,
-    gap: 20,
+    gap: 16,
   },
   propertyCard: {
-    backgroundColor: "#252544",
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
   },
   propertyHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    marginBottom: 15,
+    marginBottom: 12,
   },
   propertyType: {
-    color: "#8F94FB",
-    fontSize: 14,
-    fontWeight: "500",
+    color: colors.accent,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
   },
   propertyInfo: {
-    gap: 8,
+    gap: 6,
   },
   propertyAddress: {
-    color: "#FFF",
+    color: colors.text,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "700",
+    letterSpacing: -0.3,
   },
   propertyLocation: {
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 14,
   },
   propertyArea: {
-    color: "#8F94FB",
-    // color: "#4E54C8",
+    color: colors.muted,
     fontSize: 14,
-    // fontWeight: "bold",
-    marginTop: -8,
   },
   propertyOwner: {
-    color: "#8F94FB",
-    // color: "#4E54C8",
+    color: colors.muted,
     fontSize: 14,
-    // fontWeight: "bold",
-    marginTop: -8,
   },
   propertyPhone: {
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 14,
-    marginTop: -8,
   },
   titleAvaliations: {
-    // color: '#fff',
-    color: "#8F94FB",
-    fontSize: 14,
-    fontWeight: "bold",
-    marginTop: 15,
-    marginBottom: 5,
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "700",
+    marginTop: 12,
+    marginBottom: 4,
   },
   buttonGroup: {
     flexDirection: "row",
     gap: 10,
-    marginTop: 15,
+    marginTop: 16,
   },
   actionButton: {
     flex: 1,
@@ -368,16 +360,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: radii.sm,
   },
   editButton: {
-    backgroundColor: "#4E54C8",
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   deleteButton: {
-    backgroundColor: "#FF6B6B",
+    backgroundColor: "rgba(225, 90, 90, 0.16)",
+  },
+  calcButton: {
+    backgroundColor: colors.accent,
+    marginTop: 10,
+  },
+  closeCalcButton: {
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 10,
   },
   actionButtonText: {
-    color: "#FFF",
+    color: colors.text,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -385,26 +389,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
+    gap: 16,
+    paddingHorizontal: 32,
   },
   loadingText: {
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 16,
   },
   emptyText: {
-    color: "#8F94FB",
+    color: colors.muted,
     fontSize: 16,
     textAlign: "center",
   },
   addButton: {
-    backgroundColor: "#4E54C8",
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 20,
+    backgroundColor: colors.accent,
+    paddingVertical: 14,
+    paddingHorizontal: 22,
+    borderRadius: radii.md,
+    marginTop: 8,
   },
   addButtonText: {
-    color: "#FFF",
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 });

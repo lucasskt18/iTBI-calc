@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   SafeAreaView,
   ScrollView,
@@ -21,6 +20,8 @@ import SelectField from "../components/SelectField";
 import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
 import { createProperty } from "../storage/propertiesStorage";
 import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
+import { colors } from "../theme";
+import { formStyles as styles } from "../theme/forms";
 
 interface FormErrors {
   address?: string;
@@ -170,7 +171,7 @@ export default function RegisterPropertyScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1A1A2E" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <BackButton />
 
       <View style={styles.header}>
@@ -204,13 +205,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="map-pin"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="CEP"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   maxLength={8}
                   value={formData.cep}
@@ -227,13 +228,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="road"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Rua"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.address}
                   editable={true}
                   maxLength={30}
@@ -255,13 +256,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="map-marker-alt"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Bairro"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.neighborhood}
                   editable={true}
                   maxLength={30}
@@ -280,13 +281,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="city"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Cidade"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.city}
                   editable={false}
                 />
@@ -301,13 +302,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="flag"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Estado"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.state}
                   editable={false}
                 />
@@ -322,13 +323,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="ruler-combined"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Área (m²)"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   value={formData.area}
                   onChangeText={(text) => {
@@ -364,13 +365,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="user"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Proprietário"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   value={formData.property}
                   onChangeText={(text) => {
                     setFormData({ ...formData, property: text });
@@ -391,13 +392,13 @@ export default function RegisterPropertyScreen() {
                 <Icon
                   name="phone-alt"
                   type="font-awesome-5"
-                  color="#8F94FB"
+                  color={colors.muted}
                   size={20}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Telefone do Proprietário"
-                  placeholderTextColor="#8F94FB"
+                  placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                   value={formData.phone}
                   maxLength={15}
@@ -458,139 +459,3 @@ export default function RegisterPropertyScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1A1A2E",
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    marginLeft: 50,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#8F94FB",
-    opacity: 0.8,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-  },
-  formContainer: {
-    gap: 20,
-  },
-  inputGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#252544",
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    gap: 15,
-  },
-  inputError: {
-    borderWidth: 1,
-    borderColor: "#FF6B6B",
-  },
-  input: {
-    flex: 1,
-    color: "#FFF",
-    fontSize: 16,
-    padding: 0,
-  },
-  errorText: {
-    color: "#FF6B6B",
-    fontSize: 12,
-    marginTop: 5,
-    marginLeft: 15,
-  },
-  submitButton: {
-    backgroundColor: "#4E54C8",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  submitButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  stateSelector: {
-    flex: 1,
-    height: 24,
-    justifyContent: "center",
-  },
-  stateSelectorText: {
-    color: "#FFF",
-    fontSize: 16,
-    height: 24,
-  },
-  placeholderText: {
-    color: "#8F94FB",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#252544",
-    borderRadius: 12,
-    padding: 20,
-    width: "90%",
-    maxHeight: "80%",
-  },
-  modalTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  stateList: {
-    maxHeight: 400,
-  },
-  stateItem: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1A1A2E",
-  },
-  stateItemText: {
-    color: "#FFF",
-    fontSize: 16,
-  },
-  closeButton: {
-    backgroundColor: "#4E54C8",
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  closeButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  selector: {
-    flex: 1,
-    height: 24,
-    justifyContent: "center",
-  },
-  selectorText: {
-    color: "#FFF",
-    fontSize: 16,
-    height: 24,
-  },
-});
