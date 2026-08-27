@@ -31,7 +31,6 @@ export default function AppNavigator() {
           contentStyle: { backgroundColor: colors.bg },
           animation: "fade",
           animationDuration: 500,
-          presentation: "transparentModal",
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />

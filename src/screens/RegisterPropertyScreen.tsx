@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   TextInput,
   TouchableOpacity,
-  StatusBar,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import BackButton from "../components/BackButton";
+import ScreenShell from "../components/ScreenShell";
 import SuccessModal from "../components/SuccessModal";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
@@ -22,6 +21,7 @@ import { createProperty } from "../storage/propertiesStorage";
 import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
 import { colors } from "../theme";
 import { formStyles as styles } from "../theme/forms";
+import { useScreenInsets } from "../hooks/useScreenInsets";
 
 interface FormErrors {
   address?: string;
@@ -37,6 +37,7 @@ interface FormErrors {
 
 export default function RegisterPropertyScreen() {
   const navigation = useNavigation();
+  const insets = useScreenInsets();
   const [formData, setFormData] = useState({
     cep: "",
     address: "",
@@ -170,22 +171,27 @@ export default function RegisterPropertyScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+    <ScreenShell>
       <BackButton />
 
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Cadastrar Imóvel</Text>
-        <Text style={styles.headerSubtitle}>Preencha os dados do imóvel</Text>
-      </View>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Cadastrar Imóvel</Text>
+          <Text style={styles.headerSubtitle}>Preencha os dados do imóvel</Text>
+        </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-      >
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          <ScrollView
+            style={styles.content}
+            contentContainerStyle={styles.formScroll}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.formContainer}>
             <View>
               <SelectField
                 value={formData.type}
@@ -419,7 +425,10 @@ export default function RegisterPropertyScreen() {
               </View>
               {renderError("phone")}
             </View>
+            </View>
+          </ScrollView>
 
+          <View style={[styles.footer, { paddingBottom: insets.footerPadding }]}>
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSubmit}
@@ -427,8 +436,8 @@ export default function RegisterPropertyScreen() {
               <Text style={styles.submitButtonText}>Cadastrar Imóvel</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
 
       <SuccessModal
         visible={showSuccessModal}
@@ -456,6 +465,6 @@ export default function RegisterPropertyScreen() {
         onClose={() => setShowErrorModal(false)}
         message={errorMessage}
       />
-    </SafeAreaView>
+    </ScreenShell>
   );
 }

@@ -4,8 +4,7 @@ import {
   Image,
   StyleSheet,
   Text,
-  StatusBar,
-  SafeAreaView,
+  ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { colors, radii } from "../theme";
+import ScreenShell from "../components/ScreenShell";
+import { useScreenInsets } from "../hooks/useScreenInsets";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -54,69 +55,85 @@ const MenuItem = ({ title, subtitle, icon, primary, onPress }: MenuItemProps) =>
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const insets = useScreenInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+    <ScreenShell>
       <LinearGradient
         colors={[colors.bg, "#12151F", colors.bg]}
         style={StyleSheet.absoluteFill}
       />
 
-      <View style={styles.header}>
-        <Image
-          source={require("../../assets/logo.png")}
-          style={styles.logo}
-        />
-        <View style={styles.headerBadge}>
-          <Text style={styles.headerBadgeText}>ITBI</Text>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + 12,
+            paddingBottom: insets.footerPadding,
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          <View style={styles.header}>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={styles.logo}
+            />
+            <View style={styles.headerBadge}>
+              <Text style={styles.headerBadgeText}>ITBI</Text>
+            </View>
+          </View>
+
+          <View style={styles.hero}>
+            <Text style={styles.kicker}>Estimativa municipal</Text>
+            <Text style={styles.textFirstCta}>Vai comprar um imóvel?</Text>
+            <Text style={styles.textSecondCta}>
+              Descubra o valor do seu ITBI de forma rápida, segura e descomplicada.
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.hero}>
-        <Text style={styles.kicker}>Estimativa municipal</Text>
-        <Text style={styles.textFirstCta}>Vai comprar um imóvel?</Text>
-        <Text style={styles.textSecondCta}>
-          Descubra o valor do seu ITBI de forma rápida, segura e descomplicada.
-        </Text>
-      </View>
-
-      <View style={styles.content}>
-        <MenuItem
-          title="Cadastrar Imóvel"
-          subtitle="Endereço, área e proprietário"
-          icon="home"
-          primary
-          onPress={() => navigation.navigate("RegisterProperty")}
-        />
-        <MenuItem
-          title="Consultar e calcular"
-          subtitle="Lista, edição e ITBI"
-          icon="list"
-          onPress={() => navigation.navigate("ListProperties")}
-        />
-        <MenuItem
-          title="Sobre o projeto"
-          subtitle="Equipe e apresentação"
-          icon="info-circle"
-          onPress={() => navigation.navigate("AboutUs")}
-        />
-      </View>
-    </SafeAreaView>
+        <View style={styles.menuList}>
+          <MenuItem
+            title="Cadastrar Imóvel"
+            subtitle="Endereço, área e proprietário"
+            icon="home"
+            primary
+            onPress={() => navigation.navigate("RegisterProperty")}
+          />
+          <MenuItem
+            title="Consultar e calcular"
+            subtitle="Lista, edição e ITBI"
+            icon="list"
+            onPress={() => navigation.navigate("ListProperties")}
+          />
+          <MenuItem
+            title="Sobre o projeto"
+            subtitle="Equipe e apresentação"
+            icon="info-circle"
+            onPress={() => navigation.navigate("AboutUs")}
+          />
+        </View>
+      </ScrollView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.bg,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "space-between",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 24,
-    paddingTop: 20,
   },
   logo: {
     width: 148,
@@ -163,11 +180,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     maxWidth: 320,
   },
-  content: {
-    flex: 1,
-    justifyContent: "flex-end",
+  menuList: {
     paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingTop: 24,
     gap: 12,
   },
   menuRow: {

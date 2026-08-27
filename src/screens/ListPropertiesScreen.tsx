@@ -3,10 +3,8 @@ import {
   View,
   StyleSheet,
   Text,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
-  StatusBar,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +16,7 @@ import {
 } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import BackButton from "../components/BackButton";
+import ScreenShell from "../components/ScreenShell";
 import ConfirmationModal from "../components/ConfirmationModal";
 import CalculatorITBI from "../components/CalculatorITBI";
 import { getPropertyTypeLabel } from "../constants/propertyTypes";
@@ -30,11 +29,13 @@ import { Property } from "../types/property";
 import { formatNumberToCurrencyInput, formatStoredMoney, formatStoredPercent } from "../utils/formatCurrency";
 import type { RootStackParamList } from "../navigation/types";
 import { colors, radii } from "../theme";
+import { useScreenInsets } from "../hooks/useScreenInsets";
 
 type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ListPropertiesScreen() {
   const navigation = useNavigation<NavigationProps>();
+  const insets = useScreenInsets();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -216,47 +217,53 @@ export default function ListPropertiesScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+    <ScreenShell>
       <BackButton />
 
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Imóveis Cadastrados</Text>
-        <Text style={styles.headerSubtitle}>
-          {properties.length} {properties.length === 1 ? "imóvel" : "imóveis"}{" "}
-          encontrados
-        </Text>
-      </View>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Imóveis Cadastrados</Text>
+          <Text style={styles.headerSubtitle}>
+            {properties.length} {properties.length === 1 ? "imóvel" : "imóveis"}{" "}
+            encontrados
+          </Text>
+        </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        {loading ? (
-          <View style={styles.centerContent}>
-            <Text style={styles.loadingText}>Carregando...</Text>
-          </View>
-        ) : properties.length === 0 ? (
-          <View style={styles.centerContent}>
-            <Icon name="home" type="font-awesome-5" color={colors.accent} size={44} />
-            <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => navigation.navigate("RegisterProperty")}
-            >
-              <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <FlatList
-            data={properties}
-            renderItem={renderProperty}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
-          />
-        )}
-      </KeyboardAvoidingView>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          {loading ? (
+            <View style={styles.centerContent}>
+              <Text style={styles.loadingText}>Carregando...</Text>
+            </View>
+          ) : properties.length === 0 ? (
+            <View style={styles.centerContent}>
+              <Icon name="home" type="font-awesome-5" color={colors.accent} size={44} />
+              <Text style={styles.emptyText}>Nenhum imóvel cadastrado</Text>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate("RegisterProperty")}
+              >
+                <Text style={styles.addButtonText}>Cadastrar Novo Imóvel</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <FlatList
+              data={properties}
+              renderItem={renderProperty}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={[
+                styles.listContent,
+                { paddingBottom: insets.scrollBottom },
+              ]}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+        </KeyboardAvoidingView>
+      </View>
 
       <ConfirmationModal
         visible={showDeleteModal}
@@ -265,7 +272,7 @@ export default function ListPropertiesScreen() {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 
@@ -275,10 +282,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 64,
+    paddingRight: 24,
+    paddingLeft: 72,
+    paddingTop: 8,
     paddingBottom: 8,
-    marginLeft: 44,
   },
   headerTitle: {
     fontSize: 26,

@@ -7,10 +7,10 @@ export const formStyles = StyleSheet.create({
     backgroundColor: colors.bg,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 64,
+    paddingRight: 24,
+    paddingLeft: 72,
+    paddingTop: 8,
     paddingBottom: 8,
-    marginLeft: 44,
   },
   headerTitle: {
     fontSize: 26,
@@ -26,12 +26,22 @@ export const formStyles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  formScroll: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 16,
+    gap: 14,
   },
   formContainer: {
     gap: 14,
-    paddingBottom: 32,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.bg,
   },
   inputGroup: {
     flexDirection: "row",
@@ -64,7 +74,6 @@ export const formStyles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: radii.md,
     alignItems: "center",
-    marginTop: 8,
   },
   submitButtonText: {
     color: colors.text,

@@ -2,17 +2,16 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   TextInput,
   TouchableOpacity,
-  StatusBar,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import BackButton from "../components/BackButton";
+import ScreenShell from "../components/ScreenShell";
 import SuccessModal from "../components/SuccessModal";
 import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
@@ -24,6 +23,7 @@ import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
 import { colors } from "../theme";
 import { formStyles as styles } from "../theme/forms";
 import type { RootStackParamList } from "../navigation/types";
+import { useScreenInsets } from "../hooks/useScreenInsets";
 
 interface FormErrors {
   phone?: string;
@@ -57,6 +57,7 @@ const EMPTY_PROPERTY: Property = {
 
 export default function EditPropertyScreen() {
   const navigation = useNavigation();
+  const insets = useScreenInsets();
   const route = useRoute<EditPropertyScreenRouteProp>();
   const propertyId = route.params.propertyId;
 
@@ -207,22 +208,27 @@ export default function EditPropertyScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+    <ScreenShell>
       <BackButton />
 
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Editar Imóvel</Text>
-        <Text style={styles.headerSubtitle}>Atualize os dados do imóvel</Text>
-      </View>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Editar Imóvel</Text>
+          <Text style={styles.headerSubtitle}>Atualize os dados do imóvel</Text>
+        </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          <ScrollView
+            style={styles.content}
+            contentContainerStyle={styles.formScroll}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.formContainer}>
             <View>
               <SelectField
                 value={formData.type}
@@ -442,13 +448,16 @@ export default function EditPropertyScreen() {
               </View>
               {renderError("phone")}
             </View>
+            </View>
+          </ScrollView>
 
+          <View style={[styles.footer, { paddingBottom: insets.footerPadding }]}>
             <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
               <Text style={styles.submitButtonText}>Salvar Alterações</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
 
       <SuccessModal
         visible={showSuccessModal}
@@ -476,6 +485,6 @@ export default function EditPropertyScreen() {
         onClose={() => setShowErrorModal(false)}
         message={errorMessage}
       />
-    </SafeAreaView>
+    </ScreenShell>
   );
 }

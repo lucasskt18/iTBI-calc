@@ -3,13 +3,15 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { colors, radii } from "../theme";
+import { useScreenInsets } from "../hooks/useScreenInsets";
 
 export default function BackButton() {
   const navigation = useNavigation();
+  const { backButtonTop } = useScreenInsets();
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, { top: backButtonTop }]}
       onPress={() => navigation.goBack()}
       activeOpacity={0.8}
     >
@@ -21,7 +23,6 @@ export default function BackButton() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 56,
     left: 20,
     width: 40,
     height: 40,
