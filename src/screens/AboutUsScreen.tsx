@@ -61,7 +61,7 @@ export default function AboutUsScreen() {
                     </View>
                     <View style={styles.teamMember}>
                         <Icon name="user" type="font-awesome-5" color="#414692" size={17} />
-                        <Text style={styles.teamMemberName}>Guilherme Pereira</Text>
+                        <Text style={styles.teamMemberName}>Guilherme Valentim</Text>
                     </View>
                     <View style={styles.teamMember}>
                         <Icon name="user" type="font-awesome-5" color="#414692" size={17} />

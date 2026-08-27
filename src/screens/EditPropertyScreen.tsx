@@ -8,26 +8,24 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  Alert,
-  Modal,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../components/BackButton";
 import SuccessModal from "../components/SuccessModal";
 import SelectField from "../components/SelectField";
 import SelectModal from "../components/SelectModal";
 import ErrorModal from "../components/ErrorModal";
-import {
-  // ESTADOS_BRASILEIROS,
-  TIPOS_IMOVEIS,
-} from "../../src/screens/RegisterPropertyScreen";
+import { TIPOS_IMOVEIS } from "../constants/propertyTypes";
+import { getProperty, updateProperty } from "../storage/propertiesStorage";
+import { Property } from "../types/property";
+import { digitsOnlyCep, fetchAddressByCep } from "../services/viaCep";
+import type { RootStackParamList } from "../navigation/types";
 
 interface FormErrors {
-  phone?: string | { borderWidth: number; borderColor: string };
+  phone?: string;
   address?: string;
   neighborhood?: string;
   city?: string;
@@ -35,53 +33,35 @@ interface FormErrors {
   area?: string;
   property?: string;
   type?: string;
-  telefone?: string;
+  cep?: string;
 }
-
-interface Property {
-  phone: string | undefined;
-  id: string;
-  address: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  area: string;
-  property: string;
-  type: string;
-  telefone: string;
-}
-
-type RootStackParamList = {
-  EditProperty: {
-    propertyId: string;
-  };
-};
 
 type EditPropertyScreenRouteProp = RouteProp<
   RootStackParamList,
   "EditProperty"
 >;
 
+const EMPTY_PROPERTY: Property = {
+  id: "",
+  cep: "",
+  address: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  area: "",
+  property: "",
+  type: "",
+  phone: "",
+};
+
 export default function EditPropertyScreen() {
   const navigation = useNavigation();
   const route = useRoute<EditPropertyScreenRouteProp>();
   const propertyId = route.params.propertyId;
 
-  const [formData, setFormData] = useState<Property>({
-    phone: "",
-    id: "",
-    address: "",
-    neighborhood: "",
-    city: "",
-    state: "",
-    area: "",
-    property: "",
-    type: "",
-    telefone: "",
-  });
+  const [formData, setFormData] = useState<Property>(EMPTY_PROPERTY);
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showStateModal, setShowStateModal] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -92,17 +72,55 @@ export default function EditPropertyScreen() {
 
   const loadProperty = async () => {
     try {
-      const storedProperties = await AsyncStorage.getItem("properties");
-      if (storedProperties) {
-        const properties = JSON.parse(storedProperties);
-        const property = properties.find((p: Property) => p.id === propertyId);
-        if (property) {
-          setFormData(property);
-        }
+      const property = await getProperty(propertyId);
+      if (property) {
+        setFormData(property);
+      } else {
+        setErrorMessage("Imóvel não encontrado.");
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error("Erro ao carregar imóvel:", error);
-      Alert.alert("Erro", "Não foi possível carregar os dados do imóvel.");
+      setErrorMessage("Não foi possível carregar os dados do imóvel.");
+      setShowErrorModal(true);
+    }
+  };
+
+  const lookupAddressByCep = async (cep: string) => {
+    try {
+      const address = await fetchAddressByCep(cep);
+      setFormData((current) => ({
+        ...current,
+        ...address,
+      }));
+      setErrors((current) => ({
+        ...current,
+        address: undefined,
+        neighborhood: undefined,
+        city: undefined,
+        state: undefined,
+        cep: undefined,
+      }));
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar o endereço. Verifique o CEP."
+      );
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleCepChange = (text: string) => {
+    const cep = digitsOnlyCep(text);
+    setFormData((current) => ({ ...current, cep }));
+
+    if (errors.cep) {
+      setErrors((current) => ({ ...current, cep: undefined }));
+    }
+
+    if (cep.length === 8) {
+      lookupAddressByCep(cep);
     }
   };
 
@@ -110,13 +128,11 @@ export default function EditPropertyScreen() {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Endereço é obrigatório";
+    if (!formData.cep.trim()) {
+      newErrors.cep = "CEP é obrigatório";
       isValid = false;
-    }
-
-    if (!formData.neighborhood.trim()) {
-      newErrors.neighborhood = "Bairro é obrigatório";
+    } else if (digitsOnlyCep(formData.cep).length !== 8) {
+      newErrors.cep = "CEP deve ter 8 dígitos";
       isValid = false;
     }
 
@@ -139,7 +155,7 @@ export default function EditPropertyScreen() {
     }
 
     if (!(formData.property ?? "").trim()) {
-      newErrors.property = "Telefone é obrigatório";
+      newErrors.property = "Proprietário é obrigatório";
       isValid = false;
     }
 
@@ -157,30 +173,6 @@ export default function EditPropertyScreen() {
     return isValid;
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) {
-      Alert.alert("Erro", "Por favor, corrija os erros no formulário.");
-      return;
-    }
-
-    try {
-      const storedProperties = await AsyncStorage.getItem("properties");
-      const properties = storedProperties ? JSON.parse(storedProperties) : [];
-
-      const updatedProperties = properties.map((property: Property) =>
-        property.id === propertyId ? formData : property
-      );
-
-      await AsyncStorage.setItem(
-        "properties",
-        JSON.stringify(updatedProperties)
-      );
-      setShowSuccessModal(true);
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro ao atualizar o imóvel.");
-    }
-  };
-
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     navigation.goBack();
@@ -188,9 +180,7 @@ export default function EditPropertyScreen() {
 
   const renderError = (field: keyof FormErrors) => {
     const error = errors[field];
-    return typeof error === "string" ? (
-      <Text style={styles.errorText}>{error}</Text>
-    ) : null;
+    return error ? <Text style={styles.errorText}>{error}</Text> : null;
   };
 
   const handleSave = async () => {
@@ -201,30 +191,13 @@ export default function EditPropertyScreen() {
     }
 
     try {
-      const storedProperties = await AsyncStorage.getItem("properties");
-      if (!storedProperties) {
-        setErrorMessage("Erro ao carregar os dados do imóvel");
-        setShowErrorModal(true);
-        return;
-      }
-
-      const properties = JSON.parse(storedProperties);
-      const propertyIndex = properties.findIndex(
-        (p: Property) => p.id === route.params?.propertyId
-      );
-
-      if (propertyIndex === -1) {
+      if (!formData.id) {
         setErrorMessage("Imóvel não encontrado");
         setShowErrorModal(true);
         return;
       }
 
-      properties[propertyIndex] = {
-        ...properties[propertyIndex],
-        ...formData,
-      };
-
-      await AsyncStorage.setItem("properties", JSON.stringify(properties));
+      await updateProperty(propertyId, formData);
       setShowSuccessModal(true);
     } catch (error) {
       setErrorMessage("Erro ao salvar as alterações. Tente novamente.");
@@ -249,17 +222,41 @@ export default function EditPropertyScreen() {
       >
         <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
           <View style={styles.formContainer}>
-            {/* <View>
+            <View>
               <SelectField
-                value={formData.type} // Mostra o valor do cadastro, se existir
+                value={formData.type}
                 placeholder="Tipo do Imóvel"
                 icon="home"
-                options={TIPOS_IMOVEIS}
+                options={[...TIPOS_IMOVEIS]}
                 error={!!errors.type}
-                onPress={() => setShowTypeModal(false)} // Adicione se for obrigatório
+                onPress={() => setShowTypeModal(true)}
               />
               {renderError("type")}
-            </View> */}
+            </View>
+
+            <View>
+              <View
+                style={[styles.inputGroup, errors.cep && styles.inputError]}
+              >
+                <Icon
+                  name="map-pin"
+                  type="font-awesome-5"
+                  color="#8F94FB"
+                  size={20}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="CEP"
+                  placeholderTextColor="#8F94FB"
+                  keyboardType="numeric"
+                  maxLength={8}
+                  value={formData.cep}
+                  onChangeText={handleCepChange}
+                />
+              </View>
+              {renderError("cep")}
+            </View>
+
             <View>
               <View
                 style={[styles.inputGroup, errors.address && styles.inputError]}
@@ -330,7 +327,7 @@ export default function EditPropertyScreen() {
                   placeholder="Cidade"
                   placeholderTextColor="#8F94FB"
                   value={formData.city}
-                  editable={false} // Bloqueia a edição
+                  editable={false}
                 />
               </View>
               {renderError("city")}
@@ -351,27 +348,11 @@ export default function EditPropertyScreen() {
                   placeholder="Estado"
                   placeholderTextColor="#8F94FB"
                   value={formData.state}
-                  editable={false} // Bloqueia a edição
+                  editable={false}
                 />
               </View>
               {renderError("state")}
             </View>
-
-            {/* <View>
-              <SelectField
-                value={formData.state}
-                placeholder="Estado"
-                icon="flag"
-                options={ESTADOS_BRASILEIROS.map(({ id, nome, sigla }) => ({
-                  id,
-                  nome,
-                  sigla,
-                }))}
-                error={!!errors.state}
-                onPress={() => setShowStateModal(false)}
-              />
-              {renderError("state")}
-            </View> */}
 
             <View>
               <View
@@ -475,24 +456,10 @@ export default function EditPropertyScreen() {
         onClose={handleCloseSuccessModal}
       />
 
-      {/* <SelectModal
-        visible={showStateModal}
-        title="Selecione o Estado"
-        options={ESTADOS_BRASILEIROS}
-        onSelect={(estado) => {
-          setFormData({ ...formData, state: estado.sigla! });
-          if (errors.state) {
-            setErrors({ ...errors, state: undefined });
-          }
-          setShowStateModal(false);
-        }}
-        onClose={() => setShowStateModal(false)}
-      /> */}
-
       <SelectModal
         visible={showTypeModal}
         title="Selecione o Tipo do Imóvel"
-        options={TIPOS_IMOVEIS}
+        options={[...TIPOS_IMOVEIS]}
         onSelect={(tipo) => {
           setFormData({ ...formData, type: tipo.id });
           if (errors.type) {
@@ -577,63 +544,5 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 16,
     fontWeight: "600",
-  },
-  stateSelector: {
-    flex: 1,
-    height: 24,
-    justifyContent: "center",
-  },
-  stateSelectorText: {
-    color: "#FFF",
-    fontSize: 16,
-    height: 24,
-  },
-  placeholderText: {
-    color: "#8F94FB",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#252544",
-    borderRadius: 12,
-    padding: 20,
-    width: "90%",
-    maxHeight: "80%",
-  },
-  modalTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  stateList: {
-    maxHeight: 400,
-  },
-  stateItem: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1A1A2E",
-  },
-  stateItemText: {
-    color: "#FFF",
-    fontSize: 16,
-  },
-  closeButton: {
-    backgroundColor: "#4E54C8",
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  closeButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

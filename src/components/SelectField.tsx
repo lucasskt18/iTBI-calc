@@ -32,7 +32,9 @@ export default function SelectField({
     onPress,
 }: SelectFieldProps) {
     const selectedOption = options.find(option =>
-        option.id === value || option.sigla === value
+        option.id === value ||
+        option.sigla === value ||
+        option.nome.toLowerCase() === value.toLowerCase()
     );
 
     return (
