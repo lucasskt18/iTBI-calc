@@ -1,6 +1,6 @@
 # iTBI-calc
 
-Aplicativo móvel (React Native + Expo) para cadastro de imóveis e **estimativa** de ITBI (Imposto sobre Transmissão de Bens Imóveis).
+Aplicativo (React Native + Expo) para cadastro de imóveis e **estimativa** de ITBI (Imposto sobre Transmissão de Bens Imóveis).
 
 O ITBI é definido pelo **município**. O app não consulta alíquota oficial: o usuário informa a porcentagem. O padrão **2%** é só um ponto de partida editável.
 
